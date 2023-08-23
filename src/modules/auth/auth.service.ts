@@ -1,8 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto-js';
+import iot, {
+  IConnectResult,
+  IMessageResult,
+  IOTConfig,
+} from '@ainiteam/quick-iot-device-sdk';
 import systemConfig from '@/config/system.config';
 import { MenuEntity } from '@/modules/system/menu/entities/menu.entity';
 import { ApiEntity } from '@/modules/system/api/entities/api.entity';
@@ -16,13 +21,20 @@ import { CreateRoleMenuDto } from '@/modules/auth/dtos/create-role-menu.dto';
 import { LoginDto } from '@/modules/auth/dtos/login.dto';
 import { RefreshTokenDto } from '@/modules/auth/dtos/refresh-token.dto';
 import { TokenVo } from '@/modules/auth/vo/token.vo';
+import { SimulatorService } from '../device/simulator/simulator.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    // @Inject(SimulatorService)
+    // private readonly simulatorService: SimulatorService
   ) {}
+
+  private device = null;
+  private config = null;
+  private status = false;
 
   @InjectRepository(MenuEntity)
   private readonly menuRepository: Repository<MenuEntity>;
@@ -69,6 +81,53 @@ export class AuthService {
         HttpStatus.BAD_REQUEST
       );
     }
+    const config: IOTConfig = {
+      productKey: 'k00wmvASb4P',
+      deviceName: '1000-00111',
+      clientOptions: {
+        host: '43.139.141.111',
+        port: 1883,
+        protocol: 'mqtt',
+        clientId: 'quick_iot_server',
+        // clientId:
+        //   'quick_iot_server_' + Math.random().toString(16).substring(2, 8),
+        username: 'quick',
+        password: 'quick',
+      },
+    };
+    this.config = config;
+    this.device = iot.createDeviceInstance(config);
+    this.device.online();
+    this.device.on('connect', (res: IConnectResult) => {
+      console.log('connect success.', res);
+      this.status = true;
+    });
+
+    this.device.on(
+      'message',
+      (topic: string, payload: Buffer, res: IMessageResult) => {
+        console.log('message:', {
+          topic,
+          payload: payload.toString(),
+          // res,
+        });
+        const { id, version, method, params } = JSON.parse(payload.toString());
+        const productId = 1;
+        const deviceId = 11;
+        // this.simulatorService.reportAttribute(productId, deviceId, params);
+      }
+    );
+    // setTimeout(() => {
+    //   this.device.postProps(
+    //     {
+    //       CurrentHumidity: Math.random().toString(16).substring(2, 4),
+    //       CurrentTemperature: Math.random().toString(16).substring(2, 4),
+    //     },
+    //     (packet?: any) => {
+    //       console.log('postProps', packet);
+    //     }
+    //   );
+    // }, 1000 * 3);
     return user;
   }
 
