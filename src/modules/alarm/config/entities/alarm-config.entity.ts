@@ -1,11 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('alarm_configs')
+@Entity("alarm_configs")
 export class AlarmConfigEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ type: 'varchar', name: 'config_id' })
+  @Column({ type: "varchar", name: "config_id" })
   configId: string;
-  @Column({ type: 'varchar', name: 'config_name' })
+  @Column({ type: "varchar", name: "config_name" })
   configName: string;
 }

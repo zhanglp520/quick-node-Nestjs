@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AlarmRecordController } from './alarm-record.controller';
-import { AlarmRecordService } from './alarm-record.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { AlarmRecordController } from "./alarm-record.controller";
+import { AlarmRecordService } from "./alarm-record.service";
 
-describe('AlarmRecordController', () => {
+describe("AlarmRecordController", () => {
   let controller: AlarmRecordController;
 
   beforeEach(async () => {
@@ -14,7 +14,7 @@ describe('AlarmRecordController', () => {
     controller = module.get<AlarmRecordController>(AlarmRecordController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

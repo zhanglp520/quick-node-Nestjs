@@ -1,35 +1,33 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import * as crypto from 'crypto-js';
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import * as crypto from "crypto-js";
 import iot, {
   IConnectResult,
   IMessageResult,
   IOTConfig,
-} from '@ainiteam/quick-iot-device-sdk';
-import systemConfig from '@/config/system.config';
-import { MenuEntity } from '@/modules/system/menu/entities/menu.entity';
-import { ApiEntity } from '@/modules/system/api/entities/api.entity';
-import { UserEntity } from '@/modules/system/user/entities/user.entity';
-import { UserService } from '@/modules/system/user/user.service';
-import { UserVo } from '@/modules/system/user/vo/user.vo';
-import { RoleMenuEntity } from '@/modules/auth/entities/role-menu.entity';
-import { UserRoleEntity } from '@/modules/auth/entities/user-role.entity';
-import { CreateUserRoleDto } from '@/modules/auth/dtos/create-user-role.dto';
-import { CreateRoleMenuDto } from '@/modules/auth/dtos/create-role-menu.dto';
-import { LoginDto } from '@/modules/auth/dtos/login.dto';
-import { RefreshTokenDto } from '@/modules/auth/dtos/refresh-token.dto';
-import { TokenVo } from '@/modules/auth/vo/token.vo';
-import { SimulatorService } from '../device/simulator/simulator.service';
+} from "@ainiteam/quick-iot-device-sdk";
+import systemConfig from "@/config/system.config";
+import { MenuEntity } from "@/modules/system/menu/entities/menu.entity";
+import { ApiEntity } from "@/modules/system/api/entities/api.entity";
+import { UserEntity } from "@/modules/system/user/entities/user.entity";
+import { UserService } from "@/modules/system/user/user.service";
+import { UserVo } from "@/modules/system/user/vo/user.vo";
+import { RoleMenuEntity } from "@/modules/auth/entities/role-menu.entity";
+import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
+import { CreateUserRoleDto } from "@/modules/auth/dtos/create-user-role.dto";
+import { CreateRoleMenuDto } from "@/modules/auth/dtos/create-role-menu.dto";
+import { LoginDto } from "@/modules/auth/dtos/login.dto";
+import { RefreshTokenDto } from "@/modules/auth/dtos/refresh-token.dto";
+import { TokenVo } from "@/modules/auth/vo/token.vo";
+import { SimulatorService } from "../device/simulator/simulator.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-    // @Inject(SimulatorService)
-    // private readonly simulatorService: SimulatorService
+    private readonly jwtService: JwtService // @Inject(SimulatorService) // private readonly simulatorService: SimulatorService
   ) {}
 
   private device = null;
@@ -62,51 +60,51 @@ export class AuthService {
     if (!user) {
       throw new HttpException(
         {
-          message: '登录失败,暂无此用户.',
+          message: "登录失败,暂无此用户.",
         },
         HttpStatus.BAD_REQUEST
       );
     } else if (user.password !== crypto.MD5(pass).toString()) {
       throw new HttpException(
         {
-          message: '登录失败,用户名或者密码错误.',
+          message: "登录失败,用户名或者密码错误.",
         },
         HttpStatus.BAD_REQUEST
       );
     } else if (!user.enabled) {
       throw new HttpException(
         {
-          message: '登录失败,用户被禁用.',
+          message: "登录失败,用户被禁用.",
         },
         HttpStatus.BAD_REQUEST
       );
     }
     const config: IOTConfig = {
-      productKey: 'k00wmvASb4P',
-      deviceName: '1000-00111',
+      productKey: "k00wmvASb4P",
+      deviceName: "1000-00111",
       clientOptions: {
-        host: '43.139.141.111',
+        host: "43.139.141.111",
         port: 1883,
-        protocol: 'mqtt',
-        clientId: 'quick_iot_server',
+        protocol: "mqtt",
+        clientId: "quick_iot_server",
         // clientId:
         //   'quick_iot_server_' + Math.random().toString(16).substring(2, 8),
-        username: 'quick',
-        password: 'quick',
+        username: "quick",
+        password: "quick",
       },
     };
     this.config = config;
     this.device = iot.createDeviceInstance(config);
     this.device.online();
-    this.device.on('connect', (res: IConnectResult) => {
-      console.log('connect success.', res);
+    this.device.on("connect", (res: IConnectResult) => {
+      console.log("connect success.", res);
       this.status = true;
     });
 
     this.device.on(
-      'message',
+      "message",
       (topic: string, payload: Buffer, res: IMessageResult) => {
-        console.log('message:', {
+        console.log("message:", {
           topic,
           payload: payload.toString(),
           // res,
@@ -155,7 +153,7 @@ export class AuthService {
       if (!id) {
         throw new HttpException(
           {
-            message: '当前登录已过期，请重新登录',
+            message: "当前登录已过期，请重新登录",
           },
           HttpStatus.UNAUTHORIZED
         );
@@ -170,7 +168,7 @@ export class AuthService {
     } catch (error) {
       throw new HttpException(
         {
-          message: '当前登录已过期，请重新登录',
+          message: "当前登录已过期，请重新登录",
         },
         HttpStatus.UNAUTHORIZED
       );
@@ -221,12 +219,12 @@ export class AuthService {
       return listAll;
     }
     const qb = this.menuRepository
-      .createQueryBuilder('m')
-      .innerJoinAndSelect('per_role_menus', 'rm', 'rm.menu_id = m.id')
-      .innerJoinAndSelect('sys_roles', 'r', 'r.id = rm.role_id')
-      .innerJoinAndSelect('per_user_roles', 'ur', 'ur.role_id = r.id')
-      .innerJoinAndSelect('sys_users', 'u', 'u.id=ur.user_id')
-      .where('u.id = :id', { id: id });
+      .createQueryBuilder("m")
+      .innerJoinAndSelect("per_role_menus", "rm", "rm.menu_id = m.id")
+      .innerJoinAndSelect("sys_roles", "r", "r.id = rm.role_id")
+      .innerJoinAndSelect("per_user_roles", "ur", "ur.role_id = r.id")
+      .innerJoinAndSelect("sys_users", "u", "u.id=ur.user_id")
+      .where("u.id = :id", { id: id });
     const list = await qb.getMany();
     list.forEach((item: MenuEntity) => {
       if (item.pId !== 0) {
@@ -257,10 +255,10 @@ export class AuthService {
 
   async getUserListByRoleId(id: number) {
     const qb = this.userRepository
-      .createQueryBuilder('u')
-      .innerJoinAndSelect('per_user_roles', 'ur', 'ur.user_id = u.id')
-      .where('ur.role_id = :id', { id: id })
-      .select(['u.id']);
+      .createQueryBuilder("u")
+      .innerJoinAndSelect("per_user_roles", "ur", "ur.user_id = u.id")
+      .where("ur.role_id = :id", { id: id })
+      .select(["u.id"]);
     const list = await qb.getMany();
     const ids = list.map((x) => x.id);
     return ids;
@@ -268,10 +266,10 @@ export class AuthService {
 
   async getMenuListByRoleId(id: number) {
     const qb = this.menuRepository
-      .createQueryBuilder('m')
-      .innerJoinAndSelect('per_role_menus', 'rm', 'rm.menu_id = m.id')
-      .where('rm.role_id = :id', { id: id })
-      .select(['m.id']);
+      .createQueryBuilder("m")
+      .innerJoinAndSelect("per_role_menus", "rm", "rm.menu_id = m.id")
+      .where("rm.role_id = :id", { id: id })
+      .select(["m.id"]);
     const list = await qb.getMany();
     const ids = list.map((x) => x.id);
     return ids;
@@ -279,7 +277,7 @@ export class AuthService {
   async assignUser(createUserRoleDto: CreateUserRoleDto) {
     const { roleId } = createUserRoleDto;
     const list = new Array<UserRoleEntity>();
-    const ids = createUserRoleDto.userIds.split(',');
+    const ids = createUserRoleDto.userIds.split(",");
     ids.forEach(async (element) => {
       const userRoleEntity = new UserRoleEntity();
       userRoleEntity.roleId = roleId;
@@ -295,7 +293,7 @@ export class AuthService {
   async assignPermission(createRoleMenuDto: CreateRoleMenuDto) {
     const { roleId } = createRoleMenuDto;
     const list = new Array<RoleMenuEntity>();
-    const ids = createRoleMenuDto.menuIds.split(',');
+    const ids = createRoleMenuDto.menuIds.split(",");
     ids.forEach((element) => {
       const roleMenuEntity = new RoleMenuEntity();
       roleMenuEntity.roleId = roleId;
@@ -316,8 +314,8 @@ export class AuthService {
     // console.log('sql', sql);
     // return;
     const qb = this.apiRepository
-      .createQueryBuilder('a')
-      .leftJoinAndSelect('per_role_apis', 'ra', 'ra.api_id = a.id')
+      .createQueryBuilder("a")
+      .leftJoinAndSelect("per_role_apis", "ra", "ra.api_id = a.id")
       .andWhere(`ra.role_id=:id`, { id: id });
     const list = await qb.getMany();
     return list;
@@ -331,8 +329,8 @@ export class AuthService {
     // console.log('sql', sql);
     // return;
     const qb = this.apiRepository
-      .createQueryBuilder('a')
-      .leftJoinAndSelect('per_role_apis', 'ra', 'ra.api_id = a.id')
+      .createQueryBuilder("a")
+      .leftJoinAndSelect("per_role_apis", "ra", "ra.api_id = a.id")
       .andWhere(`ra.role_id=:id`, { id: id });
     const list = await qb.getMany();
     const ids = list.map((x) => x.id);

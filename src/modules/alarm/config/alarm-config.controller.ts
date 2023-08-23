@@ -7,21 +7,21 @@ import {
   Delete,
   Query,
   Put,
-} from '@nestjs/common';
-import { AlarmConfigService } from './alarm-config.service';
-import { CreateAlarmConfigDto } from './dto/create-alarm-config.dto';
-import { UpdateAlarmConfigDto } from './dto/update-alarm-config.dto';
-import { SearchAlarmConfigDto } from './dto/search-alarm-config.dto';
+} from "@nestjs/common";
+import { AlarmConfigService } from "./alarm-config.service";
+import { CreateAlarmConfigDto } from "./dto/create-alarm-config.dto";
+import { UpdateAlarmConfigDto } from "./dto/update-alarm-config.dto";
+import { SearchAlarmConfigDto } from "./dto/search-alarm-config.dto";
 
-@Controller('/alarm/configs')
+@Controller("/alarm/configs")
 export class AlarmConfigController {
   constructor(private readonly alarmConfigService: AlarmConfigService) {}
 
-  @Get('getPageList')
+  @Get("getPageList")
   getPageList(
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchAlarmConfigDto = new SearchAlarmConfigDto();
     searchAlarmConfigDto.keyword = keyword;
@@ -39,14 +39,14 @@ export class AlarmConfigController {
     return list;
   }
 
-  @Get(':id')
-  getAlarmConfigById(@Param('id') id: string) {
+  @Get(":id")
+  getAlarmConfigById(@Param("id") id: string) {
     return this.alarmConfigService.getAlarmConfigById(+id);
   }
 
-  @Get('getAlarmConfigByAlarmConfigName/:alarmConfigName')
+  @Get("getAlarmConfigByAlarmConfigName/:alarmConfigName")
   getAlarmConfigByAlarmConfigName(
-    @Param('alarmConfigName') alarmConfigName: string
+    @Param("alarmConfigName") alarmConfigName: string
   ) {
     return this.alarmConfigService.getAlarmConfigByAlarmConfigName(
       alarmConfigName
@@ -58,9 +58,9 @@ export class AlarmConfigController {
     return this.alarmConfigService.createAlarmConfig(createAlarmConfigDto);
   }
 
-  @Put(':id')
+  @Put(":id")
   updateAlarmConfigById(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateAlarmConfigDto: UpdateAlarmConfigDto
   ) {
     return this.alarmConfigService.updateAlarmConfigById(
@@ -69,8 +69,8 @@ export class AlarmConfigController {
     );
   }
 
-  @Delete(':id')
-  removeAlarmConfigById(@Param('id') id: string) {
+  @Delete(":id")
+  removeAlarmConfigById(@Param("id") id: string) {
     return this.alarmConfigService.removeAlarmConfigById(+id);
   }
 }

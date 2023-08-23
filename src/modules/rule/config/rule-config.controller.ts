@@ -7,21 +7,21 @@ import {
   Delete,
   Query,
   Put,
-} from '@nestjs/common';
-import { RuleConfigService } from './rule-config.service';
-import { CreateRuleConfigDto } from './dto/create-rule-config.dto';
-import { UpdateRuleConfigDto } from './dto/update-rule-config.dto';
-import { SearchRuleConfigDto } from './dto/search-rule-config.dto';
+} from "@nestjs/common";
+import { RuleConfigService } from "./rule-config.service";
+import { CreateRuleConfigDto } from "./dto/create-rule-config.dto";
+import { UpdateRuleConfigDto } from "./dto/update-rule-config.dto";
+import { SearchRuleConfigDto } from "./dto/search-rule-config.dto";
 
-@Controller('/rule/configs')
+@Controller("/rule/configs")
 export class RuleConfigController {
   constructor(private readonly ruleConfigService: RuleConfigService) {}
 
-  @Get('getPageList')
+  @Get("getPageList")
   getPageList(
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchRuleConfigDto = new SearchRuleConfigDto();
     searchRuleConfigDto.keyword = keyword;
@@ -39,14 +39,14 @@ export class RuleConfigController {
     return list;
   }
 
-  @Get(':id')
-  getRuleConfigById(@Param('id') id: string) {
+  @Get(":id")
+  getRuleConfigById(@Param("id") id: string) {
     return this.ruleConfigService.getRuleConfigById(+id);
   }
 
-  @Get('getRuleConfigByRuleConfigName/:ruleConfigName')
+  @Get("getRuleConfigByRuleConfigName/:ruleConfigName")
   getRuleConfigByRuleConfigName(
-    @Param('ruleConfigName') ruleConfigName: string
+    @Param("ruleConfigName") ruleConfigName: string
   ) {
     return this.ruleConfigService.getRuleConfigByRuleConfigName(ruleConfigName);
   }
@@ -56,9 +56,9 @@ export class RuleConfigController {
     return this.ruleConfigService.createRuleConfig(createRuleConfigDto);
   }
 
-  @Put(':id')
+  @Put(":id")
   updateRuleConfigById(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateRuleConfigDto: UpdateRuleConfigDto
   ) {
     return this.ruleConfigService.updateRuleConfigById(
@@ -67,8 +67,8 @@ export class RuleConfigController {
     );
   }
 
-  @Delete(':id')
-  removeRuleConfigById(@Param('id') id: string) {
+  @Delete(":id")
+  removeRuleConfigById(@Param("id") id: string) {
     return this.ruleConfigService.removeRuleConfigById(+id);
   }
 }

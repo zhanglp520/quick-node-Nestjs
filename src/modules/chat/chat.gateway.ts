@@ -3,11 +3,11 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
-} from '@nestjs/websockets';
-import { Server } from 'http';
-import { ChatService } from './chat.service';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
+} from "@nestjs/websockets";
+import { Server } from "http";
+import { ChatService } from "./chat.service";
+import { CreateChatDto } from "./dto/create-chat.dto";
+import { UpdateChatDto } from "./dto/update-chat.dto";
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway {
@@ -16,27 +16,27 @@ export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('createChat')
+  @SubscribeMessage("createChat")
   create(@MessageBody() createChatDto: CreateChatDto) {
     return this.chatService.create(createChatDto);
   }
 
-  @SubscribeMessage('findAllChat')
+  @SubscribeMessage("findAllChat")
   findAll() {
     return this.chatService.findAll();
   }
 
-  @SubscribeMessage('findOneChat')
+  @SubscribeMessage("findOneChat")
   findOne(@MessageBody() id: number) {
     return this.chatService.findOne(id);
   }
 
-  @SubscribeMessage('updateChat')
+  @SubscribeMessage("updateChat")
   update(@MessageBody() updateChatDto: UpdateChatDto) {
     return this.chatService.update(updateChatDto.id, updateChatDto);
   }
 
-  @SubscribeMessage('removeChat')
+  @SubscribeMessage("removeChat")
   remove(@MessageBody() id: number) {
     return this.chatService.remove(id);
   }

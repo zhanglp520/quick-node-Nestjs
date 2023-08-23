@@ -7,21 +7,21 @@ import {
   Delete,
   Query,
   Put,
-} from '@nestjs/common';
-import { AlarmRecordService } from './alarm-record.service';
-import { CreateAlarmRecordDto } from './dto/create-alarm-record.dto';
-import { UpdateAlarmRecordDto } from './dto/update-alarm-record.dto';
-import { SearchAlarmRecordDto } from './dto/search-alarm-record.dto';
+} from "@nestjs/common";
+import { AlarmRecordService } from "./alarm-record.service";
+import { CreateAlarmRecordDto } from "./dto/create-alarm-record.dto";
+import { UpdateAlarmRecordDto } from "./dto/update-alarm-record.dto";
+import { SearchAlarmRecordDto } from "./dto/search-alarm-record.dto";
 
-@Controller('/alarm/records')
+@Controller("/alarm/records")
 export class AlarmRecordController {
   constructor(private readonly alarmRecordService: AlarmRecordService) {}
 
-  @Get('getPageList')
+  @Get("getPageList")
   getPageList(
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchAlarmRecordDto = new SearchAlarmRecordDto();
     searchAlarmRecordDto.keyword = keyword;
@@ -39,14 +39,14 @@ export class AlarmRecordController {
     return list;
   }
 
-  @Get(':id')
-  getAlarmRecordById(@Param('id') id: string) {
+  @Get(":id")
+  getAlarmRecordById(@Param("id") id: string) {
     return this.alarmRecordService.getAlarmRecordById(+id);
   }
 
-  @Get('getAlarmRecordByAlarmRecordName/:alarmRecordName')
+  @Get("getAlarmRecordByAlarmRecordName/:alarmRecordName")
   getAlarmRecordByAlarmRecordName(
-    @Param('alarmRecordName') alarmRecordName: string
+    @Param("alarmRecordName") alarmRecordName: string
   ) {
     return this.alarmRecordService.getAlarmRecordByAlarmRecordName(
       alarmRecordName
@@ -58,9 +58,9 @@ export class AlarmRecordController {
     return this.alarmRecordService.createAlarmRecord(createAlarmRecordDto);
   }
 
-  @Put(':id')
+  @Put(":id")
   updateAlarmRecordById(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateAlarmRecordDto: UpdateAlarmRecordDto
   ) {
     return this.alarmRecordService.updateAlarmRecordById(
@@ -69,8 +69,8 @@ export class AlarmRecordController {
     );
   }
 
-  @Delete(':id')
-  removeAlarmRecordById(@Param('id') id: string) {
+  @Delete(":id")
+  removeAlarmRecordById(@Param("id") id: string) {
     return this.alarmRecordService.removeAlarmRecordById(+id);
   }
 }

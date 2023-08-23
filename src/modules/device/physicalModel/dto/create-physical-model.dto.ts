@@ -1,6 +1,6 @@
 export class CreatePhysicalModelDto {
   productId: number;
-  attributes: String;
-  functions: String;
-  events: String;
+  attributes: string;
+  functions: string;
+  events: string;
 }

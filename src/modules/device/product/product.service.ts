@@ -1,17 +1,17 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateProductDto } from './dto/create-product.dto';
-import { SearchProductDto } from './dto/search-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductEntity } from './entities/product.entity';
-import { PhysicalModelService } from '../physicalModel/physical-model.service';
-import { CreatePhysicalModelDto } from '../physicalModel/dto/create-physical-model.dto';
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateProductDto } from "./dto/create-product.dto";
+import { SearchProductDto } from "./dto/search-product.dto";
+import { UpdateProductDto } from "./dto/update-product.dto";
+import { ProductEntity } from "./entities/product.entity";
+import { PhysicalModelService } from "../physicalModel/physical-model.service";
+import { CreatePhysicalModelDto } from "../physicalModel/dto/create-physical-model.dto";
 
 @Injectable()
 export class ProductService {
-  @InjectRepository(ProductEntity, 'iot_device_dev')
+  @InjectRepository(ProductEntity, "iot_device_dev")
   private readonly productRepository: Repository<ProductEntity>;
 
   constructor(
@@ -44,7 +44,7 @@ export class ProductService {
     }
 
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -82,7 +82,7 @@ export class ProductService {
       productName: createProductDto.productName,
     });
     if (product) {
-      throw new HttpException('操作失败,产品名已使用.', HttpStatus.BAD_REQUEST);
+      throw new HttpException("操作失败,产品名已使用.", HttpStatus.BAD_REQUEST);
     }
     const productEntity = new ProductEntity();
     toEntity(createProductDto, productEntity);
@@ -101,7 +101,7 @@ export class ProductService {
     const product = await this.getProductById(id);
     if (!product) {
       throw new HttpException(
-        '操作失败,未找到产品信息.',
+        "操作失败,未找到产品信息.",
         HttpStatus.BAD_REQUEST
       );
     }

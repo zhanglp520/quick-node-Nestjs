@@ -1,15 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateProductTypeDto } from './dto/create-product-type.dto';
-import { SearchProductTypeDto } from './dto/search-product-type.dto';
-import { UpdateProductTypeDto } from './dto/update-product-type.dto';
-import { ProductTypeEntity } from './entities/product-type.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateProductTypeDto } from "./dto/create-product-type.dto";
+import { SearchProductTypeDto } from "./dto/search-product-type.dto";
+import { UpdateProductTypeDto } from "./dto/update-product-type.dto";
+import { ProductTypeEntity } from "./entities/product-type.entity";
 
 @Injectable()
 export class ProductTypeService {
-  @InjectRepository(ProductTypeEntity, 'iot_device_dev')
+  @InjectRepository(ProductTypeEntity, "iot_device_dev")
   private readonly productTypeRepository: Repository<ProductTypeEntity>;
 
   async getProductTypePageList(searchProductTypeDto: SearchProductTypeDto) {
@@ -23,7 +23,7 @@ export class ProductTypeService {
       });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -58,7 +58,7 @@ export class ProductTypeService {
     });
     if (productType) {
       throw new HttpException(
-        '操作失败,产品分类名已使用.',
+        "操作失败,产品分类名已使用.",
         HttpStatus.BAD_REQUEST
       );
     }
@@ -75,7 +75,7 @@ export class ProductTypeService {
     const productType = await this.getProductTypeById(id);
     if (!productType) {
       throw new HttpException(
-        '操作失败,未找到产品分类信息.',
+        "操作失败,未找到产品分类信息.",
         HttpStatus.BAD_REQUEST
       );
     }

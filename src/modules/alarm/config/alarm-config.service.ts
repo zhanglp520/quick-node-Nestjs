@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateAlarmConfigDto } from './dto/create-alarm-config.dto';
-import { SearchAlarmConfigDto } from './dto/search-alarm-config.dto';
-import { UpdateAlarmConfigDto } from './dto/update-alarm-config.dto';
-import { AlarmConfigEntity } from './entities/alarm-config.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateAlarmConfigDto } from "./dto/create-alarm-config.dto";
+import { SearchAlarmConfigDto } from "./dto/search-alarm-config.dto";
+import { UpdateAlarmConfigDto } from "./dto/update-alarm-config.dto";
+import { AlarmConfigEntity } from "./entities/alarm-config.entity";
 
 @Injectable()
 export class AlarmConfigService {
@@ -24,7 +24,7 @@ export class AlarmConfigService {
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -58,7 +58,7 @@ export class AlarmConfigService {
       configName: createAlarmConfigDto.configName,
     });
     if (alarmConfig) {
-      throw new HttpException('操作失败,角色名已使用.', HttpStatus.BAD_REQUEST);
+      throw new HttpException("操作失败,角色名已使用.", HttpStatus.BAD_REQUEST);
     }
     const alarmConfigEntity = new AlarmConfigEntity();
     toEntity(createAlarmConfigDto, alarmConfigEntity);
@@ -72,7 +72,7 @@ export class AlarmConfigService {
     const alarmConfig = await this.getAlarmConfigById(id);
     if (!alarmConfig) {
       throw new HttpException(
-        '操作失败,未找到角色信息.',
+        "操作失败,未找到角色信息.",
         HttpStatus.BAD_REQUEST
       );
     }

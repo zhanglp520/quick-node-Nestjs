@@ -6,12 +6,12 @@ import {
   Param,
   Delete,
   Put,
-} from '@nestjs/common';
-import { ProductTypeService } from './product-type.service';
-import { CreateProductTypeDto } from './dto/create-product-type.dto';
-import { UpdateProductTypeDto } from './dto/update-product-type.dto';
+} from "@nestjs/common";
+import { ProductTypeService } from "./product-type.service";
+import { CreateProductTypeDto } from "./dto/create-product-type.dto";
+import { UpdateProductTypeDto } from "./dto/update-product-type.dto";
 
-@Controller('device/productTypes')
+@Controller("device/productTypes")
 export class ProductTypeController {
   constructor(private readonly productTypeService: ProductTypeService) {}
 
@@ -38,14 +38,14 @@ export class ProductTypeController {
     return list;
   }
 
-  @Get(':id')
-  getProductTypeById(@Param('id') id: string) {
+  @Get(":id")
+  getProductTypeById(@Param("id") id: string) {
     return this.productTypeService.getProductTypeById(+id);
   }
 
-  @Get('getProductTypeByProductTypeName/:productTypeName')
+  @Get("getProductTypeByProductTypeName/:productTypeName")
   getProductTypeByProductTypeName(
-    @Param('productTypeName') productTypeName: string
+    @Param("productTypeName") productTypeName: string
   ) {
     return this.productTypeService.getProductTypeByProductTypeName(
       productTypeName
@@ -57,9 +57,9 @@ export class ProductTypeController {
     return this.productTypeService.createProductType(createProductTypeDto);
   }
 
-  @Put(':id')
+  @Put(":id")
   updateProductTypeById(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateProductTypeDto: UpdateProductTypeDto
   ) {
     return this.productTypeService.updateProductTypeById(
@@ -68,8 +68,8 @@ export class ProductTypeController {
     );
   }
 
-  @Delete(':id')
-  removeProductTypeById(@Param('id') id: string) {
+  @Delete(":id")
+  removeProductTypeById(@Param("id") id: string) {
     return this.productTypeService.removeProductTypeById(+id);
   }
 }

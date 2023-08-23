@@ -8,13 +8,13 @@ import {
   Delete,
   Query,
   UseGuards,
-} from '@nestjs/common';
-import { ChatService } from './chat.service';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
-import { ChatGateway } from '../chat/chat.gateway';
+} from "@nestjs/common";
+import { ChatService } from "./chat.service";
+import { CreateChatDto } from "./dto/create-chat.dto";
+import { UpdateChatDto } from "./dto/update-chat.dto";
+import { ChatGateway } from "../chat/chat.gateway";
 
-@Controller('chat')
+@Controller("chat")
 export class ChatController {
   constructor(
     private readonly chatService: ChatService,

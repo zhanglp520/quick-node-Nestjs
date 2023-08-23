@@ -1,4 +1,4 @@
-import { PageDto } from 'src/dtos/page.dto';
+import { PageDto } from "src/dtos/page.dto";
 
 export class SearchProductTypeDto {
   keyword: string;

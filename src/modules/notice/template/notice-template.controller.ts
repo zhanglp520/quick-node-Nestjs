@@ -7,21 +7,21 @@ import {
   Delete,
   Query,
   Put,
-} from '@nestjs/common';
-import { NoticeTemplateService } from './notice-template.service';
-import { CreateNoticeTemplateDto } from './dto/create-notice-template.dto';
-import { UpdateNoticeTemplateDto } from './dto/update-notice-template.dto';
-import { SearchNoticeTemplateDto } from './dto/search-notice-template.dto';
+} from "@nestjs/common";
+import { NoticeTemplateService } from "./notice-template.service";
+import { CreateNoticeTemplateDto } from "./dto/create-notice-template.dto";
+import { UpdateNoticeTemplateDto } from "./dto/update-notice-template.dto";
+import { SearchNoticeTemplateDto } from "./dto/search-notice-template.dto";
 
-@Controller('/notice/templates')
+@Controller("/notice/templates")
 export class NoticeTemplateController {
   constructor(private readonly noticeTemplateService: NoticeTemplateService) {}
 
-  @Get('getPageList')
+  @Get("getPageList")
   getPageList(
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchNoticeTemplateDto = new SearchNoticeTemplateDto();
     searchNoticeTemplateDto.keyword = keyword;
@@ -41,14 +41,14 @@ export class NoticeTemplateController {
     return list;
   }
 
-  @Get(':id')
-  getNoticeTemplateById(@Param('id') id: string) {
+  @Get(":id")
+  getNoticeTemplateById(@Param("id") id: string) {
     return this.noticeTemplateService.getNoticeTemplateById(+id);
   }
 
-  @Get('getNoticeTemplateByNoticeTemplateName/:notice-templateName')
+  @Get("getNoticeTemplateByNoticeTemplateName/:notice-templateName")
   getNoticeTemplateByNoticeTemplateName(
-    @Param('notice-templateName') noticeTemplateName: string
+    @Param("notice-templateName") noticeTemplateName: string
   ) {
     return this.noticeTemplateService.getNoticeTemplateByNoticeTemplateName(
       noticeTemplateName
@@ -64,9 +64,9 @@ export class NoticeTemplateController {
     );
   }
 
-  @Put(':id')
+  @Put(":id")
   updateNoticeTemplateById(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateNoticeTemplateDto: UpdateNoticeTemplateDto
   ) {
     return this.noticeTemplateService.updateNoticeTemplateById(
@@ -75,8 +75,8 @@ export class NoticeTemplateController {
     );
   }
 
-  @Delete(':id')
-  removeNoticeTemplateById(@Param('id') id: string) {
+  @Delete(":id")
+  removeNoticeTemplateById(@Param("id") id: string) {
     return this.noticeTemplateService.removeNoticeTemplateById(+id);
   }
 }

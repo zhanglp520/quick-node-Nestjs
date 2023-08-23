@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateNoticeConfigDto } from './dto/create-notice-config.dto';
-import { SearchNoticeConfigDto } from './dto/search-notice-config.dto';
-import { UpdateNoticeConfigDto } from './dto/update-notice-config.dto';
-import { NoticeConfigEntity } from './entities/notice-config.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateNoticeConfigDto } from "./dto/create-notice-config.dto";
+import { SearchNoticeConfigDto } from "./dto/search-notice-config.dto";
+import { UpdateNoticeConfigDto } from "./dto/update-notice-config.dto";
+import { NoticeConfigEntity } from "./entities/notice-config.entity";
 
 @Injectable()
 export class NoticeConfigService {
@@ -24,7 +24,7 @@ export class NoticeConfigService {
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -59,7 +59,7 @@ export class NoticeConfigService {
     });
     if (noticeConfig) {
       throw new HttpException(
-        '操作失败,通知配置名已使用.',
+        "操作失败,通知配置名已使用.",
         HttpStatus.BAD_REQUEST
       );
     }
@@ -75,7 +75,7 @@ export class NoticeConfigService {
     const noticeConfig = await this.getNoticeConfigById(id);
     if (!noticeConfig) {
       throw new HttpException(
-        '操作失败,未找到通知配置信息.',
+        "操作失败,未找到通知配置信息.",
         HttpStatus.BAD_REQUEST
       );
     }

@@ -8,23 +8,23 @@ import {
   Query,
   Put,
   Patch,
-} from '@nestjs/common';
-import { DeviceService } from './device.service';
-import { CreateDeviceDto } from './dto/create-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
-import { SearchDeviceDto } from './dto/search-device.dto';
-import { SearchAttributeDto } from './dto/search-attribute.dto';
+} from "@nestjs/common";
+import { DeviceService } from "./device.service";
+import { CreateDeviceDto } from "./dto/create-device.dto";
+import { UpdateDeviceDto } from "./dto/update-device.dto";
+import { SearchDeviceDto } from "./dto/search-device.dto";
+import { SearchAttributeDto } from "./dto/search-attribute.dto";
 
-@Controller('/device/devices')
+@Controller("/device/devices")
 export class DeviceController {
   constructor(private readonly deviceService: DeviceService) {}
 
   @Get()
   getPageList(
-    @Query('productId') productId,
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("productId") productId,
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchDeviceDto = new SearchDeviceDto();
     searchDeviceDto.productId = productId;
@@ -36,13 +36,13 @@ export class DeviceController {
     return this.deviceService.getDevicePageList(searchDeviceDto);
   }
 
-  @Get('getDeviceList')
-  async getDeviceList(@Query('productId') productId) {
+  @Get("getDeviceList")
+  async getDeviceList(@Query("productId") productId) {
     const list = await this.deviceService.getDeviceList(productId);
     return list;
   }
 
-  @Get('getDeviceCount')
+  @Get("getDeviceCount")
   async getDeviceCount() {
     const list = await this.deviceService.getDeviceList();
     const onlineList = list.filter((x) => x.status === true);
@@ -54,13 +54,13 @@ export class DeviceController {
     };
     return result;
   }
-  @Get('getAttributePageList')
+  @Get("getAttributePageList")
   getAttributePageList(
-    @Query('deviceId') deviceId,
-    @Query('identifying') identifying,
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("deviceId") deviceId,
+    @Query("identifying") identifying,
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchAttributeDto = new SearchAttributeDto();
     searchAttributeDto.deviceId = deviceId;
@@ -72,13 +72,13 @@ export class DeviceController {
     };
     return this.deviceService.getAttributePageList(searchAttributeDto);
   }
-  @Get('getFunctionPageList')
+  @Get("getFunctionPageList")
   getFunctionPageList(
-    @Query('deviceId') deviceId,
-    @Query('identifying') identifying,
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("deviceId") deviceId,
+    @Query("identifying") identifying,
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchAttributeDto = new SearchAttributeDto();
     searchAttributeDto.deviceId = deviceId;
@@ -90,13 +90,13 @@ export class DeviceController {
     };
     return this.deviceService.getFunctionPageList(searchAttributeDto);
   }
-  @Get('getEventPageList')
+  @Get("getEventPageList")
   getEventPageList(
-    @Query('deviceId') deviceId,
-    @Query('identifying') identifying,
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("deviceId") deviceId,
+    @Query("identifying") identifying,
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchAttributeDto = new SearchAttributeDto();
     searchAttributeDto.deviceId = deviceId;
@@ -108,21 +108,21 @@ export class DeviceController {
     };
     return this.deviceService.getEventPageList(searchAttributeDto);
   }
-  @Get('getAttribute')
-  getAttribute(@Query('deviceId') deviceId, @Query('identifying') identifying) {
+  @Get("getAttribute")
+  getAttribute(@Query("deviceId") deviceId, @Query("identifying") identifying) {
     const searchAttributeDto = new SearchAttributeDto();
     searchAttributeDto.deviceId = deviceId;
     searchAttributeDto.identifying = identifying;
     return this.deviceService.getAttribute(searchAttributeDto);
   }
 
-  @Get(':id')
-  getDeviceById(@Param('id') id: string) {
+  @Get(":id")
+  getDeviceById(@Param("id") id: string) {
     return this.deviceService.getDeviceById(+id);
   }
 
-  @Get('getDeviceByDeviceName/:deviceName')
-  getDeviceByDeviceName(@Param('deviceName') deviceName: string) {
+  @Get("getDeviceByDeviceName/:deviceName")
+  getDeviceByDeviceName(@Param("deviceName") deviceName: string) {
     return this.deviceService.getDeviceByDeviceName(deviceName);
   }
 
@@ -131,24 +131,24 @@ export class DeviceController {
     return this.deviceService.createDevice(createDeviceDto);
   }
 
-  @Put(':id')
+  @Put(":id")
   updateDeviceById(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateDeviceDto: UpdateDeviceDto
   ) {
     return this.deviceService.updateDeviceById(+id, updateDeviceDto);
   }
 
-  @Delete(':id')
-  removeDeviceById(@Param('id') id: string) {
+  @Delete(":id")
+  removeDeviceById(@Param("id") id: string) {
     return this.deviceService.removeDeviceById(+id);
   }
-  @Patch('enabled/:id')
-  enabled(@Param('id') id: string) {
+  @Patch("enabled/:id")
+  enabled(@Param("id") id: string) {
     return this.deviceService.enabledDeviceById(+id);
   }
-  @Patch('disable/:id')
-  disable(@Param('id') id: string) {
+  @Patch("disable/:id")
+  disable(@Param("id") id: string) {
     return this.deviceService.disableDeviceById(+id);
   }
 }

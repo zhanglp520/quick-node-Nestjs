@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateRuleConfigDto } from './dto/create-rule-config.dto';
-import { SearchRuleConfigDto } from './dto/search-rule-config.dto';
-import { UpdateRuleConfigDto } from './dto/update-rule-config.dto';
-import { RuleConfigEntity } from './entities/rule-config.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateRuleConfigDto } from "./dto/create-rule-config.dto";
+import { SearchRuleConfigDto } from "./dto/search-rule-config.dto";
+import { UpdateRuleConfigDto } from "./dto/update-rule-config.dto";
+import { RuleConfigEntity } from "./entities/rule-config.entity";
 
 @Injectable()
 export class RuleConfigService {
@@ -24,7 +24,7 @@ export class RuleConfigService {
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -59,7 +59,7 @@ export class RuleConfigService {
     });
     if (ruleConfig) {
       throw new HttpException(
-        '操作失败,规则配置名已使用.',
+        "操作失败,规则配置名已使用.",
         HttpStatus.BAD_REQUEST
       );
     }
@@ -75,7 +75,7 @@ export class RuleConfigService {
     const ruleConfig = await this.getRuleConfigById(id);
     if (!ruleConfig) {
       throw new HttpException(
-        '操作失败,未找到规则配置信息.',
+        "操作失败,未找到规则配置信息.",
         HttpStatus.BAD_REQUEST
       );
     }

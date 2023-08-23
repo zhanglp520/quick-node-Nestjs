@@ -7,21 +7,21 @@ import {
   Delete,
   Query,
   Put,
-} from '@nestjs/common';
-import { NoticeConfigService } from './notice-config.service';
-import { CreateNoticeConfigDto } from './dto/create-notice-config.dto';
-import { UpdateNoticeConfigDto } from './dto/update-notice-config.dto';
-import { SearchNoticeConfigDto } from './dto/search-notice-config.dto';
+} from "@nestjs/common";
+import { NoticeConfigService } from "./notice-config.service";
+import { CreateNoticeConfigDto } from "./dto/create-notice-config.dto";
+import { UpdateNoticeConfigDto } from "./dto/update-notice-config.dto";
+import { SearchNoticeConfigDto } from "./dto/search-notice-config.dto";
 
-@Controller('/notice/configs')
+@Controller("/notice/configs")
 export class NoticeConfigController {
   constructor(private readonly noticeConfigService: NoticeConfigService) {}
 
-  @Get('getPageList')
+  @Get("getPageList")
   getPageList(
-    @Query('keyword') keyword,
-    @Query('current') current,
-    @Query('size') size
+    @Query("keyword") keyword,
+    @Query("current") current,
+    @Query("size") size
   ) {
     const searchNoticeConfigDto = new SearchNoticeConfigDto();
     searchNoticeConfigDto.keyword = keyword;
@@ -41,14 +41,14 @@ export class NoticeConfigController {
     return list;
   }
 
-  @Get(':id')
-  getNoticeConfigById(@Param('id') id: string) {
+  @Get(":id")
+  getNoticeConfigById(@Param("id") id: string) {
     return this.noticeConfigService.getNoticeConfigById(+id);
   }
 
-  @Get('getNoticeConfigByNoticeConfigName/:noticeConfigName')
+  @Get("getNoticeConfigByNoticeConfigName/:noticeConfigName")
   getNoticeConfigByNoticeConfigName(
-    @Param('noticeConfigName') noticeConfigName: string
+    @Param("noticeConfigName") noticeConfigName: string
   ) {
     return this.noticeConfigService.getNoticeConfigByNoticeConfigName(
       noticeConfigName
@@ -60,9 +60,9 @@ export class NoticeConfigController {
     return this.noticeConfigService.createNoticeConfig(createNoticeConfigDto);
   }
 
-  @Put(':id')
+  @Put(":id")
   updateNoticeConfigById(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateNoticeConfigDto: UpdateNoticeConfigDto
   ) {
     return this.noticeConfigService.updateNoticeConfigById(
@@ -71,8 +71,8 @@ export class NoticeConfigController {
     );
   }
 
-  @Delete(':id')
-  removeNoticeConfigById(@Param('id') id: string) {
+  @Delete(":id")
+  removeNoticeConfigById(@Param("id") id: string) {
     return this.noticeConfigService.removeNoticeConfigById(+id);
   }
 }

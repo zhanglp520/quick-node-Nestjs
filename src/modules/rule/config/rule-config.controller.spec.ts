@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { RuleConfigController } from './rule-config.controller';
-import { RuleConfigService } from './rule-config.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { RuleConfigController } from "./rule-config.controller";
+import { RuleConfigService } from "./rule-config.service";
 
-describe('RuleConfigController', () => {
+describe("RuleConfigController", () => {
   let controller: RuleConfigController;
 
   beforeEach(async () => {
@@ -14,7 +14,7 @@ describe('RuleConfigController', () => {
     controller = module.get<RuleConfigController>(RuleConfigController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

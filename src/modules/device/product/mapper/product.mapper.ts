@@ -1,8 +1,8 @@
-import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { Mapper, MappingProfile, createMap } from '@automapper/core';
-import { Injectable } from '@nestjs/common';
-import { ProductEntity } from '../entities/product.entity';
-import { ProductVo } from '../vo/product.vo';
+import { AutomapperProfile, InjectMapper } from "@automapper/nestjs";
+import { Mapper, MappingProfile, createMap } from "@automapper/core";
+import { Injectable } from "@nestjs/common";
+import { ProductEntity } from "../entities/product.entity";
+import { ProductVo } from "../vo/product.vo";
 
 @Injectable()
 export class ProductMapperProfile extends AutomapperProfile {

@@ -1,30 +1,30 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateDeviceDto } from './dto/create-device.dto';
-import { SearchDeviceDto } from './dto/search-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
-import { DeviceEntity } from './entities/device.entity';
-import { PhysicalModelService } from '../physicalModel/physical-model.service';
-import { AttributeEntity } from './entities/attribute.entity';
-import { SearchAttributeDto } from './dto/search-attribute.dto';
-import { CreateAttributeDto } from './dto/create-attribute.dto';
-import { SearchFunctionDto } from './dto/search-function.dto';
-import { FunctionEntity } from './entities/function.entity';
-import { EventEntity } from './entities/event.entity';
-import { CreateFunctionDto } from './dto/create-function.dto';
-import { CreateEventDto } from './dto/create-event.dto';
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateDeviceDto } from "./dto/create-device.dto";
+import { SearchDeviceDto } from "./dto/search-device.dto";
+import { UpdateDeviceDto } from "./dto/update-device.dto";
+import { DeviceEntity } from "./entities/device.entity";
+import { PhysicalModelService } from "../physicalModel/physical-model.service";
+import { AttributeEntity } from "./entities/attribute.entity";
+import { SearchAttributeDto } from "./dto/search-attribute.dto";
+import { CreateAttributeDto } from "./dto/create-attribute.dto";
+import { SearchFunctionDto } from "./dto/search-function.dto";
+import { FunctionEntity } from "./entities/function.entity";
+import { EventEntity } from "./entities/event.entity";
+import { CreateFunctionDto } from "./dto/create-function.dto";
+import { CreateEventDto } from "./dto/create-event.dto";
 
 @Injectable()
 export class DeviceService {
-  @InjectRepository(DeviceEntity, 'iot_device_dev')
+  @InjectRepository(DeviceEntity, "iot_device_dev")
   private readonly deviceRepository: Repository<DeviceEntity>;
-  @InjectRepository(FunctionEntity, 'iot_device_dev')
+  @InjectRepository(FunctionEntity, "iot_device_dev")
   private readonly functionRepository: Repository<FunctionEntity>;
-  @InjectRepository(AttributeEntity, 'iot_device_dev')
+  @InjectRepository(AttributeEntity, "iot_device_dev")
   private readonly attributeRepository: Repository<AttributeEntity>;
-  @InjectRepository(EventEntity, 'iot_device_dev')
+  @InjectRepository(EventEntity, "iot_device_dev")
   private readonly eventRepository: Repository<EventEntity>;
   constructor(
     @Inject(PhysicalModelService)
@@ -36,13 +36,13 @@ export class DeviceService {
     const { current, size } = page;
     const skip = (current - 1) * size;
     const queryBuilder = this.deviceRepository.createQueryBuilder();
-    queryBuilder.where('id<>0');
+    queryBuilder.where("id<>0");
     if (keyword) {
       queryBuilder.andWhere(`user_name=:userName`, { userName: keyword });
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -88,7 +88,7 @@ export class DeviceService {
   // }
 
   getDeviceList(productId?: number) {
-    console.log('getDeviceList', {
+    console.log("getDeviceList", {
       productId,
     });
 
@@ -122,7 +122,7 @@ export class DeviceService {
       deviceName: createDeviceDto.deviceName,
     });
     if (device) {
-      throw new HttpException('操作失败,设备名已使用.', HttpStatus.BAD_REQUEST);
+      throw new HttpException("操作失败,设备名已使用.", HttpStatus.BAD_REQUEST);
     }
     const deviceEntity = new DeviceEntity();
     toEntity(createDeviceDto, deviceEntity);
@@ -136,7 +136,7 @@ export class DeviceService {
     const device = await this.getDeviceById(id);
     if (!device) {
       throw new HttpException(
-        '操作失败,未找到设备信息.',
+        "操作失败,未找到设备信息.",
         HttpStatus.BAD_REQUEST
       );
     }
@@ -176,7 +176,7 @@ export class DeviceService {
       // });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -195,7 +195,7 @@ export class DeviceService {
     queryBuilder.andWhere(`identifying=:identifying`, {
       identifying: identifying,
     });
-    const list = await queryBuilder.orderBy('create_time', 'DESC').getMany();
+    const list = await queryBuilder.orderBy("create_time", "DESC").getMany();
     return list && list[0];
   }
   async reportAttribute(createAttributeDto: CreateAttributeDto) {
@@ -221,7 +221,7 @@ export class DeviceService {
       // });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -239,7 +239,7 @@ export class DeviceService {
     const functionEntity = new FunctionEntity();
     toEntity(createFunctionDto, functionEntity);
     functionEntity.createTime = new Date();
-    console.log('callFunction', functionEntity);
+    console.log("callFunction", functionEntity);
     await this.functionRepository.insert(functionEntity);
   }
   //#endregion
@@ -259,7 +259,7 @@ export class DeviceService {
       // });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -270,12 +270,12 @@ export class DeviceService {
     };
   }
   async triggerEvent(createEventDto: CreateEventDto) {
-    console.log('triggerEvent', createEventDto);
+    console.log("triggerEvent", createEventDto);
     createEventDto.inputParams = JSON.stringify(createEventDto.inputParams);
     const eventEntity = new EventEntity();
     toEntity(createEventDto, eventEntity);
     eventEntity.createTime = new Date();
-    console.log('triggerEvent', eventEntity);
+    console.log("triggerEvent", eventEntity);
     await this.eventRepository.insert(eventEntity);
   }
   //#endregion

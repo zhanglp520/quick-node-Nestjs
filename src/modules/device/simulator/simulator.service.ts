@@ -2,13 +2,13 @@ import iot, {
   IConnectResult,
   IMessageResult,
   IOTConfig,
-} from '@ainiteam/quick-iot-device-sdk';
-import { PhysicalModelService } from '../physicalModel/physical-model.service';
-import { Inject } from '@nestjs/common';
-import { DeviceService } from '../device/device.service';
-import { CreateAttributeDto } from '../device/dto/create-attribute.dto';
-import { CreateFunctionDto } from '../device/dto/create-function.dto';
-import { CreateEventDto } from '../device/dto/create-event.dto';
+} from "@ainiteam/quick-iot-device-sdk";
+import { PhysicalModelService } from "../physicalModel/physical-model.service";
+import { Inject } from "@nestjs/common";
+import { DeviceService } from "../device/device.service";
+import { CreateAttributeDto } from "../device/dto/create-attribute.dto";
+import { CreateFunctionDto } from "../device/dto/create-function.dto";
+import { CreateEventDto } from "../device/dto/create-event.dto";
 
 export class SimulatorService {
   constructor(
@@ -17,7 +17,7 @@ export class SimulatorService {
   ) {}
 
   reportAttribute(productId: number, deviceId: number, props: any) {
-    console.log('reportAttribute-props', props);
+    console.log("reportAttribute-props", props);
     const obj = props;
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {

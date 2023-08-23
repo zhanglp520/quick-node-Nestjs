@@ -4,11 +4,11 @@ import {
   ExecutionContext,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '@/common/decorators/roles.decorator';
-import { Role } from '@/common/enums/role.enum';
-import { AuthService } from '@/modules/auth/auth.service';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { ROLES_KEY } from "@/common/decorators/roles.decorator";
+import { Role } from "@/common/enums/role.enum";
+import { AuthService } from "@/modules/auth/auth.service";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -42,7 +42,7 @@ export class RolesGuard implements CanActivate {
     }
     throw new HttpException(
       {
-        message: '无权限访问此接口',
+        message: "无权限访问此接口",
       },
       HttpStatus.UNAUTHORIZED
     );
