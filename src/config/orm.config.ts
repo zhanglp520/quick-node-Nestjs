@@ -5,9 +5,9 @@ export const defaultOpts: TypeOrmModuleOptions = {
   type: 'mysql',
   host: '43.139.141.111',
   port: 3306,
-  username: 'quick_core_v2',
-  password: 'quick_core_v2',
-  database: 'quick_core_v2',
+  username: 'quick_core_dev',
+  password: 'quick_core_dev',
+  database: 'quick_core_dev',
   // "cache": true,
   cache: {
     duration: 30000, // 30 seconds

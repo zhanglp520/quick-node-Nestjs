@@ -1,17 +1,20 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
-import { LocalStrategy } from './strategies/local.strategy';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { AuthService } from './auth.service';
-import { UserModule } from '../system/user/user.module';
-import { AuthController } from './auth.controller';
-import { MenuEntity } from '../system/menu/entities/menu.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from '../system/user/entities/user.entity';
-import { UserRoleEntity } from './entities/user-role.entity';
-import { RoleMenuEntity } from './entities/role-menu.entity';
+import { MenuEntity } from '@/modules/system/menu/entities/menu.entity';
+import { UserEntity } from '@/modules/system/user/entities/user.entity';
+import { UserModule } from '@/modules/system/user/user.module';
+import { jwtConstants } from '@/modules/auth/constants';
+import { LocalStrategy } from '@/modules/auth/strategies/local.strategy';
+import { JwtStrategy } from '@/modules/auth/strategies/jwt.strategy';
+import { UserRoleEntity } from '@/modules/auth/entities/user-role.entity';
+import { RoleMenuEntity } from '@/modules/auth/entities/role-menu.entity';
+import { AuthService } from '@/modules/auth/auth.service';
+import { AuthController } from '@/modules/auth/auth.controller';
+import { AuthMapperProfile } from '@/modules/auth/mapper/auth.mapper';
+import { ApiEntity } from '@/modules/system/api/entities/api.entity';
+import { RoleApiEntity } from '@/modules/auth/entities/role-api.entity';
 
 @Module({
   imports: [
@@ -20,6 +23,8 @@ import { RoleMenuEntity } from './entities/role-menu.entity';
       UserEntity,
       UserRoleEntity,
       RoleMenuEntity,
+      ApiEntity,
+      RoleApiEntity,
     ]),
     PassportModule,
     //PassportModule.register({
@@ -33,7 +38,7 @@ import { RoleMenuEntity } from './entities/role-menu.entity';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, AuthMapperProfile],
   exports: [AuthService],
 })
 export class AuthModule {}

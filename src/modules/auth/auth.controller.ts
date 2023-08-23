@@ -1,92 +1,156 @@
-import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { CreateRoleMenuDto } from './dtos/create-role-menu.dto';
 import { CreateUserRoleDto } from './dtos/create-user-role.dto';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ResponseResult } from '@/common/tools/response.result';
+import { MenuVo } from '@/modules/system/menu/vo/menu.vo';
+import { RefreshTokenDto } from '@/modules/auth/dtos/refresh-token.dto';
+import { TokenVo } from '@/modules/auth/vo/token.vo';
+import { LoginDto } from '@/modules/auth/dtos/login.dto';
 
-/*
- *@Description: 权限管理模块控制器
- *@Author: 土豆哥
- *@Date: 2022-11-28 21:16:30
- */
+@ApiTags('权限管理')
 @Controller('/auths')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  /*
-   *@Description: 登录
-   *@Author: 土豆哥
-   *@Date: 2022-11-28 21:16:10
-   */
+  @ApiOperation({ summary: '登录' })
+  @ApiBody({ type: LoginDto, description: '登录参数' })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: TokenVo,
+  })
   @Public()
   @Post('/login')
-  login(@Request() req) {
-    return this.authService.login(req.body);
+  login(@Body() login: LoginDto) {
+    return this.authService.login(login);
   }
-  /*
-   *@Description: 注销
-   *@Author: 土豆哥
-   *@Date: 2022-11-28 21:15:58
-   */
+
+  @ApiOperation({ summary: '注销' })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: ResponseResult,
+  })
   @Public()
   @Post('/logout')
   logout() {
     return this.authService.logout();
   }
-  /*
-   *@Description: 刷新令牌
-   *@Author: 土豆哥
-   *@Date: 2022-11-28 21:15:38
-   */
+
+  @ApiOperation({ summary: '刷新令牌' })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: TokenVo,
+  })
   @Public()
   @Post('/refreshToken')
-  refreshToken(@Request() req) {
-    const { quickRefreshToken } = req.body;
-    return this.authService.refreshToken(quickRefreshToken);
+  refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshTokenDto);
   }
-  /*
-   *@Description: 获取用户权限
-   *@Author: 土豆哥
-   *@Date: 2022-11-28 21:14:34
-   */
+
+  @ApiOperation({ summary: '获取用户权限' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: '用户主键',
+    required: true,
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: MenuVo,
+  })
   @Get('getMenuListByUserId/:id')
   getMenuListByUserId(@Param('id') id: string) {
     return this.authService.getMenuByUserId(+id);
   }
-  /*
-   *@Description: 获取角色分配的用户权限
-   *@Author: 土豆哥
-   *@Date: 2022-11-28 21:13:51
-   */
+
+  @ApiOperation({ summary: '获取角色分配的用户权限' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: '角色主键',
+    required: true,
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: Array<Number>,
+  })
   @Get('/getUserListByRoleId/:id')
   getUserListByRoleId(@Param('id') id: string) {
     return this.authService.getUserListByRoleId(+id);
   }
-  /*
-   *@Description: 获取角色分配的菜单权限
-   *@Author: 土豆哥
-   *@Date: 2022-11-28 21:13:04
-   */
+
+  @ApiOperation({ summary: '获取角色分配的菜单权限' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: '角色主键',
+    required: true,
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: Array<Number>,
+  })
   @Get('/getMenuListByRoleId/:id')
   getMenuListByRoleId(@Param('id') id: string) {
     return this.authService.getMenuListByRoleId(+id);
   }
-  /*
-   *@Description: 角色分配用户
-   *@Author: 土豆哥
-   *@Date: 2022-11-29 00:13:43
-   */
+
+  @ApiOperation({ summary: '角色分配用户' })
+  @ApiBody({ type: CreateUserRoleDto, description: '角色分配用户参数' })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: ResponseResult,
+  })
   @Post('/assignUser')
   assignUser(@Body() createUserRoleDto: CreateUserRoleDto) {
     return this.authService.assignUser(createUserRoleDto);
   }
-  /*
-   *@Description: 角色分配权限
-   *@Author: 土豆哥
-   *@Date: 2022-11-29 00:13:59
-   */
+
+  @ApiOperation({ summary: '角色分配权限' })
+  @ApiBody({ type: CreateRoleMenuDto, description: '角色分配权限参数' })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: ResponseResult,
+  })
   @Post('/assignPermission')
   assignPermission(@Body() createRoleMenuDto: CreateRoleMenuDto) {
     return this.authService.assignPermission(createRoleMenuDto);
   }
+
+  @ApiOperation({ summary: '已分配的接口权限' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: '角色主键',
+    required: true,
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: '操作成功',
+    type: ResponseResult,
+  })
+  @Get('/getApiListByRoleId/:id')
+  async getApiListByRoleId(@Param('id') id: string) {
+    return await this.authService.getApiListByRoleId(+id);
+  }
+  // @Post('/assignPermission')
+  // assignPermission(@Body() createRoleMenuDto: CreateRoleMenuDto) {
+  //   return this.authService.assignPermission(createRoleMenuDto);
+  // }
 }

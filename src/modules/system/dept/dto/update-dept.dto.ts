@@ -1,4 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { ApiExtraModels } from '@nestjs/swagger';
 import { CreateDeptDto } from './create-dept.dto';
 
-export class UpdateDeptDto extends PartialType(CreateDeptDto) {}
+// @ApiExtraModels(CreateDeptDto)
+export class UpdateDeptDto extends CreateDeptDto {}

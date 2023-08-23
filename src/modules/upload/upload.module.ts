@@ -21,10 +21,8 @@ import { UploadService } from './Upload.service';
         },
       }),
     }),
-
   ],
   controllers: [UploadController],
-  providers: [UploadService]
+  providers: [UploadService],
 })
-export class UploadModule { }
-
+export class UploadModule {}

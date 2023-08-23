@@ -1,6 +1,3 @@
-import { PageDto } from 'src/dtos/page.dto';
+import { SearchDto } from 'src/dtos/search.dto';
 
-export class SearchRoleDto {
-  keyword: string;
-  page: PageDto;
-}
+export class SearchRoleDto extends SearchDto {}

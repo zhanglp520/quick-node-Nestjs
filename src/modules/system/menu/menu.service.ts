@@ -52,7 +52,9 @@ export class MenuService {
 
   async createMenu(createMenuDto: CreateMenuDto) {
     const menu = await this.menuRepository.findOneBy({
+      menuId: createMenuDto.menuId,
       menuName: createMenuDto.menuName,
+      pId: createMenuDto.pId,
     });
     if (menu) {
       throw new HttpException('操作失败,菜单名已使用.', HttpStatus.BAD_REQUEST);

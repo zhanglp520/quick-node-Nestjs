@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import * as Log4js from 'log4js';
-import { LogService } from '../../modules/system/log/log.service';
-import log4jsConfig from '../../config/log4.config';
-import { CreateLogDto } from '../../modules/system/log/dto/create-log.dto';
+import { LogService } from '@/modules/system/log/log.service';
+import log4jsConfig from '@//config/log4.config';
+import { CreateLogDto } from '@/modules/system/log/dto/create-log.dto';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {

@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AuthService } from '../auth.service';
-import { jwtConstants } from '../constants';
+import { AuthService } from '@/modules/auth/auth.service';
+import { jwtConstants } from '@/modules/auth/constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
   async validate(payload: any) {
     const { id } = payload;
-    const user = await this.authService.validateUserByJwt(id);
+    const user = await this.authService.validateUserByJwt(payload);
     if (!user) {
       throw new HttpException(
         {

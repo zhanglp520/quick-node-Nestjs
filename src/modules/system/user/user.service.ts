@@ -10,17 +10,33 @@ import * as crypto from 'crypto-js';
 import { toEntity } from 'src/utils/dto2Entity';
 import systemConfig from '../../../config/system.config';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
+import { UserVo } from './vo/user.vo';
+import { PageResponseResult } from 'src/common/tools/page.response.result';
+import { UserRoleEntity } from '@/modules/auth/entities/user-role.entity';
+import { UserRoleVo } from '@/modules/auth/vo/user-role.vo';
+import { RoleEntity } from '../role/entities/role.entity';
+import { RoleVo } from '../role/vo/role.vo';
 /*
- *@Description: 用户管理模块业务，返回用户数据时，排除掉超级管理员,超级管理员id为0，默认管理员用户名为administrator。切记
+ *@Description: 用户管理模块业务
+ *返回用户数据时，排除掉超级管理员,超级管理员id为0，默认管理员用户名为administrator。切记
  *@Author: 土豆哥
  *@Date: 2022-11-28 22:20:27
  */
 @Injectable()
 export class UserService {
+  constructor(@InjectMapper() mapper: Mapper) {
+    this.mapper = mapper;
+  }
+
+  private readonly mapper: Mapper;
   @InjectRepository(UserEntity)
   private readonly userRepository: Repository<UserEntity>;
 
-  async getUserPageList(searchUserDto: SearchUserDto) {
+  async getUserPageList(
+    searchUserDto: SearchUserDto
+  ): Promise<PageResponseResult<UserVo[]>> {
     const { page, keyword } = searchUserDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
@@ -30,38 +46,92 @@ export class UserService {
       queryBuilder.andWhere(`user_name=:userName`, { userName: keyword });
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
-    const list = await queryBuilder
+    const entities = await queryBuilder
       .orderBy('create_time', 'DESC')
       .offset(skip)
       .limit(size)
       .getMany();
+
+    const vos = await this.mapper.mapArrayAsync(entities, UserEntity, UserVo);
     page.total = await this.userRepository.count();
-    return {
-      payload: list,
-      total: page.total,
-    };
+    const data = new PageResponseResult<UserVo[]>();
+    data.payload = vos;
+    data.total = page.total;
+    return data;
   }
 
-  getUserList() {
-    return this.userRepository.find({
-      where: {
-        id: Not(0),
-      },
+  async getUserList() {
+    //多对一方式
+    // console.log('entities', '多对一方式');
+    const entities = await this.userRepository
+      .createQueryBuilder('u')
+      .leftJoinAndSelect('u.roles', 'system_roles')
+      .getMany();
+    //一对多方式
+    // const entities = await this.userRepository
+    //   .createQueryBuilder('u')
+    //   .leftJoinAndSelect('u.userRoles', 'per_user_roles')
+    //   .getMany();
+    //关联时，使用此方式，得不到关联属性值
+    // const entities = await this.userRepository.find({
+    //   where: {
+    //     id: Not(0),
+    //   },
+    // });
+    const vos = [];
+    const self = this;
+    entities.forEach((element) => {
+      const vo = self.mapper.map(element, UserEntity, UserVo);
+      const roleVos = self.mapper.mapArray(element.roles, RoleEntity, RoleVo);
+      vo.roles = roleVos;
+      vos.push(vo);
     });
+    return vos;
   }
 
-  getUserById(id: number) {
-    return this.userRepository.findOne({
-      where: {
-        id,
-      },
-    });
+  async getUserById(id: number) {
+    const entity = await this.userRepository
+      .createQueryBuilder('u')
+      .leftJoinAndSelect('u.roles', 'system_roles')
+      .andWhere(`u.id=:id`, { id: id })
+      .getOne();
+    const roleVos = await this.mapper.mapArrayAsync(
+      entity.roles,
+      RoleEntity,
+      RoleVo
+    );
+    const vo = await this.mapper.mapAsync(entity, UserEntity, UserVo);
+    vo.roles = roleVos;
+    return vo;
+    // const entity = await this.getById(id);
+    // const vo = await this.mapper.mapAsync(entity, UserEntity, UserVo);
+    // // const roleVos = await this.mapper.mapArrayAsync(
+    // //   entity.roles,
+    // //   RoleEntity,
+    // //   RoleVo
+    // // );
+    // // vo.roles = roleVos;
+    // return vo;
   }
 
-  getUserByUserName(userName: string) {
-    return this.userRepository.findOneBy({
-      userName,
-    });
+  async getUserByUserName(userName: string) {
+    // const entity = await this.userRepository.findOneBy({
+    //   userName,
+    // });
+
+    const entity = await this.userRepository
+      .createQueryBuilder('u')
+      .leftJoinAndSelect('u.roles', 'system_roles')
+      .andWhere(`user_name=:userName`, { userName: userName })
+      .getOne();
+    const roleVos = await this.mapper.mapArrayAsync(
+      entity.roles,
+      RoleEntity,
+      RoleVo
+    );
+    const vo = await this.mapper.mapAsync(entity, UserEntity, UserVo);
+    vo.roles = roleVos;
+    return vo;
   }
 
   async createUser(createUserDto: CreateUserDto) {
@@ -89,7 +159,7 @@ export class UserService {
   }
 
   async updateUserById(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.getUserById(id);
+    const user = await this.getById(id);
     if (!user) {
       throw new HttpException(
         {
@@ -106,20 +176,24 @@ export class UserService {
   async removeUserById(id: number) {
     await this.userRepository.delete(id);
   }
+
   async removeUserByIds(ids: string) {
     const arr = ids.split(',');
     await this.userRepository.delete(arr);
   }
+
   async enabledUserById(id: number) {
     const userEntity = new UserEntity();
     userEntity.enabled = true;
     await this.userRepository.update(id, userEntity);
   }
+
   async disableUserById(id: number) {
     const userEntity = new UserEntity();
     userEntity.enabled = false;
     await this.userRepository.update(id, userEntity);
   }
+
   async resetUserPasswordById(id: number) {
     const userEntity = new UserEntity();
     const { defaultPassword } = systemConfig;
@@ -128,9 +202,10 @@ export class UserService {
       .toString();
     await this.userRepository.update(id, userEntity);
   }
+
   async changePasswordById(id: number, changePasswordDto: ChangePasswordDto) {
     const { oldPassword, newPassword } = changePasswordDto;
-    const user = await this.getUserById(id);
+    const user = await this.getById(id);
     if (!user) {
       throw new HttpException(
         {
@@ -152,33 +227,34 @@ export class UserService {
     userEntity.password = crypto.MD5(newPassword.toString()).toString();
     await this.userRepository.update(id, userEntity);
   }
+
   async importExcel(file: any) {
     const { buffer } = file;
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(buffer);
     const worksheet = workbook.getWorksheet(1);
-    const result = new Array<CreateUserDto>;
+    const result = new Array<CreateUserDto>();
     worksheet.eachRow((row, rowNumber) => {
       // 第一行是表头，故从第二行获取数据
       if (rowNumber > 1) {
-        const target = new CreateUserDto()
+        const target = new CreateUserDto();
         row.eachCell((cell, colNumber) => {
           if (colNumber === 1) {
-            target.userId = cell.value.toString()
+            target.userId = cell.value.toString();
           } else if (colNumber === 2) {
-            target.userName = cell.value.toString()
+            target.userName = cell.value.toString();
           } else if (colNumber === 3) {
-            target.avatar = cell.value.toString()
+            target.avatar = cell.value.toString();
           } else if (colNumber === 4) {
-            target.fullName = cell.value.toString()
+            target.fullName = cell.value.toString();
           } else if (colNumber === 5) {
-            target.phone = cell.value.toString()
+            target.phone = cell.value.toString();
           } else if (colNumber === 6) {
-            target.email = cell.value.toString()
+            target.email = cell.value.toString();
           } else if (colNumber === 7) {
-            target.address = cell.value.toString()
+            target.address = cell.value.toString();
           } else if (colNumber === 8) {
-            target.remark = cell.value.toString()
+            target.remark = cell.value.toString();
           }
         });
         result.push(target);
@@ -186,7 +262,7 @@ export class UserService {
     });
 
     result.forEach((element: CreateUserDto) => {
-      this.createUser(element)
+      this.createUser(element);
     });
   }
 
@@ -204,12 +280,20 @@ export class UserService {
       { header: '地址', key: 'address', width: 12 },
       { header: '备注', key: 'remark', width: 32 },
     ];
-    const result = await this.getUserList() // result是通过前端传递的ids从数据库获取需要导出的信息
+    const result = await this.getUserList(); // result是通过前端传递的ids从数据库获取需要导出的信息
     worksheet.addRows(result);
     // return workbook.xlsx.writeFile('用户.xlsx'); //直接到导出文件
     // return workbook.xlsx.writeBuffer(); // 前端接受到的数据格式为{type: 'buffer', data: []}
 
     const stream = await workbook.xlsx.writeBuffer();
-    return stream
+    return stream;
+  }
+
+  private getById(id: number) {
+    return this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
   }
 }

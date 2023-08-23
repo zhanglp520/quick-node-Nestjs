@@ -7,9 +7,9 @@ import {
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import * as Log4js from 'log4js';
-import config from '../../config/log4.config';
-import { LogService } from '../../modules/system/log/log.service';
-import { CreateLogDto } from '../../modules/system/log/dto/create-log.dto';
+import config from '@/config/log4.config';
+import { LogService } from '@/modules/system/log/log.service';
+import { CreateLogDto } from '@/modules/system/log/dto/create-log.dto';
 
 @Injectable()
 export class LoggerInterceptor implements NestInterceptor {

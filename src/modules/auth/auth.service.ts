@@ -3,19 +3,20 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto-js';
-import systemConfig from '../../config/system.config';
-import { UserEntity } from '../system/user/entities/user.entity';
-import { MenuEntity } from '../system/menu/entities/menu.entity';
-import { RoleMenuEntity } from './entities/role-menu.entity';
-import { UserRoleEntity } from './entities/user-role.entity';
-import { UserService } from '../system/user/user.service';
-import { CreateUserRoleDto } from './dtos/create-user-role.dto';
-import { CreateRoleMenuDto } from './dtos/create-role-menu.dto';
-/*
- *@Description: 权限管理模块业务
- *@Author: 土豆哥
- *@Date: 2022-11-28 23:25:58
- */
+import systemConfig from '@/config/system.config';
+import { MenuEntity } from '@/modules/system/menu/entities/menu.entity';
+import { ApiEntity } from '@/modules/system/api/entities/api.entity';
+import { UserEntity } from '@/modules/system/user/entities/user.entity';
+import { UserService } from '@/modules/system/user/user.service';
+import { UserVo } from '@/modules/system/user/vo/user.vo';
+import { RoleMenuEntity } from '@/modules/auth/entities/role-menu.entity';
+import { UserRoleEntity } from '@/modules/auth/entities/user-role.entity';
+import { CreateUserRoleDto } from '@/modules/auth/dtos/create-user-role.dto';
+import { CreateRoleMenuDto } from '@/modules/auth/dtos/create-role-menu.dto';
+import { LoginDto } from '@/modules/auth/dtos/login.dto';
+import { RefreshTokenDto } from '@/modules/auth/dtos/refresh-token.dto';
+import { TokenVo } from '@/modules/auth/vo/token.vo';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,7 +32,8 @@ export class AuthService {
   private readonly userRoleRepository: Repository<UserRoleEntity>;
   @InjectRepository(RoleMenuEntity)
   private readonly roleMenuRepository: Repository<RoleMenuEntity>;
-
+  @InjectRepository(ApiEntity)
+  private readonly apiRepository: Repository<ApiEntity>;
   async validateUserById(id: number) {
     const user = await this.userService.getUserById(id);
     if (!user) {
@@ -43,7 +45,7 @@ export class AuthService {
   async validateUserByUserName(
     username: string,
     pass: string
-  ): Promise<UserEntity> {
+  ): Promise<UserVo> {
     const user = await this.userService.getUserByUserName(username);
     if (!user) {
       throw new HttpException(
@@ -69,6 +71,7 @@ export class AuthService {
     }
     return user;
   }
+
   genToken(payload) {
     const { accessTokenExpiresIn, refreshTokenExpiresIn } = systemConfig;
     const quickAccessToken = this.jwtService.sign(payload, {
@@ -79,16 +82,16 @@ export class AuthService {
     });
     const { exp } = this.jwtService.verify(quickAccessToken); //获取jwt生成的到期时间
     // const expiresIn = new Date().getTime() + 1000 * accessTokenExpiresIn;//有误差，不严重
-    const data = {
-      quickAccessToken,
-      quickRefreshToken,
-      expiresIn: exp,
-    };
-    return data;
+    const tokenVo = new TokenVo();
+    tokenVo.quickAccessToken = quickAccessToken;
+    tokenVo.quickRefreshToken = quickRefreshToken;
+    tokenVo.expiresIn = exp;
+    return tokenVo;
   }
-  async refreshToken(token: string) {
+
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
     try {
-      const payload = await this.verifyToken(token);
+      const payload = await this.verifyToken(refreshTokenDto.quickRefreshToken);
       const { id, userName } = payload;
       if (!id) {
         throw new HttpException(
@@ -100,11 +103,11 @@ export class AuthService {
       }
       const tokenObj = this.genToken({ id, userName });
       const { quickAccessToken, quickRefreshToken, expiresIn } = tokenObj;
-      return {
-        quickAccessToken,
-        quickRefreshToken,
-        expiresIn,
-      };
+      const tokenVo = new TokenVo();
+      tokenVo.quickAccessToken = quickAccessToken;
+      tokenVo.quickRefreshToken = quickRefreshToken;
+      tokenVo.expiresIn = expiresIn;
+      return tokenVo;
     } catch (error) {
       throw new HttpException(
         {
@@ -114,6 +117,7 @@ export class AuthService {
       );
     }
   }
+
   async verifyToken(token: string) {
     try {
       const payload = this.jwtService.verify(token);
@@ -122,14 +126,16 @@ export class AuthService {
       throw error;
     }
   }
-  async validateUserByJwt(payload): Promise<UserEntity> {
+
+  async validateUserByJwt(payload): Promise<UserVo> {
     const { id } = payload;
     return await this.userService.getUserById(id);
   }
-  async login(user: any) {
+
+  async login(login: LoginDto) {
     const userEntity = await this.validateUserByUserName(
-      user.username,
-      user.password
+      login.username,
+      login.password
     );
     if (!userEntity) {
       return null;
@@ -138,11 +144,11 @@ export class AuthService {
     const payload = { userName, id };
     const tokenObj = this.genToken(payload);
     const { quickAccessToken, quickRefreshToken, expiresIn } = tokenObj;
-    return {
-      quickAccessToken,
-      quickRefreshToken,
-      expiresIn,
-    };
+    const tokenVo = new TokenVo();
+    tokenVo.quickAccessToken = quickAccessToken;
+    tokenVo.quickRefreshToken = quickRefreshToken;
+    tokenVo.expiresIn = expiresIn;
+    return tokenVo;
   }
 
   async logout() {
@@ -150,7 +156,7 @@ export class AuthService {
   }
 
   async getMenuByUserId(id: number) {
-    const listNew = [];
+    const listNew = new Array<MenuEntity>();
     const listAll = await this.menuRepository.find();
     if (id == 0) {
       return listAll;
@@ -163,7 +169,7 @@ export class AuthService {
       .innerJoinAndSelect('sys_users', 'u', 'u.id=ur.user_id')
       .where('u.id = :id', { id: id });
     const list = await qb.getMany();
-    list.forEach((item) => {
+    list.forEach((item: MenuEntity) => {
       if (item.pId !== 0) {
         const menu = listAll.find((x) => x.id === item.pId);
         if (menu) {
@@ -189,6 +195,7 @@ export class AuthService {
     });
     return listNew;
   }
+
   async getUserListByRoleId(id: number) {
     const qb = this.userRepository
       .createQueryBuilder('u')
@@ -199,6 +206,7 @@ export class AuthService {
     const ids = list.map((x) => x.id);
     return ids;
   }
+
   async getMenuListByRoleId(id: number) {
     const qb = this.menuRepository
       .createQueryBuilder('m')
@@ -224,6 +232,7 @@ export class AuthService {
     });
     await this.userRoleRepository.insert(list);
   }
+
   async assignPermission(createRoleMenuDto: CreateRoleMenuDto) {
     const { roleId } = createRoleMenuDto;
     const list = new Array<RoleMenuEntity>();
@@ -238,5 +247,36 @@ export class AuthService {
       roleId,
     });
     await this.roleMenuRepository.insert(list);
+  }
+  async getApiListByRoleId1(id: number) {
+    // const sql = this.apiRepository
+    //   .createQueryBuilder('a')
+    //   .leftJoinAndSelect('per_role_apis', 'ra', 'ra.api_id = a.id')
+    //   .andWhere(`ra.role_id=:id`, { id: id })
+    //   .getSql();
+    // console.log('sql', sql);
+    // return;
+    const qb = this.apiRepository
+      .createQueryBuilder('a')
+      .leftJoinAndSelect('per_role_apis', 'ra', 'ra.api_id = a.id')
+      .andWhere(`ra.role_id=:id`, { id: id });
+    const list = await qb.getMany();
+    return list;
+  }
+  async getApiListByRoleId(id: number) {
+    // const sql = this.apiRepository
+    //   .createQueryBuilder('a')
+    //   .leftJoinAndSelect('per_role_apis', 'ra', 'ra.api_id = a.id')
+    //   .andWhere(`ra.role_id=:id`, { id: id })
+    //   .getSql();
+    // console.log('sql', sql);
+    // return;
+    const qb = this.apiRepository
+      .createQueryBuilder('a')
+      .leftJoinAndSelect('per_role_apis', 'ra', 'ra.api_id = a.id')
+      .andWhere(`ra.role_id=:id`, { id: id });
+    const list = await qb.getMany();
+    const ids = list.map((x) => x.id);
+    return ids;
   }
 }

@@ -3,39 +3,54 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { toEntity } from 'src/utils/dto2Entity';
 import { Repository } from 'typeorm';
 import { CreateDeptDto } from './dto/create-dept.dto';
-import { SearchDeptDto } from './dto/search-dept.dto';
 import { UpdateDeptDto } from './dto/update-dept.dto';
 import { DeptEntity } from './entities/dept.entity';
+import { Mapper } from '@automapper/core';
+import { DeptVo } from './vo/dept.vo';
+import { InjectMapper } from '@automapper/nestjs';
 
 @Injectable()
 export class DeptService {
+  constructor(@InjectMapper() mapper: Mapper) {
+    this.mapper = mapper;
+  }
+
+  private readonly mapper: Mapper;
   @InjectRepository(DeptEntity)
   private readonly deptRepository: Repository<DeptEntity>;
 
-  getDeptByPId(pId: string) {
-    return this.deptRepository.find({
+  async getDeptByPId(pId: string): Promise<DeptVo[]> {
+    const entities = await this.deptRepository.find({
       where: {
         pId,
       },
     });
+    const vos = await this.mapper.mapArrayAsync(entities, DeptEntity, DeptVo);
+    return vos;
   }
 
-  getDeptList() {
-    return this.deptRepository.find();
+  async getDeptList() {
+    const entities = await this.deptRepository.find();
+    const vos = await this.mapper.mapArrayAsync(entities, DeptEntity, DeptVo);
+    return vos;
   }
 
-  getDeptById(id: number) {
-    return this.deptRepository.findOne({
+  async getDeptById(id: number): Promise<DeptVo> {
+    const entity = await this.deptRepository.findOne({
       where: {
         id,
       },
     });
+    const vo = await this.mapper.mapAsync(entity, DeptEntity, DeptVo);
+    return vo;
   }
 
-  getDeptByDeptName(deptName: string) {
-    return this.deptRepository.findOneBy({
+  async getDeptByDeptName(deptName: string): Promise<DeptVo> {
+    const entity = await this.deptRepository.findOneBy({
       deptName,
     });
+    const vo = await this.mapper.mapAsync(entity, DeptEntity, DeptVo);
+    return vo;
   }
 
   async createDept(createDeptDto: CreateDeptDto) {
