@@ -1,13 +1,13 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 export const defaultOpts: TypeOrmModuleOptions = {
-  name: 'default',
-  type: 'mysql',
-  host: '43.139.141.111',
+  name: "default",
+  type: "mysql",
+  host: "43.139.141.111",
   port: 3306,
-  username: 'quick_core_dev',
-  password: 'quick_core_dev',
-  database: 'quick_core_dev',
+  username: "quick_core_dev",
+  password: "quick_core_dev",
+  database: "quick_core_dev",
   // "cache": true,
   cache: {
     duration: 30000, // 30 seconds
@@ -19,8 +19,8 @@ export const defaultOpts: TypeOrmModuleOptions = {
 };
 export const logOpts: TypeOrmModuleOptions = {
   ...defaultOpts,
-  name: 'quick_log_v2',
-  username: 'quick_log_v2',
-  password: 'quick_log_v2',
-  database: 'quick_log_v2',
+  name: "quick_log_v2",
+  username: "quick_log_v2",
+  password: "quick_log_v2",
+  database: "quick_log_v2",
 };
