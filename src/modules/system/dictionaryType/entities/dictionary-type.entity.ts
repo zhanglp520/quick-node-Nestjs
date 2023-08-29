@@ -1,7 +1,7 @@
 import { AutoMap } from "@automapper/classes";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("sys_dictionaries_type")
+@Entity("sys_dictionary_types")
 export class DictionaryTypeEntity extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn()
