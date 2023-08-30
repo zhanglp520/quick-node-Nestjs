@@ -23,16 +23,16 @@ export class ProductEntity extends BaseEntity {
   dataProtocol: number;
   @Column({ type: "int", name: "network_mode" })
   networkMode: number;
-  @Column({ type: "int", name: "access_key" })
-  accessKey: number;
-  @Column({ type: "int", name: "product_key" })
-  productKey: number;
-  @Column({ type: "int", name: "product_secret" })
-  productSecret: number;
+  @Column({ type: "varchar", name: "access_key" })
+  accessKey: string;
+  @Column({ type: "varchar", name: "product_key" })
+  productKey: string;
+  @Column({ type: "varchar", name: "product_secret" })
+  productSecret: string;
   @Column({ type: "int", default: 0 })
   enabled: boolean;
   @Column({ type: "int", default: 0 })
-  published: boolean;
+  published: number;
   @Transform((time: any) => moment(time.value).format("YYYY-MM-DD HH:mm:ss"))
   @Column({ type: "datetime", name: "create_time", default: new Date() })
   createTime: Date;

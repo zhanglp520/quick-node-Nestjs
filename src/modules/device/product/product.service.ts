@@ -86,8 +86,16 @@ export class ProductService {
     }
     const productEntity = new ProductEntity();
     toEntity(createProductDto, productEntity);
+
+    productEntity.accessKey = "aaaaaaaaa";
+    productEntity.productKey = "bbbbbbb";
+    productEntity.productSecret = "cccccccc";
     productEntity.enabled = true;
+    productEntity.published = 0;
     productEntity.createTime = new Date();
+    productEntity.updateTime = null;
+    productEntity.publishTime = null;
+    productEntity.unpublishTime = null;
     await this.productRepository.insert(productEntity);
     const createPhysicalModelDto = new CreatePhysicalModelDto();
     createPhysicalModelDto.productId = productEntity.id;

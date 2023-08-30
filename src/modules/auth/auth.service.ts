@@ -79,42 +79,42 @@ export class AuthService {
         HttpStatus.BAD_REQUEST
       );
     }
-    const config: IOTConfig = {
-      productKey: "k00wmvASb4P",
-      deviceName: "1000-00111",
-      clientOptions: {
-        host: "43.139.141.111",
-        port: 1883,
-        protocol: "mqtt",
-        clientId: "quick_iot_server",
-        // clientId:
-        //   'quick_iot_server_' + Math.random().toString(16).substring(2, 8),
-        username: "quick",
-        password: "quick",
-      },
-    };
-    this.config = config;
-    this.device = iot.createDeviceInstance(config);
-    this.device.online();
-    this.device.on("connect", (res: IConnectResult) => {
-      console.log("connect success.", res);
-      this.status = true;
-    });
+    // const config: IOTConfig = {
+    //   productKey: "k00wmvASb4P",
+    //   deviceName: "1000-00111",
+    //   clientOptions: {
+    //     host: "43.139.141.111",
+    //     port: 1883,
+    //     protocol: "mqtt",
+    //     clientId: "quick_iot_server",
+    //     // clientId:
+    //     //   'quick_iot_server_' + Math.random().toString(16).substring(2, 8),
+    //     username: "quick",
+    //     password: "quick",
+    //   },
+    // };
+    // this.config = config;
+    // this.device = iot.createDeviceInstance(config);
+    // this.device.online();
+    // this.device.on("connect", (res: IConnectResult) => {
+    //   console.log("connect success.", res);
+    //   this.status = true;
+    // });
 
-    this.device.on(
-      "message",
-      (topic: string, payload: Buffer, res: IMessageResult) => {
-        console.log("message:", {
-          topic,
-          payload: payload.toString(),
-          // res,
-        });
-        const { id, version, method, params } = JSON.parse(payload.toString());
-        const productId = 1;
-        const deviceId = 11;
-        // this.simulatorService.reportAttribute(productId, deviceId, params);
-      }
-    );
+    // this.device.on(
+    //   "message",
+    //   (topic: string, payload: Buffer, res: IMessageResult) => {
+    //     console.log("message:", {
+    //       topic,
+    //       payload: payload.toString(),
+    //       // res,
+    //     });
+    //     const { id, version, method, params } = JSON.parse(payload.toString());
+    //     const productId = 1;
+    //     const deviceId = 11;
+    //     // this.simulatorService.reportAttribute(productId, deviceId, params);
+    //   }
+    // );
     // setTimeout(() => {
     //   this.device.postProps(
     //     {
