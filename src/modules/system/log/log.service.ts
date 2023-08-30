@@ -8,7 +8,7 @@ import { toEntity } from "src/utils/dto2Entity";
 
 @Injectable()
 export class LogService {
-  @InjectRepository(LogEntity, "iot_log_dev") //指定日志数据库连接名称来切换数据库
+  @InjectRepository(LogEntity, "quick_log_v2") //指定日志数据库连接名称来切换数据库
   private readonly logRepository: Repository<LogEntity>;
 
   async getLogPageList(searchLogDto: SearchLogDto) {
