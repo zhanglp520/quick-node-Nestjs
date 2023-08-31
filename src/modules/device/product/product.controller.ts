@@ -68,12 +68,20 @@ export class ProductController {
   removeProductById(@Param("id") id: string) {
     return this.productService.removeProductById(+id);
   }
-  @Patch("enabled/:id")
-  enabled(@Param("id") id: string) {
-    return this.productService.enabledProductById(+id);
+  @Patch("enable/:id")
+  enable(@Param("id") id: string) {
+    return this.productService.enableProductById(+id);
   }
   @Patch("disable/:id")
   disable(@Param("id") id: string) {
     return this.productService.disableProductById(+id);
+  }
+  @Patch("publish/:id")
+  publish(@Param("id") id: string) {
+    return this.productService.publishProductById(+id);
+  }
+  @Patch("unpublish/:id")
+  unpublish(@Param("id") id: string) {
+    return this.productService.unpublishProductById(+id);
   }
 }

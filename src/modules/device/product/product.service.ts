@@ -121,7 +121,7 @@ export class ProductService {
   async removeProductById(id: number) {
     await this.productRepository.delete(id);
   }
-  async enabledProductById(id: number) {
+  async enableProductById(id: number) {
     const productEntity = new ProductEntity();
     productEntity.enabled = true;
     await this.productRepository.update(id, productEntity);
@@ -129,6 +129,16 @@ export class ProductService {
   async disableProductById(id: number) {
     const productEntity = new ProductEntity();
     productEntity.enabled = false;
+    await this.productRepository.update(id, productEntity);
+  }
+  async publishProductById(id: number) {
+    const productEntity = new ProductEntity();
+    productEntity.published = 1;
+    await this.productRepository.update(id, productEntity);
+  }
+  async unpublishProductById(id: number) {
+    const productEntity = new ProductEntity();
+    productEntity.published = 2;
     await this.productRepository.update(id, productEntity);
   }
 }
