@@ -9,7 +9,7 @@ import { logOpts } from "../../../config/orm.config";
 
 @Injectable()
 export class LogService {
-  @InjectRepository(LogEntity, logOpts.name) //指定日志数据库连接名称来切换数据库
+  @InjectRepository(LogEntity, logOpts.database.toString()) //指定日志数据库连接名称来切换数据库
   private readonly logRepository: Repository<LogEntity>;
 
   async getLogPageList(searchLogDto: SearchLogDto) {
