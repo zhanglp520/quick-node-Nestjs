@@ -5,9 +5,9 @@ export const defaultOpts: TypeOrmModuleOptions = {
   type: "mysql",
   host: "43.139.141.111",
   port: 3306,
-  username: "quick_core_dev",
-  password: "quick_core_dev",
-  database: "quick_core_dev",
+  username: "order_core_dev",
+  password: "order_core_dev",
+  database: "order_core_dev",
   // "cache": true,
   cache: {
     duration: 30000, // 30 seconds
@@ -17,10 +17,24 @@ export const defaultOpts: TypeOrmModuleOptions = {
   // entities: [UsersEntity],
   // entities: [__dirname + '/**/*.entity{.ts,.js}'],
 };
+export const orderOpts: TypeOrmModuleOptions = {
+  ...defaultOpts,
+  name: "order_order_dev",
+  username: "order_order_dev",
+  password: "order_order_dev",
+  database: "order_order_dev",
+};
+export const qqOpts: TypeOrmModuleOptions = {
+  ...defaultOpts,
+  name: "order_qq_dev",
+  username: "order_qq_dev",
+  password: "order_qq_dev",
+  database: "order_qq_dev",
+};
 export const logOpts: TypeOrmModuleOptions = {
   ...defaultOpts,
-  name: "quick_log_v2",
-  username: "quick_log_v2",
-  password: "quick_log_v2",
-  database: "quick_log_v2",
+  name: "order_log_dev",
+  username: "order_log_dev",
+  password: "order_log_dev",
+  database: "order_log_dev",
 };
