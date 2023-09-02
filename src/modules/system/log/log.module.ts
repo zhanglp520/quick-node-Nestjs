@@ -9,7 +9,7 @@ import { LogMapperProfile } from "./mapper/log.mapper";
 @Module({
   imports: [
     TypeOrmModule.forRoot(logOpts),
-    TypeOrmModule.forFeature([LogEntity], "iot_log_dev"), //指定日志数据库连接名称来切换数据库
+    TypeOrmModule.forFeature([LogEntity], logOpts.database.toString()), //指定日志数据库连接名称来切换数据库
   ],
   controllers: [LogController],
   providers: [LogService, LogMapperProfile],

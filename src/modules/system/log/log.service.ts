@@ -5,10 +5,11 @@ import { CreateLogDto } from "./dto/create-log.dto";
 import { SearchLogDto } from "./dto/search-log.dto";
 import { LogEntity } from "./entities/log.entity";
 import { toEntity } from "src/utils/dto2Entity";
+import { logOpts } from "../../../config/orm.config";
 
 @Injectable()
 export class LogService {
-  @InjectRepository(LogEntity, "iot_log_dev") //指定日志数据库连接名称来切换数据库
+  @InjectRepository(LogEntity, logOpts.database.toString()) //指定日志数据库连接名称来切换数据库
   private readonly logRepository: Repository<LogEntity>;
 
   async getLogPageList(searchLogDto: SearchLogDto) {
