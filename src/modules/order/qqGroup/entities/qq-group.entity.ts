@@ -1,7 +1,7 @@
 import { AutoMap } from "@automapper/classes";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("order_qq_groups")
+@Entity("qq_groups")
 export class QQGroupEntity extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn({ type: "int" })

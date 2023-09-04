@@ -1,19 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Not, Repository } from "typeorm";
-import * as ExcelJS from "exceljs";
+import { Repository } from "typeorm";
 import { CreateQQGroupDto } from "./dto/create-qq-group.dto";
 import { SearchQQGroupDto } from "./dto/search-qq-group.dto";
 import { UpdateQQGroupDto } from "./dto/update-qq-group.dto";
 import { QQGroupEntity } from "./entities/qq-group.entity";
-import * as crypto from "crypto-js";
 import { toEntity } from "src/utils/dto2Entity";
-import systemConfig from "../../../config/system.config";
 import { InjectMapper } from "@automapper/nestjs";
 import { Mapper } from "@automapper/core";
 import { QQGroupVo } from "./vo/qq-group.vo";
 import { PageResponseResult } from "src/common/tools/page.response.result";
 import { qqOpts } from "../../../config/orm.config";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const moment = require("moment");
+
 /*
  *@Description: 用户管理模块业务
  *返回用户数据时，排除掉超级管理员,超级管理员id为0，默认管理员用户名为administrator。切记
@@ -29,6 +29,130 @@ export class QQGroupService {
   private readonly mapper: Mapper;
   @InjectRepository(QQGroupEntity, qqOpts.database.toString())
   private readonly qqGroupRepository: Repository<QQGroupEntity>;
+
+  async statistics() {
+    console.log(
+      "days",
+      moment().startOf("week").add(1, "days").format("yyyy-MM-DD")
+    );
+
+    //多对一方式
+    // console.log('entities', '多对一方式');
+    const entities = await this.qqGroupRepository
+      .createQueryBuilder("group")
+      .getMany();
+    const date = new Date();
+    const y = date.getFullYear();
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
+    const monthObj = entities.filter((item: QQGroupEntity) => {
+      const date1 = new Date(item.createTime);
+      const start = moment().startOf("week");
+      const end = moment().endOf("week");
+      return date1 > start && date1 < end;
+    });
+    const dayObj = entities.filter((item: QQGroupEntity) => {
+      const date1 = new Date(item.createTime);
+      const year = date1.getFullYear();
+      const month = date1.getMonth() + 1;
+      const day = date1.getDate();
+      return y === year && m === month && d === day;
+    });
+    const yesterObj = entities.filter((item: QQGroupEntity) => {
+      const date1 = new Date(item.createTime);
+      const year = date1.getFullYear();
+      const month = date1.getMonth() + 1;
+      const day = date1.getDate();
+      return y === year && m === month && d - 1 === day;
+    });
+    const weekObj = entities.filter((item: QQGroupEntity) => {
+      const date1 = new Date(item.createTime);
+      const start = moment().startOf("week");
+      const end = moment().endOf("week");
+      return date1 > start && date1 < end;
+    });
+
+    //周日
+    const day1Obj = entities.filter((item: QQGroupEntity) => {
+      const date1 = moment(item.createTime).format("yyyy-MM-DD");
+      const start = moment()
+        .startOf("week")
+        .add(1, "days")
+        .format("yyyy-MM-DD");
+      return date1 === start;
+    });
+
+    const day2Obj = entities.filter((item: QQGroupEntity) => {
+      const date1 = moment(item.createTime).format("yyyy-MM-DD");
+      const start = moment()
+        .startOf("week")
+        .add(2, "days")
+        .format("yyyy-MM-DD");
+      return date1 === start;
+    });
+
+    const day3Obj = entities.filter((item: QQGroupEntity) => {
+      const date1 = moment(item.createTime).format("yyyy-MM-DD");
+      const start = moment()
+        .startOf("week")
+        .add(3, "days")
+        .format("yyyy-MM-DD");
+      return date1 === start;
+    });
+
+    const day4Obj = entities.filter((item: QQGroupEntity) => {
+      const date1 = moment(item.createTime).format("yyyy-MM-DD");
+      const start = moment()
+        .startOf("week")
+        .add(4, "days")
+        .format("yyyy-MM-DD");
+      return date1 === start;
+    });
+
+    const day5Obj = entities.filter((item: QQGroupEntity) => {
+      const date1 = moment(item.createTime).format("yyyy-MM-DD");
+      const start = moment()
+        .startOf("week")
+        .add(5, "days")
+        .format("yyyy-MM-DD");
+      return date1 === start;
+    });
+
+    const day6Obj = entities.filter((item: QQGroupEntity) => {
+      const date1 = moment(item.createTime).format("yyyy-MM-DD");
+      const start = moment()
+        .startOf("week")
+        .add(6, "days")
+        .format("yyyy-MM-DD");
+      return date1 === start;
+    });
+
+    const day7Obj = entities.filter((item: QQGroupEntity) => {
+      const date1 = moment(item.createTime).format("yyyy-MM-DD");
+      const start = moment()
+        .startOf("week")
+        .add(7, "days")
+        .format("yyyy-MM-DD");
+      return date1 === start;
+    });
+
+    const result = {
+      yesterDayOrderNum: yesterObj.length,
+      monthOrderNum: monthObj.length,
+      dayOrderNum: dayObj.length,
+      weekOrderNum: weekObj.length,
+      dayData: [
+        day1Obj.length,
+        day2Obj.length,
+        day3Obj.length,
+        day4Obj.length,
+        day5Obj.length,
+        day6Obj.length,
+        day7Obj.length,
+      ],
+    };
+    return result;
+  }
 
   async getQQGroupPageList(
     searchQQGroupDto: SearchQQGroupDto

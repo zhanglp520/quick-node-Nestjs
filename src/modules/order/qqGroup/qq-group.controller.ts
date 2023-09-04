@@ -88,6 +88,24 @@ export class QQGroupController {
     return this.qqGroupService.getQQGroupPageList(searchQQGroupDto);
   }
 
+  @ApiOperation({ summary: "根据订单名称获取详情" })
+  @ApiParam({
+    name: "qqGroupName",
+    type: String,
+    description: "订单名称",
+    required: true,
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
+    type: QQGroupVo,
+  })
+  @Get("statistics")
+  // @Version('2')
+  statistics() {
+    return this.qqGroupService.statistics();
+  }
+
   @ApiOperation({ summary: "列表" })
   @ApiOkResponse({
     status: 200,
