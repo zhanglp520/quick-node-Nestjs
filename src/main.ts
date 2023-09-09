@@ -5,7 +5,7 @@ import { join } from "path";
 import { AppModule } from "@/app.module";
 import { ValidationPipe } from "@/common/pipes/validation.pipe";
 import { TransformInterceptor } from "@/common/interceptors/transform.interceptor";
-import { LoggerInterceptor } from "@/common/interceptors/Logger.interceptor";
+import { LoggerInterceptor } from "@/common/interceptors/logger.interceptor";
 import { AllExceptionsFilter } from "@/common/filters/all-exceptions.filter";
 import { LogService } from "@/modules/system/log/log.service";
 // import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
