@@ -1,16 +1,16 @@
-import { AutoMap } from '@automapper/classes';
-import { ApiProperty } from '@nestjs/swagger';
+import { AutoMap } from "@automapper/classes";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class TokenVo {
-  @ApiProperty({ description: '令牌' })
+  @ApiProperty({ description: "令牌" })
   @AutoMap()
-  quickAccessToken: String;
+  quickAccessToken: string;
 
-  @ApiProperty({ description: '刷新令牌' })
+  @ApiProperty({ description: "刷新令牌" })
   @AutoMap()
-  quickRefreshToken: String;
+  quickRefreshToken: string;
 
-  @ApiProperty({ description: '过期时间' })
+  @ApiProperty({ description: "过期时间" })
   @AutoMap()
-  expiresIn: String;
+  expiresIn: string;
 }

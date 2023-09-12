@@ -3,13 +3,13 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Reflector } from '@nestjs/core';
-import { AuthService } from '@/modules/auth/auth.service';
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { Reflector } from "@nestjs/core";
+import { AuthService } from "@/modules/auth/auth.service";
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtAuthGuard extends AuthGuard("jwt") {
   constructor(
     private reflector: Reflector,
     private readonly authService: AuthService
@@ -17,7 +17,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
   async canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride('isPublic', [
+    const isPublic = this.reflector.getAllAndOverride("isPublic", [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -36,31 +36,31 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   async checkToken(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest();
-    const accessToken = req.get('Authorization');
+    const accessToken = req.get("Authorization");
     if (!accessToken) {
       throw new HttpException(
         {
-          message: '请先登录',
+          message: "请先登录",
         },
         HttpStatus.UNAUTHORIZED
       );
     }
-    if (accessToken.indexOf('Bearer') === -1) {
+    if (accessToken.indexOf("Bearer") === -1) {
       throw new HttpException(
         {
-          message: 'token未包含Bearer头',
+          message: "token未包含Bearer头",
         },
         HttpStatus.UNAUTHORIZED
       );
     }
     try {
-      const tokenStr = accessToken.replace('Bearer ', '');
+      const tokenStr = accessToken.replace("Bearer ", "");
       const payload = await this.authService.verifyToken(tokenStr);
       const { userName } = payload;
       if (!userName) {
         throw new HttpException(
           {
-            message: '当前登录已过期,请重新登录.',
+            message: "当前登录已过期,请重新登录.",
           },
           HttpStatus.UNAUTHORIZED
         );
@@ -68,7 +68,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     } catch (error) {
       throw new HttpException(
         {
-          message: '当前登录已过期,请重新登录.',
+          message: "当前登录已过期,请重新登录.",
         },
         HttpStatus.UNAUTHORIZED
       );

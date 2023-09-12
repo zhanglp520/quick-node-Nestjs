@@ -3,13 +3,13 @@ import {
   NestInterceptor,
   CallHandler,
   ExecutionContext,
-} from '@nestjs/common';
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import * as Log4js from 'log4js';
-import config from '@/config/log4.config';
-import { LogService } from '@/modules/system/log/log.service';
-import { CreateLogDto } from '@/modules/system/log/dto/create-log.dto';
+} from "@nestjs/common";
+import { map } from "rxjs/operators";
+import { Observable } from "rxjs";
+import * as Log4js from "log4js";
+import config from "@/config/log4.config";
+import { LogService } from "@/modules/system/log/log.service";
+import { CreateLogDto } from "@/modules/system/log/dto/create-log.dto";
 
 @Injectable()
 export class LoggerInterceptor implements NestInterceptor {
@@ -23,8 +23,8 @@ export class LoggerInterceptor implements NestInterceptor {
       type: 0,
       ip: req.headers?.remoteip
         ? String(req.headers.remoteip)
-        : req.ip.split(':').pop(),
-      operateId: 'admin',
+        : req.ip.split(":").pop(),
+      operateId: "admin",
       request: JSON.stringify({
         url: req.url,
         method: req.method,
@@ -41,16 +41,16 @@ export class LoggerInterceptor implements NestInterceptor {
           ...logData,
           response: JSON.stringify({
             status: 0,
-            msg: '操作成功.',
+            msg: "操作成功.",
             data: data ? data : null,
           }),
           duration: end - start,
-          operateId: 'admin',
+          operateId: "admin",
         };
 
-        const logger = Log4js.getLogger('info');
+        const logger = Log4js.getLogger("info");
         logger.info(logObj);
-        if (!req.url.includes('/system/logs')) {
+        if (!req.url.includes("/system/logs")) {
           const createLogDto = new CreateLogDto();
           createLogDto.type = 0;
           createLogDto.ip = logObj.ip;

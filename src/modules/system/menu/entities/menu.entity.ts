@@ -1,18 +1,18 @@
-import { AutoMap } from '@automapper/classes';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AutoMap } from "@automapper/classes";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('sys_menus')
+@Entity("sys_menus")
 export class MenuEntity extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn()
   id: number;
 
   @AutoMap()
-  @Column({ name: 'menu_id' })
+  @Column({ name: "menu_id" })
   menuId: string;
 
   @AutoMap()
-  @Column({ name: 'menu_name' })
+  @Column({ name: "menu_name" })
   menuName: string;
 
   @AutoMap()
@@ -20,11 +20,11 @@ export class MenuEntity extends BaseEntity {
   path: string;
 
   @AutoMap()
-  @Column({ name: 'view_path' })
+  @Column({ name: "view_path" })
   viewPath: string;
 
   @AutoMap()
-  @Column({ name: 'menu_type' })
+  @Column({ name: "menu_type" })
   menuType: string;
 
   @AutoMap()
@@ -36,26 +36,26 @@ export class MenuEntity extends BaseEntity {
   sort: number;
 
   @AutoMap()
-  @Column({ name: 'p_id' })
+  @Column({ name: "p_id" })
   pId: number;
 
   @AutoMap()
-  @Column({ type: 'int' })
+  @Column({ type: "int" })
   link: string;
 
   @AutoMap()
-  @Column({ name: 'link_url' })
+  @Column({ name: "link_url" })
   linkUrl: string;
 
   @AutoMap()
-  @Column({ type: 'int' })
+  @Column({ type: "int" })
   enabled: boolean;
 
   @AutoMap()
-  @Column({ type: 'int' })
+  @Column({ type: "int" })
   status: boolean;
 
   @AutoMap()
-  @Column({ type: 'int' })
+  @Column({ type: "int" })
   cache: boolean;
 }

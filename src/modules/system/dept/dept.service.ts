@@ -1,13 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateDeptDto } from './dto/create-dept.dto';
-import { UpdateDeptDto } from './dto/update-dept.dto';
-import { DeptEntity } from './entities/dept.entity';
-import { Mapper } from '@automapper/core';
-import { DeptVo } from './vo/dept.vo';
-import { InjectMapper } from '@automapper/nestjs';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateDeptDto } from "./dto/create-dept.dto";
+import { UpdateDeptDto } from "./dto/update-dept.dto";
+import { DeptEntity } from "./entities/dept.entity";
+import { Mapper } from "@automapper/core";
+import { DeptVo } from "./vo/dept.vo";
+import { InjectMapper } from "@automapper/nestjs";
 
 @Injectable()
 export class DeptService {
@@ -58,7 +58,7 @@ export class DeptService {
       deptName: createDeptDto.deptName,
     });
     if (dept) {
-      throw new HttpException('操作失败,部门名已使用.', HttpStatus.BAD_REQUEST);
+      throw new HttpException("操作失败,部门名已使用.", HttpStatus.BAD_REQUEST);
     }
     const deptEntity = new DeptEntity();
     toEntity(createDeptDto, deptEntity);
@@ -69,7 +69,7 @@ export class DeptService {
     const dept = await this.getDeptById(id);
     if (!dept) {
       throw new HttpException(
-        '操作失败,未找到部门信息.',
+        "操作失败,未找到部门信息.",
         HttpStatus.BAD_REQUEST
       );
     }

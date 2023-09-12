@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateMenuDto } from './dto/create-menu.dto';
-import { SearchMenuDto } from './dto/search-menu.dto';
-import { UpdateMenuDto } from './dto/update-menu.dto';
-import { MenuEntity } from './entities/menu.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateMenuDto } from "./dto/create-menu.dto";
+import { SearchMenuDto } from "./dto/search-menu.dto";
+import { UpdateMenuDto } from "./dto/update-menu.dto";
+import { MenuEntity } from "./entities/menu.entity";
 
 @Injectable()
 export class MenuService {
@@ -21,7 +21,7 @@ export class MenuService {
       queryBuilder.where(`menu_name=:menuName`, { menuName: keyword });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -57,7 +57,7 @@ export class MenuService {
       pId: createMenuDto.pId,
     });
     if (menu) {
-      throw new HttpException('操作失败,菜单名已使用.', HttpStatus.BAD_REQUEST);
+      throw new HttpException("操作失败,菜单名已使用.", HttpStatus.BAD_REQUEST);
     }
     const menuEntity = new MenuEntity();
     toEntity(createMenuDto, menuEntity);
@@ -68,7 +68,7 @@ export class MenuService {
     const menu = await this.getMenuById(id);
     if (!menu) {
       throw new HttpException(
-        '操作失败,未找到菜单信息.',
+        "操作失败,未找到菜单信息.",
         HttpStatus.BAD_REQUEST
       );
     }

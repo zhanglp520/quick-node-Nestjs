@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateDictionaryTypeDto } from './dto/create-dictionary-type.dto';
-import { SearchDictionaryTypeDto } from './dto/search-dictionary-type.dto';
-import { UpdateDictionaryTypeDto } from './dto/update-dictionary-type.dto';
-import { DictionaryTypeEntity } from './entities/dictionary-type.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateDictionaryTypeDto } from "./dto/create-dictionary-type.dto";
+import { SearchDictionaryTypeDto } from "./dto/search-dictionary-type.dto";
+import { UpdateDictionaryTypeDto } from "./dto/update-dictionary-type.dto";
+import { DictionaryTypeEntity } from "./entities/dictionary-type.entity";
 
 @Injectable()
 export class DictionaryTypeService {
@@ -26,7 +26,7 @@ export class DictionaryTypeService {
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -61,7 +61,7 @@ export class DictionaryTypeService {
     });
     if (dictionaryType) {
       throw new HttpException(
-        '操作失败,字典分类名已使用.',
+        "操作失败,字典分类名已使用.",
         HttpStatus.BAD_REQUEST
       );
     }
@@ -77,7 +77,7 @@ export class DictionaryTypeService {
     const dictionaryType = await this.getDictionaryTypeById(id);
     if (!dictionaryType) {
       throw new HttpException(
-        '操作失败,未找到字典分类信息.',
+        "操作失败,未找到字典分类信息.",
         HttpStatus.BAD_REQUEST
       );
     }

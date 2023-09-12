@@ -1,20 +1,20 @@
-import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { MenuEntity } from '@/modules/system/menu/entities/menu.entity';
-import { UserEntity } from '@/modules/system/user/entities/user.entity';
-import { UserModule } from '@/modules/system/user/user.module';
-import { jwtConstants } from '@/modules/auth/constants';
-import { LocalStrategy } from '@/modules/auth/strategies/local.strategy';
-import { JwtStrategy } from '@/modules/auth/strategies/jwt.strategy';
-import { UserRoleEntity } from '@/modules/auth/entities/user-role.entity';
-import { RoleMenuEntity } from '@/modules/auth/entities/role-menu.entity';
-import { AuthService } from '@/modules/auth/auth.service';
-import { AuthController } from '@/modules/auth/auth.controller';
-import { AuthMapperProfile } from '@/modules/auth/mapper/auth.mapper';
-import { ApiEntity } from '@/modules/system/api/entities/api.entity';
-import { RoleApiEntity } from '@/modules/auth/entities/role-api.entity';
+import { Module } from "@nestjs/common";
+import { PassportModule } from "@nestjs/passport";
+import { JwtModule } from "@nestjs/jwt";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { MenuEntity } from "@/modules/system/menu/entities/menu.entity";
+import { UserEntity } from "@/modules/system/user/entities/user.entity";
+import { UserModule } from "@/modules/system/user/user.module";
+import { jwtConstants } from "@/modules/auth/constants";
+import { LocalStrategy } from "@/modules/auth/strategies/local.strategy";
+import { JwtStrategy } from "@/modules/auth/strategies/jwt.strategy";
+import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
+import { RoleMenuEntity } from "@/modules/auth/entities/role-menu.entity";
+import { AuthService } from "@/modules/auth/auth.service";
+import { AuthController } from "@/modules/auth/auth.controller";
+import { AuthMapperProfile } from "@/modules/auth/mapper/auth.mapper";
+import { ApiEntity } from "@/modules/system/api/entities/api.entity";
+import { RoleApiEntity } from "@/modules/auth/entities/role-api.entity";
 
 @Module({
   imports: [
