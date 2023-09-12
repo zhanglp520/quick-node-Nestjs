@@ -8,49 +8,57 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductEntity } from "./entities/product.entity";
 import { PhysicalModelService } from "../physicalModel/physical-model.service";
 import { CreatePhysicalModelDto } from "../physicalModel/dto/create-physical-model.dto";
+import { InjectMapper } from "@automapper/nestjs";
+import { Mapper } from "@automapper/core";
+import { ProductVo } from "./vo/product.vo";
 
 @Injectable()
 export class ProductService {
-  @InjectRepository(ProductEntity, "iot_device_dev")
-  private readonly productRepository: Repository<ProductEntity>;
-
   constructor(
+    @InjectMapper() mapper: Mapper,
     @Inject(PhysicalModelService)
     private readonly physicalModelService: PhysicalModelService
-  ) {}
+  ) {
+    this.mapper = mapper;
+  }
+
+  private readonly mapper: Mapper;
+  @InjectRepository(ProductEntity, "iot_device_dev")
+  private readonly productRepository: Repository<ProductEntity>;
 
   async getProductPageList(searchProductDto: SearchProductDto) {
     const { page, keyword, productType } = searchProductDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
     const queryBuilder = this.productRepository.createQueryBuilder();
+    queryBuilder.where(`1=1`);
     if (productType) {
-      queryBuilder.where(`product_type=:productType`, {
+      queryBuilder.andWhere(`product_type=:productType`, {
         productType: productType,
       });
-      if (keyword) {
-        queryBuilder.orWhere(`product_id=:productId`, { productId: keyword });
-        queryBuilder.orWhere(`product_name=:productName`, {
-          productName: keyword,
-        });
-      }
-    } else {
-      if (keyword) {
-        queryBuilder.where(`product_id=:productId`, { productId: keyword });
-        queryBuilder.orWhere(`product_name=:productName`, {
-          productName: keyword,
-        });
-      }
+    }
+    if (keyword) {
+      queryBuilder
+        .andWhere("(product_id=:productId OR product_name LIKE :productName)")
+        .setParameters({ productId: keyword, productName: `%${keyword}%` });
     }
 
-    const list = await queryBuilder
+    const entities = await queryBuilder
       .orderBy("create_time", "DESC")
-      .offset(skip)
-      .limit(size)
+      .skip(skip)
+      .take(size)
       .getMany();
-    page.total = await this.productRepository.count();
+    // console.log("sql:", queryBuilder.getSql());
+    const vos = await this.mapper.mapArrayAsync(
+      entities,
+      ProductEntity,
+      ProductVo
+    );
+
+    const list = await queryBuilder.getMany();
+    page.total = list.length;
     return {
-      payload: list,
+      payload: vos,
       total: page.total,
     };
   }
@@ -115,6 +123,7 @@ export class ProductService {
     }
     const productEntity = new ProductEntity();
     toEntity(updateProductDto, productEntity);
+    productEntity.updateTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
 
@@ -124,21 +133,27 @@ export class ProductService {
   async enableProductById(id: number) {
     const productEntity = new ProductEntity();
     productEntity.enabled = true;
+    productEntity.updateTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
   async disableProductById(id: number) {
     const productEntity = new ProductEntity();
     productEntity.enabled = false;
+    productEntity.updateTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
   async publishProductById(id: number) {
     const productEntity = new ProductEntity();
+    productEntity.updateTime = new Date();
     productEntity.published = 1;
+    productEntity.publishTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
   async unpublishProductById(id: number) {
     const productEntity = new ProductEntity();
+    productEntity.updateTime = new Date();
     productEntity.published = 2;
+    productEntity.unpublishTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
 }

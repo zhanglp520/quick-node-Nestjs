@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { AutoMap } from "@automapper/classes";
 import { BaseVo } from "src/vos/base.dto";
+import { Transform } from "class-transformer";
 
 export class DeviceVo extends BaseVo {
   @ApiProperty({ description: "设备编号" })

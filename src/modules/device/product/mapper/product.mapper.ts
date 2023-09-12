@@ -7,6 +7,8 @@ import { ProductVo } from "../vo/product.vo";
 @Injectable()
 export class ProductMapperProfile extends AutomapperProfile {
   constructor(@InjectMapper() mapper: Mapper) {
+    console.log("ProductMapperProfile-mapper", mapper);
+
     super(mapper);
   }
 
