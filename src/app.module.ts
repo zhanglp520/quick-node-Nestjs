@@ -20,6 +20,20 @@ import { DictionaryTypeModule } from "@/modules/system/dictionaryType/dictionary
 import { DictionaryModule } from "@/modules/system/dictionary/dictionary.module";
 import { ApiModule } from "@/modules/system/api/api.module";
 import { RolesGuard } from "@/modules/auth/guards/roles.guard";
+//设备管理
+import { DeviceModule } from "./modules/device/device/device.module";
+import { ProductModule } from "./modules/device/product/product.module";
+import { ProductTypeModule } from "./modules/device/productType/product-type.module";
+import { SimulatorModule } from "./modules/device/simulator/simulator.module";
+import { PhysicalModel } from "./modules/device/physicalModel/physical-model.module";
+//通知管理
+import { NoticeTemplateModule } from "./modules/notice/template/notice-template.module";
+import { NoticeConfigModule } from "./modules/notice/config/notice-config.module";
+//告警管理
+import { AlarmConfigModule } from "./modules/alarm/config/alarm-config.module";
+import { AlarmRecordModule } from "./modules/alarm/record/alarm-record.module";
+//规则引擎
+import { RuleConfigModule } from "./modules/rule/config/rule-config.module";
 
 @Dependencies(DataSource)
 @Module({
