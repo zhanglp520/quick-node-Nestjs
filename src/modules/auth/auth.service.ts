@@ -1,13 +1,8 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import * as crypto from "crypto-js";
-import iot, {
-  IConnectResult,
-  IMessageResult,
-  IOTConfig,
-} from "@ainiteam/quick-iot-device-sdk";
 import systemConfig from "@/config/system.config";
 import { MenuEntity } from "@/modules/system/menu/entities/menu.entity";
 import { ApiEntity } from "@/modules/system/api/entities/api.entity";
@@ -21,7 +16,6 @@ import { CreateRoleMenuDto } from "@/modules/auth/dtos/create-role-menu.dto";
 import { LoginDto } from "@/modules/auth/dtos/login.dto";
 import { RefreshTokenDto } from "@/modules/auth/dtos/refresh-token.dto";
 import { TokenVo } from "@/modules/auth/vo/token.vo";
-import { SimulatorService } from "../device/simulator/simulator.service";
 
 @Injectable()
 export class AuthService {

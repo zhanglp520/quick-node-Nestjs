@@ -29,11 +29,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+    // const msg: string = exception.response
+    //   ? exception.response.message
+    //     ? exception.response.message
+    //     : exception.response.errorMsg
+    //   : "服务器内部错误,请联系管理员.";
     const msg: string = exception.response
-      ? exception.response.message
-        ? exception.response.message
-        : exception.response.errorMsg
+      ? exception.response
       : "服务器内部错误,请联系管理员.";
+
     const responseBody: any = {
       status: 1,
       error: httpStatus,
