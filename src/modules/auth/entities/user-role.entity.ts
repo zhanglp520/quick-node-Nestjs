@@ -1,6 +1,6 @@
-import { RoleEntity } from '@/modules/system/role/entities/role.entity';
-import { UserEntity } from '@/modules/system/user/entities/user.entity';
-import { AutoMap } from '@automapper/classes';
+import { RoleEntity } from "@/modules/system/role/entities/role.entity";
+import { UserEntity } from "@/modules/system/user/entities/user.entity";
+import { AutoMap } from "@automapper/classes";
 import {
   BaseEntity,
   Column,
@@ -9,20 +9,20 @@ import {
   JoinTable,
   ManyToOne,
   PrimaryGeneratedColumn,
-} from 'typeorm';
+} from "typeorm";
 
-@Entity('per_user_roles')
+@Entity("per_user_roles")
 export class UserRoleEntity extends BaseEntity {
   @AutoMap()
   @PrimaryGeneratedColumn()
   id: number;
 
   @AutoMap()
-  @Column({ type: 'int', name: 'user_id' })
+  @Column({ type: "int", name: "user_id" })
   userId: number;
 
   @AutoMap()
-  @Column({ type: 'int', name: 'role_id' })
+  @Column({ type: "int", name: "role_id" })
   roleId: number;
 
   // @AutoMap()

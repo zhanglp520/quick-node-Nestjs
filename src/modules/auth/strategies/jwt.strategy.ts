@@ -1,8 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AuthService } from '@/modules/auth/auth.service';
-import { jwtConstants } from '@/modules/auth/constants';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { ExtractJwt, Strategy } from "passport-jwt";
+import { AuthService } from "@/modules/auth/auth.service";
+import { jwtConstants } from "@/modules/auth/constants";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new HttpException(
         {
-          message: '当前登录已过期,请重新登录.',
+          message: "当前登录已过期,请重新登录.",
         },
         HttpStatus.UNAUTHORIZED
       );

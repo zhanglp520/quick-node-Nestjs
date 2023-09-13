@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateDictionaryDto } from './dto/create-dictionary.dto';
-import { SearchDictionaryDto } from './dto/search-dictionary.dto';
-import { UpdateDictionaryDto } from './dto/update-dictionary.dto';
-import { DictionaryEntity } from './entities/dictionary.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateDictionaryDto } from "./dto/create-dictionary.dto";
+import { SearchDictionaryDto } from "./dto/search-dictionary.dto";
+import { UpdateDictionaryDto } from "./dto/update-dictionary.dto";
+import { DictionaryEntity } from "./entities/dictionary.entity";
 
 @Injectable()
 export class DictionaryService {
@@ -24,7 +24,7 @@ export class DictionaryService {
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -40,7 +40,7 @@ export class DictionaryService {
     if (!typeId) {
       throw new HttpException(
         {
-          message: '请求参数错误,未找到typeId参数.',
+          message: "请求参数错误,未找到typeId参数.",
         },
         HttpStatus.BAD_REQUEST
       );
@@ -71,7 +71,7 @@ export class DictionaryService {
       dicName: createDictionaryDto.dicName,
     });
     if (dictionary) {
-      throw new HttpException('操作失败,字典名已使用.', HttpStatus.BAD_REQUEST);
+      throw new HttpException("操作失败,字典名已使用.", HttpStatus.BAD_REQUEST);
     }
     const dictionaryEntity = new DictionaryEntity();
     toEntity(createDictionaryDto, dictionaryEntity);
@@ -85,7 +85,7 @@ export class DictionaryService {
     const dictionary = await this.getDictionaryById(id);
     if (!dictionary) {
       throw new HttpException(
-        '操作失败,未找到字典信息.',
+        "操作失败,未找到字典信息.",
         HttpStatus.BAD_REQUEST
       );
     }

@@ -4,12 +4,12 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
-import * as Log4js from 'log4js';
-import { LogService } from '@/modules/system/log/log.service';
-import log4jsConfig from '@//config/log4.config';
-import { CreateLogDto } from '@/modules/system/log/dto/create-log.dto';
+} from "@nestjs/common";
+import { HttpAdapterHost } from "@nestjs/core";
+import * as Log4js from "log4js";
+import { LogService } from "@/modules/system/log/log.service";
+import log4jsConfig from "@//config/log4.config";
+import { CreateLogDto } from "@/modules/system/log/dto/create-log.dto";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -29,11 +29,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+    // const msg: string = exception.response
+    //   ? exception.response.message
+    //     ? exception.response.message
+    //     : exception.response.errorMsg
+    //   : "服务器内部错误,请联系管理员.";
     const msg: string = exception.response
-      ? exception.response.message
-        ? exception.response.message
-        : exception.response.errorMsg
-      : '服务器内部错误,请联系管理员.';
+      ? exception.response
+      : "服务器内部错误,请联系管理员.";
+
     const responseBody: any = {
       status: 1,
       error: httpStatus,
@@ -54,14 +58,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       response: JSON.stringify(responseBody),
       execution: exception,
       duration: end - start,
-      operateId: 'admin',
+      operateId: "admin",
       ip: req.headers?.remoteip
         ? String(req.headers.remoteip)
-        : req.ip.split(':').pop(),
+        : req.ip.split(":").pop(),
     };
-    const logger = Log4js.getLogger('error');
+    const logger = Log4js.getLogger("error");
     logger.error(logObj);
-    if (!req.url.includes('/system/logs')) {
+    if (!req.url.includes("/system/logs")) {
       const createLogDto = new CreateLogDto();
       createLogDto.type = logObj.type;
       createLogDto.ip = logObj.ip;

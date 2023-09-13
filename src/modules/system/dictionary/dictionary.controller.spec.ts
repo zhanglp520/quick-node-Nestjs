@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { DictionaryController } from './dictionary.controller';
-import { DictionaryService } from './dictionary.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { DictionaryController } from "./dictionary.controller";
+import { DictionaryService } from "./dictionary.service";
 
-describe('DictionaryController', () => {
+describe("DictionaryController", () => {
   let controller: DictionaryController;
 
   beforeEach(async () => {
@@ -14,7 +14,7 @@ describe('DictionaryController', () => {
     controller = module.get<DictionaryController>(DictionaryController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

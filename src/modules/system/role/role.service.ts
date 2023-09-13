@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { toEntity } from 'src/utils/dto2Entity';
-import { Repository } from 'typeorm';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { SearchRoleDto } from './dto/search-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
-import { RoleEntity } from './entities/role.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { toEntity } from "src/utils/dto2Entity";
+import { Repository } from "typeorm";
+import { CreateRoleDto } from "./dto/create-role.dto";
+import { SearchRoleDto } from "./dto/search-role.dto";
+import { UpdateRoleDto } from "./dto/update-role.dto";
+import { RoleEntity } from "./entities/role.entity";
 
 @Injectable()
 export class RoleService {
@@ -22,7 +22,7 @@ export class RoleService {
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const list = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -56,7 +56,7 @@ export class RoleService {
       roleName: createRoleDto.roleName,
     });
     if (role) {
-      throw new HttpException('操作失败,角色名已使用.', HttpStatus.BAD_REQUEST);
+      throw new HttpException("操作失败,角色名已使用.", HttpStatus.BAD_REQUEST);
     }
     const roleEntity = new RoleEntity();
     toEntity(createRoleDto, roleEntity);
@@ -67,7 +67,7 @@ export class RoleService {
     const role = await this.getRoleById(id);
     if (!role) {
       throw new HttpException(
-        '操作失败,未找到角色信息.',
+        "操作失败,未找到角色信息.",
         HttpStatus.BAD_REQUEST
       );
     }

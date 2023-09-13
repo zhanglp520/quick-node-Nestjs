@@ -20,7 +20,7 @@ import { DictionaryTypeModule } from "@/modules/system/dictionaryType/dictionary
 import { DictionaryModule } from "@/modules/system/dictionary/dictionary.module";
 import { ApiModule } from "@/modules/system/api/api.module";
 import { RolesGuard } from "@/modules/auth/guards/roles.guard";
-
+//订单管理
 import { QQGroupModule } from "@/modules/order/qqGroup/qq-group.module";
 
 @Dependencies(DataSource)

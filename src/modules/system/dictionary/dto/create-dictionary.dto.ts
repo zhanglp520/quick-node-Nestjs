@@ -1,9 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateDictionaryDto {
-  @ApiProperty({ description: '字典编号' })
+  @ApiProperty({ description: "字典编号" })
   dicId: string;
 
-  @ApiProperty({ description: '字典名称' })
+  @ApiProperty({ description: "字典名称" })
   dicName: string;
 }

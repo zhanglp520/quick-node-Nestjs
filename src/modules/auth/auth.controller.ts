@@ -85,7 +85,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: Array<Number>,
+    type: Array<number>,
   })
   @Get('/getUserListByRoleId/:id')
   getUserListByRoleId(@Param('id') id: string) {
@@ -102,7 +102,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: Array<Number>,
+    type: Array<number>,
   })
   @Get('/getMenuListByRoleId/:id')
   getMenuListByRoleId(@Param('id') id: string) {

@@ -1,8 +1,8 @@
-import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { Mapper, MappingProfile, createMap } from '@automapper/core';
-import { Injectable } from '@nestjs/common';
-import { UserRoleEntity } from '../entities/user-role.entity';
-import { UserRoleVo } from '../vo/user-role.vo';
+import { AutomapperProfile, InjectMapper } from "@automapper/nestjs";
+import { Mapper, MappingProfile, createMap } from "@automapper/core";
+import { Injectable } from "@nestjs/common";
+import { UserRoleEntity } from "../entities/user-role.entity";
+import { UserRoleVo } from "../vo/user-role.vo";
 
 @Injectable()
 export class AuthMapperProfile extends AutomapperProfile {

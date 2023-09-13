@@ -3,7 +3,7 @@ import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 export const defaultOpts: TypeOrmModuleOptions = {
   name: "default",
   type: "mysql",
-  host: "43.139.141.111",
+  host: "114.132.171.237",
   port: 3306,
   username: "order_core_dev",
   password: "order_core_dev",

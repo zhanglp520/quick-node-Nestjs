@@ -1,23 +1,23 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
-import * as ExcelJS from 'exceljs';
-import { CreateUserDto } from './dto/create-user.dto';
-import { SearchUserDto } from './dto/search-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
-import * as crypto from 'crypto-js';
-import { toEntity } from 'src/utils/dto2Entity';
-import systemConfig from '../../../config/system.config';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { InjectMapper } from '@automapper/nestjs';
-import { Mapper } from '@automapper/core';
-import { UserVo } from './vo/user.vo';
-import { PageResponseResult } from 'src/common/tools/page.response.result';
-import { UserRoleEntity } from '@/modules/auth/entities/user-role.entity';
-import { UserRoleVo } from '@/modules/auth/vo/user-role.vo';
-import { RoleEntity } from '../role/entities/role.entity';
-import { RoleVo } from '../role/vo/role.vo';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Not, Repository } from "typeorm";
+import * as ExcelJS from "exceljs";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { SearchUserDto } from "./dto/search-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { UserEntity } from "./entities/user.entity";
+import * as crypto from "crypto-js";
+import { toEntity } from "src/utils/dto2Entity";
+import systemConfig from "../../../config/system.config";
+import { ChangePasswordDto } from "./dto/change-password.dto";
+import { InjectMapper } from "@automapper/nestjs";
+import { Mapper } from "@automapper/core";
+import { UserVo } from "./vo/user.vo";
+import { PageResponseResult } from "src/common/tools/page.response.result";
+import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
+import { UserRoleVo } from "@/modules/auth/vo/user-role.vo";
+import { RoleEntity } from "../role/entities/role.entity";
+import { RoleVo } from "../role/vo/role.vo";
 /*
  *@Description: 用户管理模块业务
  *返回用户数据时，排除掉超级管理员,超级管理员id为0，默认管理员用户名为administrator。切记
@@ -41,13 +41,13 @@ export class UserService {
     const { current, size } = page;
     const skip = (current - 1) * size;
     const queryBuilder = this.userRepository.createQueryBuilder();
-    queryBuilder.where('id<>0');
+    queryBuilder.where("id<>0");
     if (keyword) {
       queryBuilder.andWhere(`user_name=:userName`, { userName: keyword });
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const entities = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -64,8 +64,8 @@ export class UserService {
     //多对一方式
     // console.log('entities', '多对一方式');
     const entities = await this.userRepository
-      .createQueryBuilder('u')
-      .leftJoinAndSelect('u.roles', 'system_roles')
+      .createQueryBuilder("u")
+      .leftJoinAndSelect("u.roles", "system_roles")
       .getMany();
     //一对多方式
     // const entities = await this.userRepository
@@ -91,8 +91,8 @@ export class UserService {
 
   async getUserById(id: number) {
     const entity = await this.userRepository
-      .createQueryBuilder('u')
-      .leftJoinAndSelect('u.roles', 'system_roles')
+      .createQueryBuilder("u")
+      .leftJoinAndSelect("u.roles", "system_roles")
       .andWhere(`u.id=:id`, { id: id })
       .getOne();
     const roleVos = await this.mapper.mapArrayAsync(
@@ -120,8 +120,8 @@ export class UserService {
     // });
 
     const entity = await this.userRepository
-      .createQueryBuilder('u')
-      .leftJoinAndSelect('u.roles', 'system_roles')
+      .createQueryBuilder("u")
+      .leftJoinAndSelect("u.roles", "system_roles")
       .andWhere(`user_name=:userName`, { userName: userName })
       .getOne();
     const roleVos = await this.mapper.mapArrayAsync(
@@ -141,7 +141,7 @@ export class UserService {
     if (user) {
       throw new HttpException(
         {
-          message: '操作失败,用户名已使用.',
+          message: "操作失败,用户名已使用.",
         },
         HttpStatus.BAD_REQUEST
       );
@@ -163,7 +163,7 @@ export class UserService {
     if (!user) {
       throw new HttpException(
         {
-          message: '操作失败,未找到用户信息.',
+          message: "操作失败,未找到用户信息.",
         },
         HttpStatus.BAD_REQUEST
       );
@@ -178,7 +178,7 @@ export class UserService {
   }
 
   async removeUserByIds(ids: string) {
-    const arr = ids.split(',');
+    const arr = ids.split(",");
     await this.userRepository.delete(arr);
   }
 
@@ -209,7 +209,7 @@ export class UserService {
     if (!user) {
       throw new HttpException(
         {
-          message: '修改密码失败,暂无此用户.',
+          message: "修改密码失败,暂无此用户.",
         },
         HttpStatus.BAD_REQUEST
       );
@@ -218,7 +218,7 @@ export class UserService {
     if (crypto.MD5(oldPassword.toString()).toString() !== password) {
       throw new HttpException(
         {
-          message: '修改密码失败,原密码错误.',
+          message: "修改密码失败,原密码错误.",
         },
         HttpStatus.BAD_REQUEST
       );
@@ -268,17 +268,17 @@ export class UserService {
 
   async exportExcel() {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('excel表格');
+    const worksheet = workbook.addWorksheet("excel表格");
     // 定义表头名称和字段名
     worksheet.columns = [
-      { header: '用户编号', key: 'user_id', width: 42 },
-      { header: '用户名', key: 'user_name', width: 32 },
-      { header: '头像', key: 'avatar', width: 32 },
-      { header: '姓名', key: 'full_name', width: 32 },
-      { header: '手机号', key: 'phone', width: 32 },
-      { header: '邮箱', key: 'email', width: 32 },
-      { header: '地址', key: 'address', width: 12 },
-      { header: '备注', key: 'remark', width: 32 },
+      { header: "用户编号", key: "user_id", width: 42 },
+      { header: "用户名", key: "user_name", width: 32 },
+      { header: "头像", key: "avatar", width: 32 },
+      { header: "姓名", key: "full_name", width: 32 },
+      { header: "手机号", key: "phone", width: 32 },
+      { header: "邮箱", key: "email", width: 32 },
+      { header: "地址", key: "address", width: 12 },
+      { header: "备注", key: "remark", width: 32 },
     ];
     const result = await this.getUserList(); // result是通过前端传递的ids从数据库获取需要导出的信息
     worksheet.addRows(result);

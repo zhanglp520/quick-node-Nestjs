@@ -1,17 +1,17 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
-import * as ExcelJS from 'exceljs';
-import { CreateApiDto } from './dto/create-api.dto';
-import { SearchApiDto } from './dto/search-api.dto';
-import { UpdateApiDto } from './dto/update-api.dto';
-import { ApiEntity } from './entities/api.entity';
-import * as crypto from 'crypto-js';
-import { toEntity } from 'src/utils/dto2Entity';
-import { InjectMapper } from '@automapper/nestjs';
-import { Mapper } from '@automapper/core';
-import { ApiVo } from './vo/api.vo';
-import { PageResponseResult } from 'src/common/tools/page.response.result';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Not, Repository } from "typeorm";
+import * as ExcelJS from "exceljs";
+import { CreateApiDto } from "./dto/create-api.dto";
+import { SearchApiDto } from "./dto/search-api.dto";
+import { UpdateApiDto } from "./dto/update-api.dto";
+import { ApiEntity } from "./entities/api.entity";
+import * as crypto from "crypto-js";
+import { toEntity } from "src/utils/dto2Entity";
+import { InjectMapper } from "@automapper/nestjs";
+import { Mapper } from "@automapper/core";
+import { ApiVo } from "./vo/api.vo";
+import { PageResponseResult } from "src/common/tools/page.response.result";
 /*
  *@Description: 接口管理模块业务
  *返回接口数据时，排除掉超级管理员,超级管理员id为0，默认管理员接口名为administrator。切记
@@ -35,13 +35,13 @@ export class ApiService {
     const { current, size } = page;
     const skip = (current - 1) * size;
     const queryBuilder = this.apiRepository.createQueryBuilder();
-    queryBuilder.where('id<>0');
+    queryBuilder.where("id<>0");
     if (keyword) {
       queryBuilder.andWhere(`api_name=:apiName`, { apiName: keyword });
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
     const entities = await queryBuilder
-      .orderBy('create_time', 'DESC')
+      .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -85,7 +85,7 @@ export class ApiService {
     if (api) {
       throw new HttpException(
         {
-          message: '操作失败,接口名已使用.',
+          message: "操作失败,接口名已使用.",
         },
         HttpStatus.BAD_REQUEST
       );
@@ -101,7 +101,7 @@ export class ApiService {
     if (!api) {
       throw new HttpException(
         {
-          message: '操作失败,未找到接口信息.',
+          message: "操作失败,未找到接口信息.",
         },
         HttpStatus.BAD_REQUEST
       );
@@ -116,7 +116,7 @@ export class ApiService {
   }
 
   async removeApiByIds(ids: string) {
-    const arr = ids.split(',');
+    const arr = ids.split(",");
     await this.apiRepository.delete(arr);
   }
 
