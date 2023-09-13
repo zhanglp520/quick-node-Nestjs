@@ -40,15 +40,10 @@ async function bootstrap() {
     defaultVersion: "2",
   });
 
-  // app.useStaticAssets("public");
-  //开发环境调试
-  app.useStaticAssets(join(__dirname, "..", "..", "public"), {
+  app.useStaticAssets(join(__dirname, "..", "public"), {
     prefix: "/public/",
   });
-  // app.useStaticAssets(join(__dirname, "..", "public"), {
-  //   prefix: "/uploads/",
-  // });
-  console.log("静态路径", join(__dirname, "..", "..", "public"));
+  console.log("静态路径", join(__dirname, "..", "public"));
 
   const config = new DocumentBuilder()
     .setTitle("quick-vue3-admin接口文档")
