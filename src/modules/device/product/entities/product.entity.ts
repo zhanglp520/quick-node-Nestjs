@@ -1,10 +1,20 @@
 import { AutoMap } from "@automapper/classes";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { DeviceEntity } from "../../device/entities/device.entity";
+import { BaseEntity } from "@/entities/base.entity";
 
+// extends BaseEntity
 @Entity("dev_products")
-export class ProductEntity extends BaseEntity {
-  @AutoMap()
+export class ProductEntity {
   @PrimaryGeneratedColumn()
+  @AutoMap()
   id: number;
 
   @AutoMap()
@@ -78,4 +88,8 @@ export class ProductEntity extends BaseEntity {
   @AutoMap()
   @Column({ type: "varchar" })
   remark: string;
+
+  @AutoMap()
+  @OneToMany(() => DeviceEntity, (device) => device.product)
+  devices: any;
 }

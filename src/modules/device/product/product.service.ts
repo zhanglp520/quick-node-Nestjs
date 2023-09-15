@@ -11,6 +11,8 @@ import { CreatePhysicalModelDto } from "../physicalModel/dto/create-physical-mod
 import { InjectMapper } from "@automapper/nestjs";
 import { Mapper } from "@automapper/core";
 import { ProductVo } from "./vo/product.vo";
+import { DeviceEntity } from "../device/entities/device.entity";
+import { DeviceVo } from "../device/vo/device.vo";
 
 @Injectable()
 export class ProductService {
@@ -30,35 +32,60 @@ export class ProductService {
     const { page, keyword, productType } = searchProductDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
-    const queryBuilder = this.productRepository.createQueryBuilder();
+    const queryBuilder = this.productRepository
+      .createQueryBuilder("p")
+      .leftJoinAndSelect("p.devices", "d");
     queryBuilder.where(`1=1`);
     if (productType) {
-      queryBuilder.andWhere(`product_type=:productType`, {
+      queryBuilder.andWhere(`p.product_type=:productType`, {
         productType: productType,
       });
     }
     if (keyword) {
       queryBuilder
-        .andWhere("(product_id=:productId OR product_name LIKE :productName)")
+        .andWhere(
+          "(p.product_id=:productId OR p.product_name LIKE :productName)"
+        )
         .setParameters({ productId: keyword, productName: `%${keyword}%` });
     }
 
     const entities = await queryBuilder
-      .orderBy("create_time", "DESC")
-      .skip(skip)
-      .take(size)
+      .orderBy("p.create_time", "DESC")
+      .offset(skip)
+      .limit(size)
       .getMany();
-    // console.log("sql:", queryBuilder.getSql());
-    const vos = await this.mapper.mapArrayAsync(
-      entities,
-      ProductEntity,
-      ProductVo
-    );
+    console.log("zlp-sql:", queryBuilder.getSql());
+    console.log("zlp-entities", entities);
 
+    // const vos = await this.mapper.mapArrayAsync(
+    //   entities,
+    //   ProductEntity,
+    //   ProductVo
+    // );
+    // console.log("zlp-vos", vos);
+
+    // const vos = [];
+    // entities.forEach((element) => {
+    //   const vo = this.mapper.map(element, ProductEntity, ProductVo);
+    //   console.log("vo", vo);
+    //   if (element.devices) {
+    //     const devVos = this.mapper.mapArray(
+    //       element.devices,
+    //       DeviceEntity,
+    //       DeviceVo
+    //     );
+    //     vo.devices = devVos;
+    //     console.log("devVos", devVos);
+    //   }
+    //   vos.push(vo);
+    // });
+
+    // return entities;
     const list = await queryBuilder.getMany();
     page.total = list.length;
     return {
-      payload: vos,
+      // payload: vos,
+      payload: entities,
       total: page.total,
     };
   }

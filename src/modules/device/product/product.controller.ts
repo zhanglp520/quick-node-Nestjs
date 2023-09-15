@@ -28,6 +28,8 @@ import { ProductVo } from "./vo/product.vo";
 import { ResponseResult } from "@/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { MapInterceptor } from "@automapper/nestjs";
+import { ProductEntity } from "./entities/product.entity";
 
 @ApiTags("产品管理")
 @Controller("/device/products")
@@ -45,6 +47,7 @@ export class ProductController {
     type: ProductVo,
   })
   @UseInterceptors(ClassSerializerInterceptor)
+  // @UseInterceptors(MapInterceptor(ProductEntity, ProductVo, { isArray: true }))
   @Get()
   getPageList(
     @Query("productType") productType,

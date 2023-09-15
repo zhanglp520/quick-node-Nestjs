@@ -1,11 +1,17 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { AutoMap } from "@automapper/classes";
 import { BaseVo } from "src/vos/base.dto";
 import { Transform } from "class-transformer";
+import { DeviceVo } from "../../device/vo/device.vo";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require("moment");
 
-export class ProductVo extends BaseVo {
+//extends BaseVo
+export class ProductVo {
+  @ApiPropertyOptional({ description: "主键" })
+  @AutoMap()
+  id: number;
+
   @ApiProperty({ description: "产品编号" })
   @AutoMap()
   productId: string;
@@ -89,4 +95,8 @@ export class ProductVo extends BaseVo {
   @ApiProperty({ description: "备注" })
   @AutoMap()
   remark: string;
+
+  @ApiProperty({ description: "设备列表" })
+  @AutoMap()
+  devices: any;
 }

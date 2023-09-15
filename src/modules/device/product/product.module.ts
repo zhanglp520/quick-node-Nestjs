@@ -15,7 +15,8 @@ import { iotOpts } from "../../../config/orm.config";
     PhysicalModel,
   ],
   controllers: [ProductController],
-  providers: [ProductService, ProductMapperProfile],
+  // ProductMapperProfile
+  providers: [ProductService],
   exports: [ProductService],
 })
 export class ProductModule {}

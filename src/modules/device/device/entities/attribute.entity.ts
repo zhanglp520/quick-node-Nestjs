@@ -1,5 +1,6 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Transform } from "class-transformer";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require("moment");
 
 @Entity("dev_physical_model_atrribute_records")

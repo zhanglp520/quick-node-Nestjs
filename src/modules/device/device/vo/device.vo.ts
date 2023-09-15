@@ -1,9 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { AutoMap } from "@automapper/classes";
 import { BaseVo } from "src/vos/base.dto";
 import { Transform } from "class-transformer";
+import { ProductVo } from "../../product/vo/product.vo";
 
-export class DeviceVo extends BaseVo {
+// extends BaseVo
+export class DeviceVo {
+  @ApiPropertyOptional({ description: "主键" })
+  @AutoMap()
+  id: number;
+
   @ApiProperty({ description: "设备编号" })
   @AutoMap()
   deviceId: string;
@@ -31,4 +37,8 @@ export class DeviceVo extends BaseVo {
   @ApiProperty({ description: "备注" })
   @AutoMap()
   remark: string;
+
+  @ApiProperty({ description: "所属产品" })
+  @AutoMap()
+  product: any;
 }
