@@ -24,11 +24,11 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { ProductVo } from "./vo/product.vo";
+// import { ProductVo } from "./vo/product.vo";
 import { ResponseResult } from "@/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
-import { MapInterceptor } from "@automapper/nestjs";
+// import { MapInterceptor } from "@automapper/nestjs";
 import { ProductEntity } from "./entities/product.entity";
 
 @ApiTags("产品管理")
@@ -44,7 +44,8 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ProductVo,
+    type: ProductEntity,
+    isArray: true,
   })
   @UseInterceptors(ClassSerializerInterceptor)
   // @UseInterceptors(MapInterceptor(ProductEntity, ProductVo, { isArray: true }))
@@ -69,7 +70,8 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ProductVo,
+    type: ProductEntity,
+    isArray: true,
   })
   @Get("getProductList")
   async getProductList() {
@@ -82,7 +84,7 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ProductVo,
+    type: ProductEntity,
   })
   @Get(":id")
   getProductById(@Param("id") id: string) {
@@ -99,7 +101,7 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ProductVo,
+    type: ProductEntity,
   })
   @Get("getProductByProductName/:productName")
   getProductByProductName(@Param("productName") productName: string) {

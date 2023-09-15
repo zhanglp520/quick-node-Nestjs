@@ -6,12 +6,7 @@ import { DeviceVo } from "../../device/vo/device.vo";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require("moment");
 
-//extends BaseVo
-export class ProductVo {
-  @ApiPropertyOptional({ description: "主键" })
-  @AutoMap()
-  id: number;
-
+export class ProductVo extends BaseVo {
   @ApiProperty({ description: "产品编号" })
   @AutoMap()
   productId: string;
