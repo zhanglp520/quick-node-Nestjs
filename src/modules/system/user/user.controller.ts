@@ -24,18 +24,26 @@ import { SearchUserDto } from "./dto/search-user.dto";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import {
   ApiBody,
+  ApiExtension,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
+  getSchemaPath,
 } from "@nestjs/swagger";
-import { UserVo } from "./vo/user.vo";
 import { Role } from "src/common/enums/role.enum";
 import { ResponseResult } from "src/common/tools/response.result";
 import { RolesGuard } from "src/modules/auth/guards/roles.guard";
 import { Roles } from "src/common/decorators/roles.decorator";
+import { UserPageResult } from "./result/user.page.result";
+import { UserListResult } from "./result/user.list.result";
+import { UserResult } from "./result/user.result";
+import { ApiResult } from "@/common/decorators/api.result.decorator";
+import { PageResponseResult } from "@/common/tools/page.response.result";
+import { UserEntity } from "./entities/user.entity";
 
 @ApiTags("用户管理")
 // @UseInterceptors(new RbacInterceptor(Role.Administrator))
@@ -44,24 +52,57 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: false })
-  @ApiQuery({ name: "size", description: "每页条数", required: false })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: UserVo,
-    // schema: {
-    //   type: 'object',
-    //   items: {
-    //     $ref: getSchemaPath(PageResponseResult),
-    //     items: {
-    //       $ref: getSchemaPath(UserVo),
-    //     },
-    //   },
-    // },
-    // type: ResponseResult<PageResponseResult<UserVo>>,
-    // isArray: true,
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(PageResponseResult) },
+        {
+          properties: {
+            payload: {
+              type: "array",
+              items: { $ref: getSchemaPath(UserEntity) },
+            },
+          },
+        },
+      ],
+    },
+  })
+  // @ApiOkResponse({ type: ResponseResult<UserVo> })
+  // @ApiResult({ type: UserVo })
+  // @ApiOkResponse({
+  //   status: 200,
+  //   description: "操作成功",
+  //   type: UserPageResult,
+  // })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   // @UseInterceptors(MapInterceptor(DeptEntity, DeptVo, { isArray: true }))
   // @Roles(Role.administrator, Role.admin)
@@ -86,7 +127,17 @@ export class UserController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: UserVo,
+    type: UserListResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("/getUserList")
   async getUserList() {
@@ -99,7 +150,7 @@ export class UserController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: UserVo,
+    type: UserResult,
   })
   @Get(":id")
   getUserById(@Param("id") id: string) {
@@ -116,7 +167,17 @@ export class UserController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: UserVo,
+    type: UserResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getUserByUserName/:userName")
   // @Version('2')
@@ -127,7 +188,7 @@ export class UserController {
   @ApiOperation({ summary: "创建" })
   @ApiBody({ type: CreateUserDto, description: "创建用户参数" })
   @ApiResponse({
-    status: 0,
+    status: 200,
     description: "请求成功",
     type: ResponseResult,
   })
@@ -137,12 +198,12 @@ export class UserController {
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 1,
-    description: "操作失败",
+    status: 401,
+    description: "无权限",
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 2,
+    status: 500,
     description: "系统异常",
     type: ResponseResult,
   })
@@ -157,6 +218,21 @@ export class UserController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Put(":id")
@@ -174,6 +250,25 @@ export class UserController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
+  @ApiUnauthorizedResponse({
+    description: "无权限",
+  })
+  // @ApiExtension()
   @Roles(Role.administrator)
   @Delete(":id")
   removeUserById(@Param("id") id: string) {

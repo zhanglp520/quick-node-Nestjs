@@ -10,8 +10,9 @@ import * as crypto from "crypto-js";
 import { toEntity } from "src/utils/dto2Entity";
 import { InjectMapper } from "@automapper/nestjs";
 import { Mapper } from "@automapper/core";
-import { ApiVo } from "./vo/api.vo";
 import { PageResponseResult } from "src/common/tools/page.response.result";
+import { ResponseStatus } from "@/common/enums/response-status.enum";
+import { ResponseResult } from "@/common/tools/response.result";
 /*
  *@Description: 接口管理模块业务
  *返回接口数据时，排除掉超级管理员,超级管理员id为0，默认管理员接口名为administrator。切记
@@ -28,9 +29,14 @@ export class ApiService {
   @InjectRepository(ApiEntity)
   private readonly apiRepository: Repository<ApiEntity>;
 
+  /**
+   * 获取接口分页列表
+   * @param searchApiDto 搜索dto
+   * @returns Promise<PageResponseResult<ApiEntity[]>>
+   */
   async getApiPageList(
     searchApiDto: SearchApiDto
-  ): Promise<PageResponseResult<ApiVo[]>> {
+  ): Promise<PageResponseResult<ApiEntity[]>> {
     const { page, keyword } = searchApiDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
@@ -46,39 +52,72 @@ export class ApiService {
       .limit(size)
       .getMany();
 
-    const vos = await this.mapper.mapArrayAsync(entities, ApiEntity, ApiVo);
     page.total = await this.apiRepository.count();
-    const data = new PageResponseResult<ApiVo[]>();
-    data.payload = vos;
-    data.total = page.total;
-    return data;
+    const result = new PageResponseResult<ApiEntity[]>(
+      ResponseStatus.success,
+      "操作成功",
+      page.total,
+      entities
+    );
+    return result;
   }
 
-  async getApiList() {
+  /**
+   * 获取接口列表
+   * @returns Promise<ResponseResult<ApiEntity[]>>
+   */
+  async getApiList(): Promise<ResponseResult<ApiEntity[]>> {
     const entities = await this.apiRepository.find({
       where: {
         id: Not(0),
       },
     });
-    const vos = await this.mapper.mapArrayAsync(entities, ApiEntity, ApiVo);
-    return vos;
+    const result = new ResponseResult<ApiEntity[]>(
+      ResponseStatus.success,
+      "操作成功",
+      entities
+    );
+    return result;
   }
 
-  async getApiById(id: number) {
+  /**
+   * 根据接口id获取接口信息
+   * @param id 主键
+   * @returns
+   */
+  async getApiById(id: number): Promise<ResponseResult<ApiEntity>> {
     const entity = await this.getById(id);
-    const vo = await this.mapper.mapAsync(entity, ApiEntity, ApiVo);
-    return vo;
+    const result = new ResponseResult<ApiEntity>(
+      ResponseStatus.success,
+      "操作成功",
+      entity
+    );
+    return result;
   }
 
-  async getApiByApiName(apiName: string) {
+  /**
+   * 根据接口名称获取接口信息
+   * @param apiName 接口名称
+   * @returns
+   */
+  async getApiByApiName(apiName: string): Promise<ResponseResult<ApiEntity>> {
     const entity = await this.apiRepository.findOneBy({
       apiName,
     });
-    const vo = await this.mapper.mapAsync(entity, ApiEntity, ApiVo);
-    return vo;
+    const result = new ResponseResult<ApiEntity>(
+      ResponseStatus.success,
+      "操作成功",
+      entity
+    );
+    return result;
   }
 
-  async createApi(createApiDto: CreateApiDto) {
+  /**
+   * 创建接口
+   * @param createApiDto 创建接口dto
+   * @returns  Promise<ResponseResult>
+   */
+  async createApi(createApiDto: CreateApiDto): Promise<ResponseResult> {
     const api = await this.apiRepository.findOneBy({
       apiName: createApiDto.apiName,
     });
@@ -94,9 +133,23 @@ export class ApiService {
     toEntity(createApiDto, apiEntity);
     apiEntity.createTime = new Date();
     await this.apiRepository.insert(apiEntity);
+    const result = new ResponseResult<ApiEntity>(
+      ResponseStatus.success,
+      "操作成功"
+    );
+    return result;
   }
 
-  async updateApiById(id: number, updateApiDto: UpdateApiDto) {
+  /**
+   * 修改接口
+   * @param id 主键
+   * @param updateApiDto 修改接口dto
+   * @returns Promise<ResponseResult>
+   */
+  async updateApiById(
+    id: number,
+    updateApiDto: UpdateApiDto
+  ): Promise<ResponseResult> {
     const api = await this.getById(id);
     if (!api) {
       throw new HttpException(
@@ -109,15 +162,40 @@ export class ApiService {
     const apiEntity = new ApiEntity();
     toEntity(updateApiDto, apiEntity);
     await this.apiRepository.update(id, apiEntity);
+    const result = new ResponseResult<ApiEntity>(
+      ResponseStatus.success,
+      "操作成功"
+    );
+    return result;
   }
 
-  async removeApiById(id: number) {
+  /**
+   * 删除接口
+   * @param id 主键
+   * @returns  Promise<ResponseResult>
+   */
+  async removeApiById(id: number): Promise<ResponseResult> {
     await this.apiRepository.delete(id);
+    const result = new ResponseResult<ApiEntity>(
+      ResponseStatus.success,
+      "操作成功"
+    );
+    return result;
   }
 
-  async removeApiByIds(ids: string) {
+  /**
+   * 批量删除接口
+   * @param id 主键
+   * @returns  Promise<ResponseResult>
+   */
+  async removeApiByIds(ids: string): Promise<ResponseResult> {
     const arr = ids.split(",");
     await this.apiRepository.delete(arr);
+    const result = new ResponseResult<ApiEntity>(
+      ResponseStatus.success,
+      "操作成功"
+    );
+    return result;
   }
 
   private getById(id: number) {

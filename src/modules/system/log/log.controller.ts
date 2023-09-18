@@ -16,10 +16,10 @@ import {
   ApiQuery,
   ApiTags,
 } from "@nestjs/swagger";
-import { LogVo } from "./vo/log.vo";
 import { ResponseResult } from "src/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { LogEntity } from "./entities/log.entity";
 
 @ApiTags("日志管理")
 @Controller("/system/logs")
@@ -27,13 +27,28 @@ export class LogController {
   constructor(private readonly logService: LogService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: false })
-  @ApiQuery({ name: "size", description: "每页条数", required: false })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: LogVo,
+    type: LogEntity,
   })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
@@ -63,7 +78,7 @@ export class LogController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: LogVo,
+    type: LogEntity,
   })
   @Get(":id")
   getLogById(@Param("id") id: string) {

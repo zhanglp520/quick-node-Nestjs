@@ -18,10 +18,10 @@ import {
   ApiParam,
   ApiTags,
 } from "@nestjs/swagger";
-import { DictionaryVo } from "./vo/dictionary.vo";
 import { ResponseResult } from "src/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { DictionaryEntity } from "./entities/dictionary.entity";
 
 @ApiTags("字典管理")
 @Controller("/system/dictionaries")
@@ -32,7 +32,7 @@ export class DictionaryController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryVo,
+    type: DictionaryEntity,
   })
   @Get()
   async getDictionaryListByTypeId(@Query("typeId") typeId) {
@@ -44,7 +44,7 @@ export class DictionaryController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryVo,
+    type: DictionaryEntity,
   })
   @Get(":id")
   getDictionaryById(@Param("id") id: string) {
@@ -55,7 +55,7 @@ export class DictionaryController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryVo,
+    type: DictionaryEntity,
   })
   @Get("getDictionaryByDictionaryName/:dictionaryName")
   getDictionaryByDictionaryName(

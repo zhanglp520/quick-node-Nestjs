@@ -6,8 +6,9 @@ import { CreateDeptDto } from "./dto/create-dept.dto";
 import { UpdateDeptDto } from "./dto/update-dept.dto";
 import { DeptEntity } from "./entities/dept.entity";
 import { Mapper } from "@automapper/core";
-import { DeptVo } from "./vo/dept.vo";
 import { InjectMapper } from "@automapper/nestjs";
+import { ResponseStatus } from "@/common/enums/response-status.enum";
+import { ResponseResult } from "@/common/tools/response.result";
 
 @Injectable()
 export class DeptService {
@@ -19,41 +20,83 @@ export class DeptService {
   @InjectRepository(DeptEntity)
   private readonly deptRepository: Repository<DeptEntity>;
 
-  async getDeptByPId(pId: string): Promise<DeptVo[]> {
+  /**
+   * 获取部门分页列表
+   * @param searchDeptDto 搜索dto
+   * @returns : Promise<ResponseResult<DeptEntity[]>>
+   */
+  async getDeptByPId(pId: string): Promise<ResponseResult<DeptEntity[]>> {
     const entities = await this.deptRepository.find({
       where: {
         pId,
       },
     });
-    const vos = await this.mapper.mapArrayAsync(entities, DeptEntity, DeptVo);
-    return vos;
+    const result = new ResponseResult<DeptEntity[]>(
+      ResponseStatus.success,
+      "操作成功",
+      entities
+    );
+    return result;
   }
 
-  async getDeptList() {
+  /**
+   * 获取部门列表
+   * @returns : Promise<ResponseResult<DeptEntity[]>>
+   */
+  async getDeptList(): Promise<ResponseResult<DeptEntity[]>> {
     const entities = await this.deptRepository.find();
-    const vos = await this.mapper.mapArrayAsync(entities, DeptEntity, DeptVo);
-    return vos;
+    const result = new ResponseResult<DeptEntity[]>(
+      ResponseStatus.success,
+      "操作成功",
+      entities
+    );
+    return result;
   }
 
-  async getDeptById(id: number): Promise<DeptVo> {
+  /**
+   * 根据部门id获取部门信息
+   * @param id 主键
+   * @returns Promise<ResponseResult<DeptEntity>>
+   */
+  async getDeptById(id: number): Promise<ResponseResult<DeptEntity>> {
     const entity = await this.deptRepository.findOne({
       where: {
         id,
       },
     });
-    const vo = await this.mapper.mapAsync(entity, DeptEntity, DeptVo);
-    return vo;
+    const result = new ResponseResult<DeptEntity>(
+      ResponseStatus.success,
+      "操作成功",
+      entity
+    );
+    return result;
   }
 
-  async getDeptByDeptName(deptName: string): Promise<DeptVo> {
+  /**
+   * 根据部门名称获取部门信息
+   * @param deptName 部门名称
+   * @returns Promise<ResponseResult<DeptEntity>>
+   */
+  async getDeptByDeptName(
+    deptName: string
+  ): Promise<ResponseResult<DeptEntity>> {
     const entity = await this.deptRepository.findOneBy({
       deptName,
     });
-    const vo = await this.mapper.mapAsync(entity, DeptEntity, DeptVo);
-    return vo;
+    const result = new ResponseResult<DeptEntity>(
+      ResponseStatus.success,
+      "操作成功",
+      entity
+    );
+    return result;
   }
 
-  async createDept(createDeptDto: CreateDeptDto) {
+  /**
+   * 创建部门
+   * @param createDeptDto 创建部门dto
+   * @returns  Promise<ResponseResult>
+   */
+  async createDept(createDeptDto: CreateDeptDto): Promise<ResponseResult> {
     const dept = await this.deptRepository.findOneBy({
       deptName: createDeptDto.deptName,
     });
@@ -63,9 +106,20 @@ export class DeptService {
     const deptEntity = new DeptEntity();
     toEntity(createDeptDto, deptEntity);
     await this.deptRepository.insert(deptEntity);
+    const result = new ResponseResult(ResponseStatus.success, "操作成功");
+    return result;
   }
 
-  async updateDeptById(id: number, updateDeptDto: UpdateDeptDto) {
+  /**
+   * 修改部门
+   * @param id 主键
+   * @param updateDeptDto 修改部门dto
+   * @returns Promise<ResponseResult>
+   */
+  async updateDeptById(
+    id: number,
+    updateDeptDto: UpdateDeptDto
+  ): Promise<ResponseResult> {
     const dept = await this.getDeptById(id);
     if (!dept) {
       throw new HttpException(
@@ -76,9 +130,18 @@ export class DeptService {
     const deptEntity = new DeptEntity();
     toEntity(updateDeptDto, deptEntity);
     await this.deptRepository.update(id, deptEntity);
+    const result = new ResponseResult(ResponseStatus.success, "操作成功");
+    return result;
   }
 
-  async removeDeptById(id: number) {
+  /**
+   * 删除部门
+   * @param id 主键
+   * @returns  Promise<ResponseResult>
+   */
+  async removeDeptById(id: number): Promise<ResponseResult> {
     await this.deptRepository.delete(id);
+    const result = new ResponseResult(ResponseStatus.success, "操作成功");
+    return result;
   }
 }

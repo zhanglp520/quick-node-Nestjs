@@ -57,52 +57,17 @@ async function bootstrap() {
     .setTermsOfService("https://quick.ainiteam.com")
     .build();
 
-  const options: SwaggerDocumentOptions = {
-    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
-  };
-
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document, {
-    useGlobalPrefix: true,
-  }); //localhost:2000/doc
+  SwaggerModule.setup("api", app, document);
+
   knife4jSetup(app, {
     urls: [
       {
-        name: "首页",
+        name: "默认",
         url: `/api-json`,
         swaggerVersion: "2.0",
         location: `/api-json`,
       },
-      {
-        name: "系统模块",
-        url: `/api-json`,
-        swaggerVersion: "2.0",
-        location: `/api/v2/system?group=系统模块`,
-      },
-      // {
-      //   name: '测试',
-      //   url: `/api-json`,
-      //   swaggerVersion: '2.0',
-      //   location: `/api-json`,
-      // },
-      // {
-      //   name: '系统模块',
-      //   url: `127.0.0.1`,
-      //   swaggerVersion: '2.0',
-      //   location: `/api/v2?group=系统模块`,
-      // },
-      // {
-      //   name: '权限模块',
-      //   url: `/api-json`,
-      //   swaggerVersion: '2.0',
-      //   location: `/api-json`,
-      // },
-      // {
-      //   name: '开发者模块',
-      //   url: `/api-json`,
-      //   swaggerVersion: '2.0',
-      //   location: `/api-json`,
-      // },
     ],
   });
 

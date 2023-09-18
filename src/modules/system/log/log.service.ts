@@ -6,13 +6,23 @@ import { SearchLogDto } from "./dto/search-log.dto";
 import { LogEntity } from "./entities/log.entity";
 import { toEntity } from "src/utils/dto2Entity";
 import { logOpts } from "../../../config/orm.config";
+import { ResponseResult } from "@/common/tools/response.result";
+import { ResponseStatus } from "@/common/enums/response-status.enum";
+import { PageResponseResult } from "@/common/tools/page.response.result";
 
 @Injectable()
 export class LogService {
   @InjectRepository(LogEntity, logOpts.database.toString()) //指定日志数据库连接名称来切换数据库
   private readonly logRepository: Repository<LogEntity>;
 
-  async getLogPageList(searchLogDto: SearchLogDto) {
+  /**
+   * 获取日志分页列表
+   * @param searchUserDto 搜索dto
+   * @returns Promise<PageResponseResult<LogEntity[]>>
+   */
+  async getLogPageList(
+    searchLogDto: SearchLogDto
+  ): Promise<PageResponseResult<LogEntity[]>> {
     const { page, keyword, type, startTime, endTime } = searchLogDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
@@ -34,31 +44,65 @@ export class LogService {
       queryBuilder.andWhere(`create_time<:startTime`, { startTime: startTime });
       queryBuilder.andWhere(`create_time>:endTime`, { endTime: endTime });
     }
-    const list = await queryBuilder
+    const entities = await queryBuilder
       .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
-    page.total = await this.logRepository.count();
-    return {
-      payload: list,
-      total: page.total,
-    };
+    page.total = await queryBuilder.getCount();
+    const result = new PageResponseResult<LogEntity[]>(
+      ResponseStatus.success,
+      "操作成功",
+      page.total,
+      entities
+    );
+    return result;
   }
-  getLogById(id: number) {
-    return this.logRepository.findOne({
+
+  /**
+   * 根据日志id获取日志信息
+   * @param id 主键
+   * @returns Promise<ResponseResult<LogEntity>>
+   */
+  async getLogById(id: number): Promise<ResponseResult<LogEntity>> {
+    const entity = await this.logRepository.findOne({
       where: {
         id,
       },
     });
+    const result = new ResponseResult<LogEntity>(
+      ResponseStatus.success,
+      "操作成功",
+      entity
+    );
+    return result;
   }
-  async createLog(createLogDto: CreateLogDto) {
+
+  /**
+   * 创建日志
+   * @param createUserDto 创建日志dto
+   * @returns  Promise<ResponseResult>
+   */
+  async createLog(createLogDto: CreateLogDto): Promise<ResponseResult> {
     createLogDto.createTime = new Date();
     const logEntity = new LogEntity();
     toEntity(createLogDto, logEntity);
     await this.logRepository.insert(logEntity);
+    const result = new ResponseResult(ResponseStatus.success, "操作成功");
+    return result;
   }
-  async removeLogById(id: number) {
+
+  /**
+   * 删除日志
+   * @param id 主键
+   * @returns  Promise<ResponseResult>
+   */
+  async removeLogById(id: number): Promise<ResponseResult> {
     await this.logRepository.delete(id);
+    const result = new ResponseResult<LogEntity>(
+      ResponseStatus.success,
+      "操作成功"
+    );
+    return result;
   }
 }

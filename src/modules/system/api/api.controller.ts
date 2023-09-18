@@ -23,10 +23,10 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { ApiVo } from "./vo/api.vo";
 import { ResponseResult } from "@/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { ApiEntity } from "./entities/api.entity";
 
 @ApiTags("接口管理")
 @Controller("/system/apis")
@@ -34,13 +34,28 @@ export class ApiController {
   constructor(private readonly apiService: ApiService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: false })
-  @ApiQuery({ name: "size", description: "每页条数", required: false })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ApiVo,
+    type: ApiEntity,
   })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
@@ -63,7 +78,7 @@ export class ApiController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ApiVo,
+    type: ApiEntity,
   })
   @Get("/getApiList")
   async getApiList() {
@@ -76,7 +91,7 @@ export class ApiController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ApiVo,
+    type: ApiEntity,
   })
   @Get(":id")
   getApiById(@Param("id") id: string) {
@@ -93,7 +108,7 @@ export class ApiController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ApiVo,
+    type: ApiEntity,
   })
   @Get("getApiByApiName/:apiName")
   // @Version('2')

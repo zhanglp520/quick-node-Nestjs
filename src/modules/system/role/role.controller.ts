@@ -20,10 +20,10 @@ import {
   ApiQuery,
   ApiTags,
 } from "@nestjs/swagger";
-import { RoleVo } from "./vo/role.vo";
 import { ResponseResult } from "src/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { RoleEntity } from "./entities/role.entity";
 
 @ApiTags("角色管理")
 @Controller("/system/roles")
@@ -31,13 +31,28 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: false })
-  @ApiQuery({ name: "size", description: "每页条数", required: false })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleEntity,
   })
   @Get("getPageList")
   getPageList(
@@ -59,7 +74,7 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleEntity,
   })
   @Get()
   async getRoleList() {
@@ -72,7 +87,7 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleEntity,
   })
   @Get(":id")
   getRoleById(@Param("id") id: string) {
@@ -89,7 +104,7 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleEntity,
   })
   @Get("getRoleByRoleName/:roleName")
   getRoleByRoleName(@Param("roleName") roleName: string) {

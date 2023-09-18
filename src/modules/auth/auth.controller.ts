@@ -11,10 +11,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ResponseResult } from '@/common/tools/response.result';
-import { MenuVo } from '@/modules/system/menu/vo/menu.vo';
 import { RefreshTokenDto } from '@/modules/auth/dtos/refresh-token.dto';
-import { TokenVo } from '@/modules/auth/vo/token.vo';
 import { LoginDto } from '@/modules/auth/dtos/login.dto';
+import { Token } from '@/common/tools/token';
+import { MenuEntity } from '../system/menu/entities/menu.entity';
 
 @ApiTags('权限管理')
 @Controller('/auths')
@@ -26,7 +26,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: TokenVo,
+    type: Token,
   })
   @Public()
   @Post('/login')
@@ -50,7 +50,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: TokenVo,
+    type: Token,
   })
   @Public()
   @Post('/refreshToken')
@@ -68,7 +68,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: MenuVo,
+    type: MenuEntity,
   })
   @Get('getMenuListByUserId/:id')
   getMenuListByUserId(@Param('id') id: string) {

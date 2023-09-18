@@ -17,10 +17,10 @@ import {
   ApiParam,
   ApiTags,
 } from "@nestjs/swagger";
-import { DeptVo } from "./vo/dept.vo";
 import { ResponseResult } from "@/common/tools/response.result";
 import { Role } from "@/common/enums/role.enum";
 import { Roles } from "@/common/decorators/roles.decorator";
+import { DeptEntity } from "./entities/dept.entity";
 
 @ApiTags("部门管理")
 @Controller("/system/depts")
@@ -39,7 +39,7 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeptVo,
+    type: DeptEntity,
   })
   @Get("getDeptByPId/:pId")
   getDeptByPId(@Param("pId") pId: string) {
@@ -50,7 +50,7 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeptVo,
+    type: DeptEntity,
   })
   @Roles(Role.administrator, Role.admin, Role.custom)
   @Get()
@@ -64,7 +64,7 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeptVo,
+    type: DeptEntity,
   })
   @Get(":id")
   getDeptById(@Param("id") id: string) {
@@ -81,7 +81,7 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeptVo,
+    type: DeptEntity,
   })
   @Get("getDeptByDeptName/:deptName")
   getDeptByDeptName(@Param("deptName") deptName: string) {
