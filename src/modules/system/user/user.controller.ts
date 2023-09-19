@@ -12,8 +12,6 @@ import {
   UseInterceptors,
   Patch,
   UploadedFile,
-  UseGuards,
-  // Version,
 } from "@nestjs/common";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -24,29 +22,23 @@ import { SearchUserDto } from "./dto/search-user.dto";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import {
   ApiBody,
-  ApiExtension,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
-  ApiUnauthorizedResponse,
-  getSchemaPath,
 } from "@nestjs/swagger";
 import { Role } from "src/common/enums/role.enum";
 import { ResponseResult } from "src/common/tools/response.result";
-import { RolesGuard } from "src/modules/auth/guards/roles.guard";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { UserPageResult } from "./result/user.page.result";
 import { UserListResult } from "./result/user.list.result";
 import { UserResult } from "./result/user.result";
-import { ApiResult } from "@/common/decorators/api.result.decorator";
-import { PageResponseResult } from "@/common/tools/page.response.result";
-import { UserEntity } from "./entities/user.entity";
 
 @ApiTags("用户管理")
 // @UseInterceptors(new RbacInterceptor(Role.Administrator))
+// @Roles(Role.administrator, Role.admin)
 @Controller("/system/users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -70,25 +62,6 @@ export class UserController {
     required: true,
     type: Number,
   })
-  // @ApiOkResponse({
-  //   status: 200,
-  //   description: "操作成功",
-  //   schema: {
-  //     allOf: [
-  //       { $ref: getSchemaPath(PageResponseResult) },
-  //       {
-  //         properties: {
-  //           payload: {
-  //             type: "array",
-  //             items: { $ref: getSchemaPath(UserEntity) },
-  //           },
-  //         },
-  //       },
-  //     ],
-  //   },
-  // })
-  // @ApiOkResponse({ type: ResponseResult<UserVo> })
-  // @ApiResult({ type: UserVo })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
@@ -104,8 +77,6 @@ export class UserController {
     description: "系统异常",
     type: ResponseResult,
   })
-  // @UseInterceptors(MapInterceptor(DeptEntity, DeptVo, { isArray: true }))
-  // @Roles(Role.administrator, Role.admin)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   getPageList(
@@ -152,6 +123,16 @@ export class UserController {
     description: "操作成功",
     type: UserResult,
   })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Get(":id")
   getUserById(@Param("id") id: string) {
     return this.userService.getUserById(+id);
@@ -180,16 +161,15 @@ export class UserController {
     type: ResponseResult,
   })
   @Get("getUserByUserName/:userName")
-  // @Version('2')
   getUserByUserName(@Param("userName") userName: string) {
     return this.userService.getUserByUserName(userName);
   }
 
   @ApiOperation({ summary: "创建" })
   @ApiBody({ type: CreateUserDto, description: "创建用户参数" })
-  @ApiResponse({
+  @ApiOkResponse({
     status: 200,
-    description: "请求成功",
+    description: "操作成功",
     type: ResponseResult,
   })
   @ApiResponse({
@@ -265,10 +245,6 @@ export class UserController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @ApiUnauthorizedResponse({
-    description: "无权限",
-  })
-  // @ApiExtension()
   @Roles(Role.administrator)
   @Delete(":id")
   removeUserById(@Param("id") id: string) {
@@ -285,6 +261,21 @@ export class UserController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Roles(Role.administrator)
@@ -305,6 +296,21 @@ export class UserController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Post("/importUser")
   @UseInterceptors(FileInterceptor("file"))
   async importUser(@UploadedFile() file: Express.Multer.File) {
@@ -321,6 +327,21 @@ export class UserController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Get("/exportUser")
@@ -341,6 +362,21 @@ export class UserController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Patch("enabled/:id")
   enabled(@Param("id") id: string) {
     return this.userService.enabledUserById(+id);
@@ -356,6 +392,21 @@ export class UserController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Patch("disable/:id")
@@ -375,6 +426,21 @@ export class UserController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Patch("resetPassword/:id")
   resetPassword(@Param("id") id: string) {
     return this.userService.resetUserPasswordById(+id);
@@ -390,6 +456,21 @@ export class UserController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Patch("changePassword/:id")

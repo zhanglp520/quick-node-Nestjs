@@ -26,7 +26,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: Token,
+     type: ResponseResult,
   })
   @Public()
   @Post('/login')
@@ -50,7 +50,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: Token,
+     type: ResponseResult,
   })
   @Public()
   @Post('/refreshToken')

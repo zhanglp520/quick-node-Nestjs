@@ -16,12 +16,15 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
 import { ResponseResult } from "src/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
 import { DictionaryEntity } from "./entities/dictionary.entity";
+import { DictionaryListResult } from "./result/dictionary.list.result";
+import { DictionaryResult } from "./result/dictionary.result";
 
 @ApiTags("字典管理")
 @Controller("/system/dictionaries")
@@ -32,7 +35,17 @@ export class DictionaryController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryEntity,
+    type: DictionaryListResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get()
   async getDictionaryListByTypeId(@Query("typeId") typeId) {
@@ -44,7 +57,17 @@ export class DictionaryController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryEntity,
+    type: DictionaryResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getDictionaryById(@Param("id") id: string) {
@@ -55,7 +78,17 @@ export class DictionaryController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryEntity,
+    type: DictionaryResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getDictionaryByDictionaryName/:dictionaryName")
   getDictionaryByDictionaryName(
@@ -71,6 +104,21 @@ export class DictionaryController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Post()
   createDictionary(@Body() createDictionaryDto: CreateDictionaryDto) {
     return this.dictionaryService.createDictionary(createDictionaryDto);
@@ -82,6 +130,21 @@ export class DictionaryController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Put(":id")
@@ -99,6 +162,21 @@ export class DictionaryController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Roles(Role.administrator)
