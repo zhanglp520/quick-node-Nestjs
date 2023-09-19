@@ -10,4 +10,7 @@ export class CreateDeptDto {
 
   @ApiProperty({ description: "父级编号" })
   pId: string;
+
+  @ApiProperty({ description: "备注" })
+  remark: string;
 }

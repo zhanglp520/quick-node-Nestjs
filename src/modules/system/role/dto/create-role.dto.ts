@@ -9,4 +9,7 @@ export class CreateRoleDto {
 
   @ApiProperty({ description: "部门名称" })
   deptId: number;
+
+  @ApiProperty({ description: "备注" })
+  remark: string;
 }

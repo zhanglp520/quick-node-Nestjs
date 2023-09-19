@@ -40,4 +40,7 @@ export class CreateMenuDto {
 
   @ApiPropertyOptional({ description: "缓存" })
   cache: number;
+
+  @ApiPropertyOptional({ description: "备注" })
+  remark: string;
 }
