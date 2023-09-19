@@ -1,8 +1,8 @@
+import { BaseEntity } from "@/entities/base.entity";
 import { RoleEntity } from "@/modules/system/role/entities/role.entity";
 import { UserEntity } from "@/modules/system/user/entities/user.entity";
-import { AutoMap } from "@automapper/classes";
+import { ApiProperty } from "@nestjs/swagger";
 import {
-  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -13,15 +13,11 @@ import {
 
 @Entity("per_user_roles")
 export class UserRoleEntity extends BaseEntity {
-  @AutoMap()
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @AutoMap()
+  @ApiProperty({ description: "用户编号" })
   @Column({ type: "int", name: "user_id" })
   userId: number;
 
-  @AutoMap()
+  @ApiProperty({ description: "角色编号" })
   @Column({ type: "int", name: "role_id" })
   roleId: number;
 

@@ -1,3 +1,4 @@
+import { MenuType } from "@/common/enums/menu.enum";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateMenuDto {
@@ -8,7 +9,7 @@ export class CreateMenuDto {
   menuName: string;
 
   @ApiProperty({ description: "菜单类型" })
-  menuType: number;
+  menuType: MenuType;
 
   @ApiPropertyOptional({ description: "路由" })
   path: string;

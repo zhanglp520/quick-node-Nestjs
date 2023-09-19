@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn } from "typeorm";
-import { AutoMap } from "@automapper/classes";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity()
 export class BaseEntity {
-  @AutoMap()
+  @ApiProperty({ description: "主键" })
   @PrimaryGeneratedColumn()
   id: number;
 }

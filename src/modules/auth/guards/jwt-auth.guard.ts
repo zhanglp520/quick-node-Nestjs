@@ -38,20 +38,10 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     const req = context.switchToHttp().getRequest();
     const accessToken = req.get("Authorization");
     if (!accessToken) {
-      throw new HttpException(
-        {
-          message: "请先登录",
-        },
-        HttpStatus.UNAUTHORIZED
-      );
+      throw new HttpException("请先登录", HttpStatus.UNAUTHORIZED);
     }
     if (accessToken.indexOf("Bearer") === -1) {
-      throw new HttpException(
-        {
-          message: "token未包含Bearer头",
-        },
-        HttpStatus.UNAUTHORIZED
-      );
+      throw new HttpException("token未包含Bearer头", HttpStatus.UNAUTHORIZED);
     }
     try {
       const tokenStr = accessToken.replace("Bearer ", "");
@@ -59,17 +49,13 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
       const { userName } = payload;
       if (!userName) {
         throw new HttpException(
-          {
-            message: "当前登录已过期,请重新登录.",
-          },
+          "当前登录已过期,请重新登录.",
           HttpStatus.UNAUTHORIZED
         );
       }
     } catch (error) {
       throw new HttpException(
-        {
-          message: "当前登录已过期,请重新登录.",
-        },
+        "当前登录已过期,请重新登录.",
         HttpStatus.UNAUTHORIZED
       );
     }

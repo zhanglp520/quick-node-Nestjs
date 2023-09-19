@@ -1,42 +1,38 @@
-import { AutoMap } from "@automapper/classes";
 import { Transform } from "class-transformer";
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 import { RoleEntity } from "../../role/entities/role.entity";
+import { ApiProperty } from "@nestjs/swagger";
+import { BaseEntity } from "@/entities/base.entity";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const moment = require("moment");
 
 @Entity("sys_apis")
 export class ApiEntity extends BaseEntity {
-  @AutoMap()
-  @PrimaryGeneratedColumn({ type: "int" })
-  id?: number;
-
-  @AutoMap()
+  @ApiProperty({ description: "接口编号" })
   @Column({ type: "varchar", name: "api_id" })
   apiId: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "接口名称" })
   @Column({ type: "varchar", name: "api_name" })
   apiName: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "接口路径" })
   @Column({ type: "varchar", name: "api_path" })
   apiPath: string;
 
-  @AutoMap()
-  @Column({ type: "datetime", name: "create_time", default: new Date() })
+  @ApiProperty({ description: "创建时间" })
+  @Transform((createTime: any) =>
+    moment(createTime.value).format("YYYY-MM-DD HH:mm:ss")
+  )
+  @Column({ type: "datetime", name: "create_time" })
   createTime: Date;
 
-  @AutoMap()
+  @ApiProperty({ description: "备注" })
   @Column({ type: "varchar" })
   remark: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "消息" })
   @ManyToMany(() => RoleEntity, (role) => role.apis)
   // @JoinTable()
   @JoinTable({
@@ -45,6 +41,6 @@ export class ApiEntity extends BaseEntity {
     inverseJoinColumns: [{ name: "role_id" }],
   })
   // @Column({ type: 'int', default: 1 })
-  @AutoMap()
+  @ApiProperty({ description: "消息" })
   roles: RoleEntity[];
 }

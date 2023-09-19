@@ -9,12 +9,7 @@ import { LoggerInterceptor } from "@/common/interceptors/logger.interceptor";
 import { AllExceptionsFilter } from "@/common/filters/all-exceptions.filter";
 import { LogService } from "@/modules/system/log/log.service";
 // import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
-import {
-  DocumentBuilder,
-  SwaggerModule,
-  SwaggerDocumentOptions,
-  SwaggerCustomOptions,
-} from "@nestjs/swagger";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { knife4jSetup } from "nestjs-knife4j";
 
 async function bootstrap() {
@@ -43,17 +38,13 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, "..", "public"), {
     prefix: "/public/",
   });
-  console.log("静态路径", join(__dirname, "..", "public"));
-
   const config = new DocumentBuilder()
     .setTitle("quick-vue3-admin接口文档")
     .setDescription("quick-vue3-admin接口文档方便开发者使用")
     .setVersion("2.0.0.RELEASE")
     .setContact("土豆哥", "https://quick.ainiteam.com", "zz15229380174@163.com")
-    // .addServer('http://127.0.0.1:4100', '开发服务器地址')
-    .addServer("http://localhost:4100", "开发环境")
+    .addServer("http://localhost:3101", "开发环境")
     .addServer("https://api.quick.ainiteam.com/", "生产环境")
-    // .setBasePath('http://127.0.0.1:4100')
     .setTermsOfService("https://quick.ainiteam.com")
     .build();
 

@@ -70,30 +70,30 @@ export class UserController {
     required: true,
     type: Number,
   })
-  @ApiOkResponse({
-    status: 200,
-    description: "操作成功",
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(PageResponseResult) },
-        {
-          properties: {
-            payload: {
-              type: "array",
-              items: { $ref: getSchemaPath(UserEntity) },
-            },
-          },
-        },
-      ],
-    },
-  })
-  // @ApiOkResponse({ type: ResponseResult<UserVo> })
-  // @ApiResult({ type: UserVo })
   // @ApiOkResponse({
   //   status: 200,
   //   description: "操作成功",
-  //   type: UserPageResult,
+  //   schema: {
+  //     allOf: [
+  //       { $ref: getSchemaPath(PageResponseResult) },
+  //       {
+  //         properties: {
+  //           payload: {
+  //             type: "array",
+  //             items: { $ref: getSchemaPath(UserEntity) },
+  //           },
+  //         },
+  //       },
+  //     ],
+  //   },
   // })
+  // @ApiOkResponse({ type: ResponseResult<UserVo> })
+  // @ApiResult({ type: UserVo })
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
+    type: UserPageResult,
+  })
   @ApiResponse({
     status: 401,
     description: "无权限",
