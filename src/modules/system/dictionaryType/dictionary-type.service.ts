@@ -6,8 +6,6 @@ import { CreateDictionaryTypeDto } from "./dto/create-dictionary-type.dto";
 import { SearchDictionaryTypeDto } from "./dto/search-dictionary-type.dto";
 import { UpdateDictionaryTypeDto } from "./dto/update-dictionary-type.dto";
 import { DictionaryTypeEntity } from "./entities/dictionary-type.entity";
-import { ResponseResult } from "@/common/tools/response.result";
-import { ResponseStatus } from "@/common/enums/response-status.enum";
 import { PageResponseResult } from "@/common/tools/page.response.result";
 
 @Injectable()
@@ -18,11 +16,10 @@ export class DictionaryTypeService {
   /**
    * 获取字典分类分页列表
    * @param searchDictionaryTypeDto 搜索dto
-   * @returns Promise<PageResponseResult<DictionaryTypeEntity[]>>
    */
   async getDictionaryTypePageList(
     searchDictionaryTypeDto: SearchDictionaryTypeDto
-  ): Promise<ResponseResult<DictionaryTypeEntity[]>> {
+  ) {
     const { page, keyword } = searchDictionaryTypeDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
@@ -40,8 +37,6 @@ export class DictionaryTypeService {
       .getMany();
     page.total = await queryBuilder.getCount();
     const result = new PageResponseResult<DictionaryTypeEntity[]>(
-      ResponseStatus.success,
-      "操作成功",
       page.total,
       entities
     );
@@ -50,64 +45,39 @@ export class DictionaryTypeService {
 
   /**
    * 获取字典分类列表
-   * @returns Promise<ResponseResult<DictionaryTypeEntity[]>>
    */
-  async getDictionaryTypeList(): Promise<
-    ResponseResult<DictionaryTypeEntity[]>
-  > {
+  async getDictionaryTypeList() {
     const entities = await this.dictionaryTypeRepository.find();
-    const result = new ResponseResult<DictionaryTypeEntity[]>(
-      ResponseStatus.success,
-      "操作成功",
-      entities
-    );
-    return result;
+    return entities;
   }
 
   /**
    * 根据字典分类id获取字典分类信息
    * @param id 主键
-   * @returns
    */
-  async getDictionaryTypeById(
-    id: number
-  ): Promise<ResponseResult<DictionaryTypeEntity>> {
+  async getDictionaryTypeById(id: number) {
     const entity = await this.dictionaryTypeRepository.findOne({
       where: {
         id,
       },
     });
-    const result = new ResponseResult<DictionaryTypeEntity>(
-      ResponseStatus.success,
-      "操作成功",
-      entity
-    );
-    return result;
+    return entity;
   }
 
   /**
    * 根据字典分类名称获取字典分类信息
    * @param dicTypeName 字典分类名称
-   * @returns
    */
-  async getDictionaryTypeByDictionaryTypeName(
-    dicTypeName: string
-  ): Promise<ResponseResult<DictionaryTypeEntity>> {
+  async getDictionaryTypeByDictionaryTypeName(dicTypeName: string) {
     const entity = await this.dictionaryTypeRepository.findOneBy({
       dicTypeName,
     });
-    const result = new ResponseResult<DictionaryTypeEntity>(
-      ResponseStatus.success,
-      "操作成功",
-      entity
-    );
-    return result;
+    return entity;
   }
 
   /**
    * 创建字典分类
    * @param createDictionaryTypeDto 创建字典分类dto
-   * @returns  Promise<ResponseResult>
    */
   async createDictionaryType(createDictionaryTypeDto: CreateDictionaryTypeDto) {
     const dictionaryType = await this.dictionaryTypeRepository.findOneBy({
@@ -122,15 +92,12 @@ export class DictionaryTypeService {
     const dictionaryTypeEntity = new DictionaryTypeEntity();
     toEntity(createDictionaryTypeDto, dictionaryTypeEntity);
     await this.dictionaryTypeRepository.insert(dictionaryTypeEntity);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 修改字典分类
    * @param id 主键
    * @param updateDictionaryTypeDto 修改字典分类dto
-   * @returns Promise<ResponseResult>
    */
   async updateDictionaryTypeById(
     id: number,
@@ -146,18 +113,13 @@ export class DictionaryTypeService {
     const dictionaryTypeEntity = new DictionaryTypeEntity();
     toEntity(updateDictionaryTypeDto, dictionaryTypeEntity);
     await this.dictionaryTypeRepository.update(id, dictionaryTypeEntity);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 删除字典分类
    * @param id 主键
-   * @returns  Promise<ResponseResult>
    */
   async removeDictionaryTypeById(id: number) {
     await this.dictionaryTypeRepository.delete(id);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 }

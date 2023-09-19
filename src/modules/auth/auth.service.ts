@@ -45,8 +45,7 @@ export class AuthService {
     username: string,
     pass: string
   ): Promise<UserEntity> {
-    const result = await this.userService.getUserByUserName(username);
-    const user = result.data;
+    const user = await this.userService.getUserByUserName(username);
     if (!user) {
       throw new HttpException(
         {
@@ -130,7 +129,7 @@ export class AuthService {
   async validateUserByJwt(payload): Promise<UserEntity> {
     const { id } = payload;
     const result = await this.userService.getUserById(id);
-    return result.data;
+    return result;
   }
 
   async login(login: LoginDto) {

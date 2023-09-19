@@ -10,10 +10,7 @@ import * as crypto from "crypto-js";
 import { toEntity } from "src/utils/dto2Entity";
 import systemConfig from "../../../config/system.config";
 import { ChangePasswordDto } from "./dto/change-password.dto";
-import { Mapper } from "@automapper/core";
 import { PageResponseResult } from "src/common/tools/page.response.result";
-import { ResponseStatus } from "@/common/enums/response-status.enum";
-import { ResponseResult } from "@/common/tools/response.result";
 
 /*
  *@Description: 用户管理模块业务
@@ -23,18 +20,14 @@ import { ResponseResult } from "@/common/tools/response.result";
  */
 @Injectable()
 export class UserService {
-  private readonly mapper: Mapper;
   @InjectRepository(UserEntity)
   private readonly userRepository: Repository<UserEntity>;
 
   /**
    * 获取用户分页列表
    * @param searchUserDto 搜索dto
-   * @returns Promise<PageResponseResult<UserEntity[]>>
    */
-  async getUserPageList(
-    searchUserDto: SearchUserDto
-  ): Promise<PageResponseResult<UserEntity[]>> {
+  async getUserPageList(searchUserDto: SearchUserDto) {
     const { page, keyword } = searchUserDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
@@ -50,82 +43,52 @@ export class UserService {
       .limit(size)
       .getMany();
     page.total = await queryBuilder.getCount();
-    const result = new PageResponseResult<UserEntity[]>(
-      ResponseStatus.success,
-      "操作成功",
-      page.total,
-      entities
-    );
+    const result = new PageResponseResult<UserEntity[]>(page.total, entities);
     return result;
   }
 
   /**
    * 获取用户列表
-   * @returns Promise<ResponseResult<UserEntity[]>>
    */
-  async getUserList(): Promise<ResponseResult<UserEntity[]>> {
+  async getUserList() {
     const entities = await this.userRepository
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.roles", "system_roles")
       .getMany();
-    const result = new ResponseResult<UserEntity[]>(
-      ResponseStatus.success,
-      "操作成功",
-      entities
-    );
-    return result;
+    return entities;
   }
 
   /**
    * 根据用户id获取用户信息
    * @param id 主键
-   * @returns
    */
-  async getUserById(id: number): Promise<ResponseResult<UserEntity>> {
+  async getUserById(id: number) {
     const entity = await this.userRepository
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.roles", "system_roles")
       .andWhere(`u.id=:id`, { id: id })
       .getOne();
-    const result = new ResponseResult<UserEntity>(
-      ResponseStatus.success,
-      "操作成功",
-      entity
-    );
-    return result;
+    return entity;
   }
 
   /**
    * 根据用户名称获取用户信息
    * @param userName 用户名称
-   * @returns
    */
-  async getUserByUserName(
-    userName: string
-  ): Promise<ResponseResult<UserEntity>> {
-    // const entity = await this.userRepository.findOneBy({
-    //   userName,
-    // });
-
+  async getUserByUserName(userName: string) {
     const entity = await this.userRepository
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.roles", "system_roles")
       .andWhere(`user_name=:userName`, { userName: userName })
       .getOne();
-    const result = new ResponseResult<UserEntity>(
-      ResponseStatus.success,
-      "操作成功",
-      entity
-    );
-    return result;
+    return entity;
   }
 
   /**
    * 创建用户
    * @param createUserDto 创建用户dto
-   * @returns  Promise<ResponseResult>
    */
-  async createUser(createUserDto: CreateUserDto): Promise<ResponseResult> {
+  async createUser(createUserDto: CreateUserDto) {
     const user = await this.userRepository.findOneBy({
       userName: createUserDto.userName,
     });
@@ -147,20 +110,14 @@ export class UserService {
     userEntity.enabled = true;
     userEntity.createTime = new Date();
     await this.userRepository.insert(userEntity);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 修改用户
    * @param id 主键
    * @param updateUserDto 修改用户dto
-   * @returns Promise<ResponseResult>
    */
-  async updateUserById(
-    id: number,
-    updateUserDto: UpdateUserDto
-  ): Promise<ResponseResult> {
+  async updateUserById(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.getById(id);
     if (!user) {
       throw new HttpException(
@@ -173,84 +130,63 @@ export class UserService {
     const userEntity = new UserEntity();
     toEntity(updateUserDto, userEntity);
     await this.userRepository.update(id, userEntity);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 删除用户
    * @param id 主键
-   * @returns  Promise<ResponseResult>
    */
-  async removeUserById(id: number): Promise<ResponseResult> {
+  async removeUserById(id: number) {
     await this.userRepository.delete(id);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 批量删除用户
    * @param id 主键
-   * @returns  Promise<ResponseResult>
    */
-  async removeUserByIds(ids: string): Promise<ResponseResult> {
+  async removeUserByIds(ids: string) {
     const arr = ids.split(",");
     await this.userRepository.delete(arr);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 启用用户
    * @param id 主键
-   * @returns Promise<ResponseResult>
    */
-  async enabledUserById(id: number): Promise<ResponseResult> {
+  async enabledUserById(id: number) {
     const userEntity = new UserEntity();
     userEntity.enabled = true;
     await this.userRepository.update(id, userEntity);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 禁用用户
    * @param id 主键
-   * @returns Promise<ResponseResult>
    */
-  async disableUserById(id: number): Promise<ResponseResult> {
+  async disableUserById(id: number) {
     const userEntity = new UserEntity();
     userEntity.enabled = false;
     await this.userRepository.update(id, userEntity);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 重置用户密码
    * @param id 主键
-   * @returns Promise<ResponseResult>
    */
-  async resetUserPasswordById(id: number): Promise<ResponseResult> {
+  async resetUserPasswordById(id: number) {
     const userEntity = new UserEntity();
     const { defaultPassword } = systemConfig;
     userEntity.password = crypto
       .MD5(crypto.MD5(defaultPassword).toString())
       .toString();
     await this.userRepository.update(id, userEntity);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   /**
    * 修改用户密码
    * @param id 主键
-   * @returns Promise<ResponseResult>
    */
-  async changePasswordById(
-    id: number,
-    changePasswordDto: ChangePasswordDto
-  ): Promise<ResponseResult> {
+  async changePasswordById(id: number, changePasswordDto: ChangePasswordDto) {
     const { oldPassword, newPassword } = changePasswordDto;
     const user = await this.getById(id);
     if (!user) {
@@ -273,8 +209,6 @@ export class UserService {
     const userEntity = new UserEntity();
     userEntity.password = crypto.MD5(newPassword.toString()).toString();
     await this.userRepository.update(id, userEntity);
-    const result = new ResponseResult(ResponseStatus.success, "操作成功");
-    return result;
   }
 
   async importExcel(file: any) {
@@ -330,7 +264,7 @@ export class UserService {
       { header: "备注", key: "remark", width: 32 },
     ];
     const result = await this.getUserList(); // result是通过前端传递的ids从数据库获取需要导出的信息
-    worksheet.addRows(result.data);
+    worksheet.addRows(result);
     // return workbook.xlsx.writeFile('用户.xlsx'); //直接到导出文件
     // return workbook.xlsx.writeBuffer(); // 前端接受到的数据格式为{type: 'buffer', data: []}
 
