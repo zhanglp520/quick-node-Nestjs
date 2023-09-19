@@ -7,6 +7,7 @@ import { SearchMenuDto } from "./dto/search-menu.dto";
 import { UpdateMenuDto } from "./dto/update-menu.dto";
 import { MenuEntity } from "./entities/menu.entity";
 import { PageResponseResult } from "@/common/tools/page.response.result";
+import { Deleted } from "@/common/enums/deleted.enum";
 
 @Injectable()
 export class MenuService {
@@ -82,6 +83,7 @@ export class MenuService {
     }
     const menuEntity = new MenuEntity();
     toEntity(createMenuDto, menuEntity);
+    menuEntity.deleted = Deleted.NoDeleted;
     await this.menuRepository.insert(menuEntity);
   }
 

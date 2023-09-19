@@ -1,3 +1,7 @@
+import { Cached } from "@/common/enums/cached.enum";
+import { Deleted } from "@/common/enums/deleted.enum";
+import { Display } from "@/common/enums/display.enum";
+import { Enabled } from "@/common/enums/enabled.enum";
 import { MenuType } from "@/common/enums/menu.enum";
 import { BaseEntity } from "@/entities/base.entity";
 import { ApiProperty } from "@nestjs/swagger";
@@ -28,9 +32,7 @@ export class MenuEntity extends BaseEntity {
   @ApiProperty({ description: "类型" })
   @Column({
     name: "menu_type",
-    type: "enum",
-    enum: MenuType,
-    default: MenuType.menu,
+    type: "int",
   })
   menuType: MenuType;
 
@@ -55,20 +57,20 @@ export class MenuEntity extends BaseEntity {
   linkUrl: string;
 
   @ApiProperty({ description: "状态" })
-  @Column({ type: "int" })
-  status: boolean;
+  @Column({ type: "int", default: 1 })
+  status: Display;
 
   @ApiProperty({ description: "缓存" })
-  @Column({ type: "int" })
-  cache: boolean;
+  @Column({ type: "int", default: 0 })
+  cache: Cached;
 
   @ApiProperty({ description: "删除" })
   @Column({ type: "int", default: 0 })
-  deleted?: boolean;
+  deleted: Deleted;
 
   @ApiProperty({ description: "启用" })
   @Column({ type: "int", default: 1 })
-  enabled?: boolean;
+  enabled: Enabled;
 
   @ApiProperty({ description: "创建时间" })
   @Transform((createTime: any) =>

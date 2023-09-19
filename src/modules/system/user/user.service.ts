@@ -11,6 +11,8 @@ import { toEntity } from "src/utils/dto2Entity";
 import systemConfig from "../../../config/system.config";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { PageResponseResult } from "src/common/tools/page.response.result";
+import { Deleted } from "@/common/enums/deleted.enum";
+import { Enabled } from "@/common/enums/enabled.enum";
 
 /*
  *@Description: 用户管理模块业务
@@ -106,8 +108,8 @@ export class UserService {
     userEntity.password = crypto
       .MD5(crypto.MD5(defaultPassword).toString())
       .toString();
-    userEntity.deleted = false;
-    userEntity.enabled = true;
+    userEntity.deleted = Deleted.NoDeleted;
+    userEntity.enabled = Enabled.Enabled;
     userEntity.createTime = new Date();
     await this.userRepository.insert(userEntity);
   }
@@ -155,7 +157,7 @@ export class UserService {
    */
   async enabledUserById(id: number) {
     const userEntity = new UserEntity();
-    userEntity.enabled = true;
+    userEntity.enabled = Enabled.Enabled;
     await this.userRepository.update(id, userEntity);
   }
 
@@ -165,7 +167,7 @@ export class UserService {
    */
   async disableUserById(id: number) {
     const userEntity = new UserEntity();
-    userEntity.enabled = false;
+    userEntity.enabled = Enabled.Disable;
     await this.userRepository.update(id, userEntity);
   }
 

@@ -1,4 +1,4 @@
 export enum LogType {
-  operate = 0,
-  execution = 1,
+  Operate = 0,
+  Execution = 1,
 }

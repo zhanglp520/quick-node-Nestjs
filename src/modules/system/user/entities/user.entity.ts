@@ -14,6 +14,8 @@ import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
 import { BaseEntity } from "@/entities/base.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
+import { Enabled } from "@/common/enums/enabled.enum";
+import { Deleted } from "@/common/enums/deleted.enum";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require("moment");
@@ -54,11 +56,11 @@ export class UserEntity extends BaseEntity {
 
   @ApiProperty({ description: "删除" })
   @Column({ type: "int", default: 0 })
-  deleted?: boolean;
+  deleted: Deleted;
 
   @ApiProperty({ description: "启用" })
   @Column({ type: "int", default: 1 })
-  enabled?: boolean;
+  enabled: Enabled;
 
   @ApiProperty({ description: "创建时间" })
   @Transform((createTime: any) =>

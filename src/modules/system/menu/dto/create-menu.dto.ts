@@ -1,3 +1,6 @@
+import { Cached } from "@/common/enums/cached.enum";
+import { Display } from "@/common/enums/display.enum";
+import { Enabled } from "@/common/enums/enabled.enum";
 import { MenuType } from "@/common/enums/menu.enum";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
@@ -33,13 +36,13 @@ export class CreateMenuDto {
   linkUrl: string;
 
   @ApiPropertyOptional({ description: "启用" })
-  enabled: number;
+  enabled: Enabled;
 
   @ApiPropertyOptional({ description: "显示" })
-  status: number;
+  status: Display;
 
   @ApiPropertyOptional({ description: "缓存" })
-  cache: number;
+  cache: Cached;
 
   @ApiPropertyOptional({ description: "备注" })
   remark: string;

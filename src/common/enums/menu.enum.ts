@@ -1,5 +1,5 @@
 export enum MenuType {
-  foder = 0,
-  menu = 1,
-  btn = 2,
+  Folder = 0,
+  Menu = 1,
+  Button = 2,
 }

@@ -1,3 +1,4 @@
+import { LogType } from "@/common/enums/log.enum";
 import { BaseEntity } from "@/entities/base.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
@@ -10,7 +11,7 @@ const moment = require("moment");
 export class LogEntity extends BaseEntity {
   @ApiProperty({ description: "日志类型" })
   @Column({ type: "int", name: "type" })
-  type: string;
+  type: LogType;
 
   @ApiProperty({ description: "ip地址" })
   @Column({ type: "varchar", name: "ip" })
