@@ -25,10 +25,14 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { DeviceVo } from "./vo/device.vo";
 import { ResponseResult } from "@/common/tools/response.result";
 import { Role } from "@/common/enums/role.enum";
 import { Roles } from "@/common/decorators/roles.decorator";
+import { DeviceListResult } from "./result/device.list.result";
+import { DeviceCount } from "./result/device.count";
+import { DevicePageResult } from "./result/device.page.result";
+import { DeviceResult } from "./result/device.result";
+import { ProductResult } from "../product/result/product.result";
 
 @ApiTags("设备管理")
 @Controller("/device/devices")
@@ -43,7 +47,17 @@ export class DeviceController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeviceVo,
+    type: DevicePageResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
@@ -67,7 +81,17 @@ export class DeviceController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeviceVo,
+    type: DeviceListResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getDeviceList")
   async getDeviceList(@Query("productId") productId) {
@@ -75,12 +99,27 @@ export class DeviceController {
     return list;
   }
 
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
+    type: DeviceCount,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Get("getDeviceCount")
   async getDeviceCount() {
     const list = await this.deviceService.getDeviceList();
     const onlineList = list.filter((x) => x.status === true);
     const offlineList = list.filter((x) => x.status === false);
-    const result = {
+    const result: DeviceCount = {
       count: list.length,
       onlineCount: onlineList.length,
       offlineCount: offlineList.length,
@@ -154,7 +193,17 @@ export class DeviceController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeviceVo,
+    type: DeviceResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getDeviceById(@Param("id") id: string) {
@@ -171,7 +220,17 @@ export class DeviceController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeviceVo,
+    type: ProductResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getDeviceByDeviceName/:deviceName")
   getDeviceByDeviceName(@Param("deviceName") deviceName: string) {
@@ -180,9 +239,9 @@ export class DeviceController {
 
   @ApiOperation({ summary: "创建" })
   @ApiBody({ type: CreateDeviceDto, description: "创建设备参数" })
-  @ApiResponse({
-    status: 0,
-    description: "请求成功",
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
     type: ResponseResult,
   })
   @ApiResponse({
@@ -191,12 +250,12 @@ export class DeviceController {
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 1,
-    description: "操作失败",
+    status: 401,
+    description: "无权限",
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 2,
+    status: 500,
     description: "系统异常",
     type: ResponseResult,
   })
@@ -213,6 +272,21 @@ export class DeviceController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Put(":id")
   updateDeviceById(
     @Param("id") id: string,
@@ -226,6 +300,21 @@ export class DeviceController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Roles(Role.administrator)
@@ -246,6 +335,21 @@ export class DeviceController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Patch("enabled/:id")
   enabled(@Param("id") id: string) {
     return this.deviceService.enabledDeviceById(+id);
@@ -261,6 +365,21 @@ export class DeviceController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Patch("disable/:id")

@@ -24,12 +24,12 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-// import { ProductVo } from "./vo/product.vo";
 import { ResponseResult } from "@/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
-// import { MapInterceptor } from "@automapper/nestjs";
-import { ProductEntity } from "./entities/product.entity";
+import { ProductPageResult } from "./result/product.page.result";
+import { ProductListResult } from "./result/product.list.result";
+import { ProductResult } from "./result/product.result";
 
 @ApiTags("产品管理")
 @Controller("/device/products")
@@ -37,15 +37,44 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "productType", description: "产品分类", required: false })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: true })
-  @ApiQuery({ name: "size", description: "每页条数", required: true })
+  @ApiQuery({
+    name: "productType",
+    description: "产品分类",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ProductEntity,
-    isArray: true,
+    type: ProductPageResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @UseInterceptors(ClassSerializerInterceptor)
   // @UseInterceptors(MapInterceptor(ProductEntity, ProductVo, { isArray: true }))
@@ -70,8 +99,17 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ProductEntity,
-    isArray: true,
+    type: ProductListResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getProductList")
   async getProductList() {
@@ -84,7 +122,17 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ProductEntity,
+    type: ProductResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getProductById(@Param("id") id: string) {
@@ -101,7 +149,17 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ProductEntity,
+    type: ProductResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getProductByProductName/:productName")
   getProductByProductName(@Param("productName") productName: string) {
@@ -110,9 +168,9 @@ export class ProductController {
 
   @ApiOperation({ summary: "创建" })
   @ApiBody({ type: CreateProductDto, description: "创建产品参数" })
-  @ApiResponse({
-    status: 0,
-    description: "请求成功",
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
     type: ResponseResult,
   })
   @ApiResponse({
@@ -121,12 +179,12 @@ export class ProductController {
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 1,
-    description: "操作失败",
+    status: 401,
+    description: "无权限",
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 2,
+    status: 500,
     description: "系统异常",
     type: ResponseResult,
   })
@@ -143,6 +201,21 @@ export class ProductController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Put(":id")
   updateProductById(
     @Param("id") id: string,
@@ -156,6 +229,21 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Roles(Role.administrator)
@@ -176,6 +264,21 @@ export class ProductController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Patch("enable/:id")
   enable(@Param("id") id: string) {
     return this.productService.enableProductById(+id);
@@ -191,6 +294,21 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Patch("disable/:id")
@@ -210,6 +328,21 @@ export class ProductController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Patch("publish/:id")
   publish(@Param("id") id: string) {
     return this.productService.publishProductById(+id);
@@ -225,6 +358,21 @@ export class ProductController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Patch("unpublish/:id")

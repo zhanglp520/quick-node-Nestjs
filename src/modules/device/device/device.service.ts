@@ -15,6 +15,7 @@ import { FunctionEntity } from "./entities/function.entity";
 import { EventEntity } from "./entities/event.entity";
 import { CreateFunctionDto } from "./dto/create-function.dto";
 import { CreateEventDto } from "./dto/create-event.dto";
+import { Enabled } from "@/common/enums/enabled.enum";
 
 @Injectable()
 export class DeviceService {
@@ -52,40 +53,6 @@ export class DeviceService {
       total: page.total,
     };
   }
-
-  // async getDevicePageList(searchDeviceDto: SearchDeviceDto) {
-  //   const { page, keyword, productId } = searchDeviceDto;
-  //   const { current, size } = page;
-  //   const skip = (current - 1) * size;
-  //   const queryBuilder = this.deviceRepository.createQueryBuilder();
-  //   if (productId) {
-  //     queryBuilder.where(`product_id=:productId`, { productId: productId });
-  //     if (keyword) {
-  //       queryBuilder.orWhere(`device_id=:deviceId`, { deviceId: keyword });
-  //       queryBuilder.orWhere(`device_name=:deviceName`, {
-  //         deviceName: keyword,
-  //       });
-  //     }
-  //   } else {
-  //     if (keyword) {
-  //       queryBuilder.where(`device_id=:deviceId`, { deviceId: keyword });
-  //       queryBuilder.orWhere(`device_name=:deviceName`, {
-  //         deviceName: keyword,
-  //       });
-  //     }
-  //   }
-
-  //   const list = await queryBuilder
-  //     .orderBy('create_time', 'DESC')
-  //     .offset(skip)
-  //     .limit(size)
-  //     .getMany();
-  //   page.total = await this.deviceRepository.count();
-  //   return {
-  //     payload: list,
-  //     total: page.total,
-  //   };
-  // }
 
   getDeviceList(productId?: number) {
     console.log("getDeviceList", {
@@ -126,7 +93,7 @@ export class DeviceService {
     }
     const deviceEntity = new DeviceEntity();
     toEntity(createDeviceDto, deviceEntity);
-    deviceEntity.enabled = true;
+    deviceEntity.enabled = Enabled.Enabled;
     deviceEntity.status = false;
     deviceEntity.createTime = new Date();
     await this.deviceRepository.insert(deviceEntity);
@@ -150,12 +117,12 @@ export class DeviceService {
   }
   async enabledDeviceById(id: number) {
     const deviceEntity = new DeviceEntity();
-    deviceEntity.enabled = true;
+    deviceEntity.enabled = Enabled.Enabled;
     await this.deviceRepository.update(id, deviceEntity);
   }
   async disableDeviceById(id: number) {
     const deviceEntity = new DeviceEntity();
-    deviceEntity.enabled = false;
+    deviceEntity.enabled = Enabled.Disable;
     await this.deviceRepository.update(id, deviceEntity);
   }
   //#region 属性

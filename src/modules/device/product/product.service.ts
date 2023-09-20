@@ -8,23 +8,16 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductEntity } from "./entities/product.entity";
 import { PhysicalModelService } from "../physicalModel/physical-model.service";
 import { CreatePhysicalModelDto } from "../physicalModel/dto/create-physical-model.dto";
-import { InjectMapper } from "@automapper/nestjs";
-import { Mapper } from "@automapper/core";
-import { ProductVo } from "./vo/product.vo";
-import { DeviceEntity } from "../device/entities/device.entity";
-import { DeviceVo } from "../device/vo/device.vo";
+import { Enabled } from "@/common/enums/enabled.enum";
+import { Published } from "@/common/enums/published.enum";
 
 @Injectable()
 export class ProductService {
   constructor(
-    @InjectMapper() mapper: Mapper,
     @Inject(PhysicalModelService)
     private readonly physicalModelService: PhysicalModelService
-  ) {
-    this.mapper = mapper;
-  }
+  ) {}
 
-  private readonly mapper: Mapper;
   @InjectRepository(ProductEntity, "iot_device_dev")
   private readonly productRepository: Repository<ProductEntity>;
 
@@ -56,35 +49,9 @@ export class ProductService {
       .getMany();
     console.log("zlp-sql:", queryBuilder.getSql());
     console.log("zlp-entities", entities);
-
-    // const vos = await this.mapper.mapArrayAsync(
-    //   entities,
-    //   ProductEntity,
-    //   ProductVo
-    // );
-    // console.log("zlp-vos", vos);
-
-    // const vos = [];
-    // entities.forEach((element) => {
-    //   const vo = this.mapper.map(element, ProductEntity, ProductVo);
-    //   console.log("vo", vo);
-    //   if (element.devices) {
-    //     const devVos = this.mapper.mapArray(
-    //       element.devices,
-    //       DeviceEntity,
-    //       DeviceVo
-    //     );
-    //     vo.devices = devVos;
-    //     console.log("devVos", devVos);
-    //   }
-    //   vos.push(vo);
-    // });
-
-    // return entities;
     const list = await queryBuilder.getMany();
     page.total = list.length;
     return {
-      // payload: vos,
       payload: entities,
       total: page.total,
     };
@@ -125,8 +92,8 @@ export class ProductService {
     productEntity.accessKey = "aaaaaaaaa";
     productEntity.productKey = "bbbbbbb";
     productEntity.productSecret = "cccccccc";
-    productEntity.enabled = true;
-    productEntity.published = 0;
+    productEntity.enabled = Enabled.Enabled;
+    productEntity.published = Published.No;
     productEntity.createTime = new Date();
     productEntity.updateTime = null;
     productEntity.publishTime = null;
@@ -159,27 +126,27 @@ export class ProductService {
   }
   async enableProductById(id: number) {
     const productEntity = new ProductEntity();
-    productEntity.enabled = true;
+    productEntity.enabled = Enabled.Enabled;
     productEntity.updateTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
   async disableProductById(id: number) {
     const productEntity = new ProductEntity();
-    productEntity.enabled = false;
+    productEntity.enabled = Enabled.Disable;
     productEntity.updateTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
   async publishProductById(id: number) {
     const productEntity = new ProductEntity();
     productEntity.updateTime = new Date();
-    productEntity.published = 1;
+    productEntity.published = Published.Published;
     productEntity.publishTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
   async unpublishProductById(id: number) {
     const productEntity = new ProductEntity();
     productEntity.updateTime = new Date();
-    productEntity.published = 2;
+    productEntity.published = Published.Unpublish;
     productEntity.unpublishTime = new Date();
     await this.productRepository.update(id, productEntity);
   }
