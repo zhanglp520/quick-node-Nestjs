@@ -1,17 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { RoleEntity } from "../entities/role.entity";
+import { Result } from "@/common/tools/result";
 
-export class RoleListResult {
-  @ApiProperty({
-    name: "status",
-    type: Number,
-    description: "状态:0-成功,1-失败,2-异常",
-  })
-  status: number;
-
-  @ApiProperty({ description: "消息" })
-  msg: string;
-
+export class RoleListResult extends Result {
   @ApiProperty({ description: "数据", type: () => [RoleEntity] })
   data: RoleEntity[];
 }
