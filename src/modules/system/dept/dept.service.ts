@@ -5,54 +5,61 @@ import { Repository } from "typeorm";
 import { CreateDeptDto } from "./dto/create-dept.dto";
 import { UpdateDeptDto } from "./dto/update-dept.dto";
 import { DeptEntity } from "./entities/dept.entity";
-import { Mapper } from "@automapper/core";
-import { DeptVo } from "./vo/dept.vo";
-import { InjectMapper } from "@automapper/nestjs";
 
 @Injectable()
 export class DeptService {
-  constructor(@InjectMapper() mapper: Mapper) {
-    this.mapper = mapper;
-  }
-
-  private readonly mapper: Mapper;
   @InjectRepository(DeptEntity)
   private readonly deptRepository: Repository<DeptEntity>;
 
-  async getDeptByPId(pId: string): Promise<DeptVo[]> {
+  /**
+   * 获取部门分页列表
+   * @param searchDeptDto 搜索dto
+   */
+  async getDeptByPId(pId: string) {
     const entities = await this.deptRepository.find({
       where: {
         pId,
       },
     });
-    const vos = await this.mapper.mapArrayAsync(entities, DeptEntity, DeptVo);
-    return vos;
+    return entities;
   }
 
+  /**
+   * 获取部门列表
+   */
   async getDeptList() {
     const entities = await this.deptRepository.find();
-    const vos = await this.mapper.mapArrayAsync(entities, DeptEntity, DeptVo);
-    return vos;
+    return entities;
   }
 
-  async getDeptById(id: number): Promise<DeptVo> {
+  /**
+   * 根据部门id获取部门信息
+   * @param id 主键
+   */
+  async getDeptById(id: number) {
     const entity = await this.deptRepository.findOne({
       where: {
         id,
       },
     });
-    const vo = await this.mapper.mapAsync(entity, DeptEntity, DeptVo);
-    return vo;
+    return entity;
   }
 
-  async getDeptByDeptName(deptName: string): Promise<DeptVo> {
+  /**
+   * 根据部门名称获取部门信息
+   * @param deptName 部门名称
+   */
+  async getDeptByDeptName(deptName: string) {
     const entity = await this.deptRepository.findOneBy({
       deptName,
     });
-    const vo = await this.mapper.mapAsync(entity, DeptEntity, DeptVo);
-    return vo;
+    return entity;
   }
 
+  /**
+   * 创建部门
+   * @param createDeptDto 创建部门dto
+   */
   async createDept(createDeptDto: CreateDeptDto) {
     const dept = await this.deptRepository.findOneBy({
       deptName: createDeptDto.deptName,
@@ -65,6 +72,11 @@ export class DeptService {
     await this.deptRepository.insert(deptEntity);
   }
 
+  /**
+   * 修改部门
+   * @param id 主键
+   * @param updateDeptDto 修改部门dto
+   */
   async updateDeptById(id: number, updateDeptDto: UpdateDeptDto) {
     const dept = await this.getDeptById(id);
     if (!dept) {
@@ -78,6 +90,10 @@ export class DeptService {
     await this.deptRepository.update(id, deptEntity);
   }
 
+  /**
+   * 删除部门
+   * @param id 主键
+   */
   async removeDeptById(id: number) {
     await this.deptRepository.delete(id);
   }

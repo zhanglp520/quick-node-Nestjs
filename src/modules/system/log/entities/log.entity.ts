@@ -1,46 +1,50 @@
-import { AutoMap } from "@automapper/classes";
+import { LogType } from "@/common/enums/log.enum";
+import { BaseEntity } from "@/entities/base.entity";
+import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require("moment");
 
 @Entity("sys_logs")
 export class LogEntity extends BaseEntity {
-  @AutoMap()
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @AutoMap()
+  @ApiProperty({ description: "日志类型" })
   @Column({ type: "int", name: "type" })
-  type: string;
+  type: LogType;
 
-  @AutoMap()
+  @ApiProperty({ description: "ip地址" })
   @Column({ type: "varchar", name: "ip" })
   ip: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "请求" })
   @Column({ type: "varchar", name: "request" })
   request: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "响应" })
   @Column({ type: "varchar", name: "response" })
   response: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "异常" })
   @Column({ type: "varchar", name: "exception" })
   exception: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "时长" })
   @Column({ type: "float", name: "duration" })
   duration: number;
 
-  @AutoMap()
+  @ApiProperty({ description: "操作人编号" })
   @Column({ type: "varchar", name: "operate_id" })
   operateId: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "创建时间" })
   @Transform((createTime: any) =>
     moment(createTime.value).format("YYYY-MM-DD HH:mm:ss")
   )
   @Column({ type: "datetime", name: "create_time" })
   createTime: Date;
+
+  @ApiProperty({ description: "备注" })
+  @Column({ type: "varchar" })
+  remark: string;
 }

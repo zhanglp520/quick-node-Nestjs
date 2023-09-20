@@ -6,12 +6,17 @@ import { CreateDictionaryDto } from "./dto/create-dictionary.dto";
 import { SearchDictionaryDto } from "./dto/search-dictionary.dto";
 import { UpdateDictionaryDto } from "./dto/update-dictionary.dto";
 import { DictionaryEntity } from "./entities/dictionary.entity";
+import { PageResponseResult } from "@/common/tools/page.response.result";
 
 @Injectable()
 export class DictionaryService {
   @InjectRepository(DictionaryEntity)
   private readonly dictionaryRepository: Repository<DictionaryEntity>;
 
+  /**
+   * 获取字典分页列表
+   * @param searchDictionaryDto 搜索dto
+   */
   async getDictionaryPageList(searchDictionaryDto: SearchDictionaryDto) {
     const { page, keyword } = searchDictionaryDto;
     const { current, size } = page;
@@ -23,18 +28,22 @@ export class DictionaryService {
       });
       queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
     }
-    const list = await queryBuilder
+    const entities = await queryBuilder
       .orderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
-    page.total = await this.dictionaryRepository.count();
-    return {
-      payload: list,
-      total: page.total,
-    };
+    page.total = await queryBuilder.getCount();
+    const result = new PageResponseResult<DictionaryEntity[]>(
+      page.total,
+      entities
+    );
+    return result;
   }
 
+  /**
+   * 获取字典列表
+   */
   async getDictionaryListByTypeId(typeId: string) {
     const queryBuilder = this.dictionaryRepository.createQueryBuilder();
     if (!typeId) {
@@ -48,24 +57,38 @@ export class DictionaryService {
     queryBuilder.where(`dic_type_id=:typeId`, {
       typeId,
     });
-    const list = await queryBuilder.getMany();
-    return list;
+    const entities = await queryBuilder.getMany();
+    return entities;
   }
 
-  getDictionaryById(id: number) {
-    return this.dictionaryRepository.findOne({
+  /**
+   * 根据字典id获取字典信息
+   * @param id 主键
+   */
+  async getDictionaryById(id: number) {
+    const entity = await this.dictionaryRepository.findOne({
       where: {
         id,
       },
     });
+    return entity;
   }
 
-  getDictionaryByDictionaryName(dicName: string) {
-    return this.dictionaryRepository.findOneBy({
+  /**
+   * 根据字典名称获取字典信息
+   * @param dicName 字典名称
+   */
+  async getDictionaryByDictionaryName(dicName: string) {
+    const entity = await this.dictionaryRepository.findOneBy({
       dicName,
     });
+    return entity;
   }
 
+  /**
+   * 创建字典
+   * @param createDictionaryDto 创建字典dto
+   */
   async createDictionary(createDictionaryDto: CreateDictionaryDto) {
     const dictionary = await this.dictionaryRepository.findOneBy({
       dicName: createDictionaryDto.dicName,
@@ -78,6 +101,11 @@ export class DictionaryService {
     await this.dictionaryRepository.insert(dictionaryEntity);
   }
 
+  /**
+   * 修改字典
+   * @param id 主键
+   * @param updateDictionaryDto 修改字典dto
+   */
   async updateDictionaryById(
     id: number,
     updateDictionaryDto: UpdateDictionaryDto
@@ -94,6 +122,10 @@ export class DictionaryService {
     await this.dictionaryRepository.update(id, dictionaryEntity);
   }
 
+  /**
+   * 删除字典
+   * @param id 主键
+   */
   async removeDictionaryById(id: number) {
     await this.dictionaryRepository.delete(id);
   }

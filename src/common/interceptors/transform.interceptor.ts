@@ -18,12 +18,7 @@ export class TransformInterceptor<T>
   ): Observable<ResponseResult<T>> {
     return next.handle().pipe(
       map((data) => {
-        const responseBody = {
-          status: 0,
-          msg: "操作成功.",
-          data: data ? data : null,
-        };
-        return responseBody;
+        return new ResponseResult(0, "操作成功", data ?? null);
       })
     );
   }

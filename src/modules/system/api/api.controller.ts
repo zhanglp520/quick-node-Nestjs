@@ -23,10 +23,13 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { ApiVo } from "./vo/api.vo";
 import { ResponseResult } from "@/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { ApiEntity } from "./entities/api.entity";
+import { ApiListResult } from "./result/api.list.result";
+import { ApiResult } from "./result/api.result";
+import { ApiPageResult } from "./result/api.page.result";
 
 @ApiTags("接口管理")
 @Controller("/system/apis")
@@ -34,13 +37,38 @@ export class ApiController {
   constructor(private readonly apiService: ApiService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: false })
-  @ApiQuery({ name: "size", description: "每页条数", required: false })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ApiVo,
+    type: ApiPageResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
@@ -63,7 +91,17 @@ export class ApiController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ApiVo,
+    type: ApiListResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("/getApiList")
   async getApiList() {
@@ -76,7 +114,17 @@ export class ApiController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ApiVo,
+    type: ApiResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getApiById(@Param("id") id: string) {
@@ -93,7 +141,17 @@ export class ApiController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: ApiVo,
+    type: ApiResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getApiByApiName/:apiName")
   // @Version('2')
@@ -103,9 +161,9 @@ export class ApiController {
 
   @ApiOperation({ summary: "创建" })
   @ApiBody({ type: CreateApiDto, description: "创建接口参数" })
-  @ApiResponse({
-    status: 0,
-    description: "请求成功",
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
     type: ResponseResult,
   })
   @ApiResponse({
@@ -114,12 +172,12 @@ export class ApiController {
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 1,
-    description: "操作失败",
+    status: 401,
+    description: "无权限",
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 2,
+    status: 500,
     description: "系统异常",
     type: ResponseResult,
   })
@@ -136,6 +194,21 @@ export class ApiController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Put(":id")
   updateApiById(@Param("id") id: string, @Body() updateApiDto: UpdateApiDto) {
     return this.apiService.updateApiById(+id, updateApiDto);
@@ -146,6 +219,21 @@ export class ApiController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Roles(Role.administrator)
@@ -164,6 +252,21 @@ export class ApiController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Roles(Role.administrator)

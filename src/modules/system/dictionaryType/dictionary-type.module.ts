@@ -3,12 +3,11 @@ import { DictionaryTypeService } from "./dictionary-type.service";
 import { DictionaryTypeController } from "./dictionary-type.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DictionaryTypeEntity } from "./entities/dictionary-type.entity";
-import { DictionaryTypeMapperProfile } from "./mapper/dictionary-type.mapper";
 
 @Module({
   imports: [TypeOrmModule.forFeature([DictionaryTypeEntity])],
   controllers: [DictionaryTypeController],
-  providers: [DictionaryTypeService, DictionaryTypeMapperProfile],
+  providers: [DictionaryTypeService],
   exports: [DictionaryTypeService],
 })
 export class DictionaryTypeModule {}

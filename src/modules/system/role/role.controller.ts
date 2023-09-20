@@ -18,12 +18,16 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { RoleVo } from "./vo/role.vo";
 import { ResponseResult } from "src/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { RoleEntity } from "./entities/role.entity";
+import { RolePageResult } from "./result/role.page.result";
+import { RoleListResult } from "./result/role.list.result";
+import { RoleResult } from "./result/role.result";
 
 @ApiTags("角色管理")
 @Controller("/system/roles")
@@ -31,13 +35,38 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: false })
-  @ApiQuery({ name: "size", description: "每页条数", required: false })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RolePageResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getPageList")
   getPageList(
@@ -59,7 +88,17 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleListResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get()
   async getRoleList() {
@@ -72,7 +111,17 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getRoleById(@Param("id") id: string) {
@@ -89,7 +138,17 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getRoleByRoleName/:roleName")
   getRoleByRoleName(@Param("roleName") roleName: string) {
@@ -103,6 +162,21 @@ export class RoleController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Post()
   createRole(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.createRole(createRoleDto);
@@ -114,6 +188,21 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Put(":id")
@@ -134,6 +223,21 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Roles(Role.administrator)

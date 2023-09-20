@@ -15,12 +15,15 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { DeptVo } from "./vo/dept.vo";
 import { ResponseResult } from "@/common/tools/response.result";
 import { Role } from "@/common/enums/role.enum";
 import { Roles } from "@/common/decorators/roles.decorator";
+import { DeptEntity } from "./entities/dept.entity";
+import { DeptResult } from "./result/dept.result";
+import { DeptListResult } from "./result/dept.list.result";
 
 @ApiTags("部门管理")
 @Controller("/system/depts")
@@ -39,7 +42,17 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeptVo,
+    type: DeptResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getDeptByPId/:pId")
   getDeptByPId(@Param("pId") pId: string) {
@@ -50,7 +63,17 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeptVo,
+    type: DeptListResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Roles(Role.administrator, Role.admin, Role.custom)
   @Get()
@@ -64,7 +87,17 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeptVo,
+    type: DeptResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getDeptById(@Param("id") id: string) {
@@ -81,7 +114,17 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DeptVo,
+    type: DeptResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getDeptByDeptName/:deptName")
   getDeptByDeptName(@Param("deptName") deptName: string) {
@@ -93,6 +136,21 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Post()
@@ -108,6 +166,21 @@ export class DeptController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Put(":id")
   updateDeptById(
     @Param("id") id: string,
@@ -121,6 +194,21 @@ export class DeptController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Roles(Role.administrator)

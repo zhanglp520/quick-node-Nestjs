@@ -2,7 +2,6 @@ import { Dependencies, Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
-import { AutomapperModule } from "@automapper/nestjs";
 import { classes } from "@automapper/classes";
 import { AppController } from "@/app.controller";
 import { AppService } from "@/app.service";
@@ -60,15 +59,6 @@ import { RuleConfigModule } from "./modules/rule/config/rule-config.module";
     AlarmRecordModule,
     RuleConfigModule,
     TypeOrmModule.forRoot(defaultOpts),
-    AutomapperModule.forRoot(
-      {
-        strategyInitializer: classes(),
-      }
-      // {
-      //   // globalErrorHandler:ErrorHandler
-      //   // globalNamingConventions: {},
-      // }
-    ),
   ],
   controllers: [AppController],
   providers: [

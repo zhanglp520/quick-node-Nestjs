@@ -12,7 +12,6 @@ import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
 import { RoleMenuEntity } from "@/modules/auth/entities/role-menu.entity";
 import { AuthService } from "@/modules/auth/auth.service";
 import { AuthController } from "@/modules/auth/auth.controller";
-import { AuthMapperProfile } from "@/modules/auth/mapper/auth.mapper";
 import { ApiEntity } from "@/modules/system/api/entities/api.entity";
 import { RoleApiEntity } from "@/modules/auth/entities/role-api.entity";
 
@@ -38,7 +37,7 @@ import { RoleApiEntity } from "@/modules/auth/entities/role-api.entity";
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, AuthMapperProfile],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

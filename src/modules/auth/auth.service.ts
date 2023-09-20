@@ -8,14 +8,13 @@ import { MenuEntity } from "@/modules/system/menu/entities/menu.entity";
 import { ApiEntity } from "@/modules/system/api/entities/api.entity";
 import { UserEntity } from "@/modules/system/user/entities/user.entity";
 import { UserService } from "@/modules/system/user/user.service";
-import { UserVo } from "@/modules/system/user/vo/user.vo";
 import { RoleMenuEntity } from "@/modules/auth/entities/role-menu.entity";
 import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
 import { CreateUserRoleDto } from "@/modules/auth/dtos/create-user-role.dto";
 import { CreateRoleMenuDto } from "@/modules/auth/dtos/create-role-menu.dto";
 import { LoginDto } from "@/modules/auth/dtos/login.dto";
 import { RefreshTokenDto } from "@/modules/auth/dtos/refresh-token.dto";
-import { TokenVo } from "@/modules/auth/vo/token.vo";
+import { Token } from "@/common/tools/token";
 
 @Injectable()
 export class AuthService {
@@ -49,7 +48,7 @@ export class AuthService {
   async validateUserByUserName(
     username: string,
     pass: string
-  ): Promise<UserVo> {
+  ): Promise<UserEntity> {
     const user = await this.userService.getUserByUserName(username);
     if (!user) {
       throw new HttpException(
@@ -133,7 +132,7 @@ export class AuthService {
     });
     const { exp } = this.jwtService.verify(quickAccessToken); //获取jwt生成的到期时间
     // const expiresIn = new Date().getTime() + 1000 * accessTokenExpiresIn;//有误差，不严重
-    const tokenVo = new TokenVo();
+    const tokenVo = new Token();
     tokenVo.quickAccessToken = quickAccessToken;
     tokenVo.quickRefreshToken = quickRefreshToken;
     tokenVo.expiresIn = exp;
@@ -154,11 +153,11 @@ export class AuthService {
       }
       const tokenObj = this.genToken({ id, userName });
       const { quickAccessToken, quickRefreshToken, expiresIn } = tokenObj;
-      const tokenVo = new TokenVo();
-      tokenVo.quickAccessToken = quickAccessToken;
-      tokenVo.quickRefreshToken = quickRefreshToken;
-      tokenVo.expiresIn = expiresIn;
-      return tokenVo;
+      const token = new Token();
+      token.quickAccessToken = quickAccessToken;
+      token.quickRefreshToken = quickRefreshToken;
+      token.expiresIn = expiresIn;
+      return token;
     } catch (error) {
       throw new HttpException(
         {
@@ -178,9 +177,10 @@ export class AuthService {
     }
   }
 
-  async validateUserByJwt(payload): Promise<UserVo> {
+  async validateUserByJwt(payload): Promise<UserEntity> {
     const { id } = payload;
-    return await this.userService.getUserById(id);
+    const result = await this.userService.getUserById(id);
+    return result;
   }
 
   async login(login: LoginDto) {
@@ -195,11 +195,11 @@ export class AuthService {
     const payload = { userName, id };
     const tokenObj = this.genToken(payload);
     const { quickAccessToken, quickRefreshToken, expiresIn } = tokenObj;
-    const tokenVo = new TokenVo();
-    tokenVo.quickAccessToken = quickAccessToken;
-    tokenVo.quickRefreshToken = quickRefreshToken;
-    tokenVo.expiresIn = expiresIn;
-    return tokenVo;
+    const token = new Token();
+    token.quickAccessToken = quickAccessToken;
+    token.quickRefreshToken = quickRefreshToken;
+    token.expiresIn = expiresIn;
+    return token;
   }
 
   async logout() {
