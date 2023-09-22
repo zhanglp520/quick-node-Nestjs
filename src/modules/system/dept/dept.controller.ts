@@ -75,7 +75,7 @@ export class DeptController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator, Role.admin, Role.custom)
+  @Roles(Role.administrator)
   @Get()
   async getDeptList() {
     const list = await this.deptService.getDeptList();
@@ -211,7 +211,6 @@ export class DeptController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
   @Delete(":id")
   removeDeptById(@Param("id") id: string) {
     return this.deptService.removeDeptById(+id);

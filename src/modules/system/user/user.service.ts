@@ -33,14 +33,14 @@ export class UserService {
     const { page, keyword } = searchUserDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
-    const queryBuilder = this.userRepository.createQueryBuilder();
-    queryBuilder.where("id<>0");
+    const queryBuilder = this.userRepository.createQueryBuilder("u");
+    queryBuilder.where("u.id<>0");
     if (keyword) {
-      queryBuilder.andWhere(`user_name=:userName`, { userName: keyword });
-      queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
+      queryBuilder.andWhere(`u.user_name=:userName`, { userName: keyword });
+      queryBuilder.orWhere(`u.phone=:phone`, { phone: keyword });
     }
     const entities = await queryBuilder
-      .orderBy("create_time", "DESC")
+      .orderBy("u.create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -56,6 +56,7 @@ export class UserService {
     const entities = await this.userRepository
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.roles", "system_roles")
+      .where("u.id<>0")
       .getMany();
     return entities;
   }

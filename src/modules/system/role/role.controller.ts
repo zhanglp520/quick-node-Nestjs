@@ -7,6 +7,8 @@ import {
   Delete,
   Query,
   Put,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { RoleService } from "./role.service";
 import { CreateRoleDto } from "./dto/create-role.dto";
@@ -68,6 +70,7 @@ export class RoleController {
     description: "系统异常",
     type: ResponseResult,
   })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("getPageList")
   getPageList(
     @Query("keyword") keyword,
@@ -100,6 +103,7 @@ export class RoleController {
     description: "系统异常",
     type: ResponseResult,
   })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async getRoleList() {
     const list = await this.roleService.getRoleList();
@@ -123,6 +127,7 @@ export class RoleController {
     description: "系统异常",
     type: ResponseResult,
   })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(":id")
   getRoleById(@Param("id") id: string) {
     return this.roleService.getRoleById(+id);
@@ -150,6 +155,7 @@ export class RoleController {
     description: "系统异常",
     type: ResponseResult,
   })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("getRoleByRoleName/:roleName")
   getRoleByRoleName(@Param("roleName") roleName: string) {
     return this.roleService.getRoleByRoleName(roleName);
@@ -240,7 +246,6 @@ export class RoleController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
   @Delete(":id")
   removeRoleById(@Param("id") id: string) {
     return this.roleService.removeRoleById(+id);

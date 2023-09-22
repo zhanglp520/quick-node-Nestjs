@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { AuthService } from './auth.service';
-import { CreateRoleMenuDto } from './dtos/create-role-menu.dto';
+import { CreateRoleAuthDto } from './dtos/create-role-auth.dto';
 import { CreateUserRoleDto } from './dtos/create-user-role.dto';
 import {
   ApiBody,
@@ -13,7 +13,6 @@ import {
 import { ResponseResult } from '@/common/tools/response.result';
 import { RefreshTokenDto } from '@/modules/auth/dtos/refresh-token.dto';
 import { LoginDto } from '@/modules/auth/dtos/login.dto';
-import { Token } from '@/common/tools/token';
 import { MenuEntity } from '../system/menu/entities/menu.entity';
 
 @ApiTags('权限管理')
@@ -122,15 +121,15 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '角色分配权限' })
-  @ApiBody({ type: CreateRoleMenuDto, description: '角色分配权限参数' })
+  @ApiBody({ type: CreateRoleAuthDto, description: '角色分配权限参数' })
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
     type: ResponseResult,
   })
   @Post('/assignPermission')
-  assignPermission(@Body() createRoleMenuDto: CreateRoleMenuDto) {
-    return this.authService.assignPermission(createRoleMenuDto);
+  assignPermission(@Body() createRoleAuthDto: CreateRoleAuthDto) {
+    return this.authService.assignPermission(createRoleAuthDto);
   }
 
   @ApiOperation({ summary: '已分配的接口权限' })

@@ -25,26 +25,21 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const { user, url } = context.switchToHttp().getRequest();
+    if (user.id === 0) {
+      return true;
+    }
     const roleCodes = user.roles?.map((item: any) => item.id);
     const flag = requiredRoles.some((role) => roleCodes?.includes(role));
     if (flag) {
       return true;
     }
-    const isCustom = requiredRoles.includes(Role.custom);
-    if (isCustom) {
-      const apis = await this.authService.getApiListByRoleId1(requiredRoles[0]);
-      if (apis && apis.length > 0) {
-        const arr = apis.filter((x) => x.apiPath == url);
-        if (arr && arr.length > 0) {
-          return true;
-        }
+    const apis = await this.authService.getApiListByRoleId1(roleCodes[0]);
+    if (apis && apis.length > 0) {
+      const arr = apis.filter((x) => x.apiPath == url);
+      if (arr && arr.length > 0) {
+        return true;
       }
     }
-    throw new HttpException(
-      {
-        message: "无权限访问此接口",
-      },
-      HttpStatus.UNAUTHORIZED
-    );
+    throw new HttpException("无权限访问此接口", HttpStatus.UNAUTHORIZED);
   }
 }

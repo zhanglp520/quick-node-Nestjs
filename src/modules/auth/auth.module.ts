@@ -20,9 +20,9 @@ import { RoleApiEntity } from "@/modules/auth/entities/role-api.entity";
     TypeOrmModule.forFeature([
       MenuEntity,
       UserEntity,
+      ApiEntity,
       UserRoleEntity,
       RoleMenuEntity,
-      ApiEntity,
       RoleApiEntity,
     ]),
     PassportModule,

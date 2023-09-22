@@ -185,7 +185,6 @@ export class DictionaryTypeController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
   @Delete(":id")
   removeDictionaryTypeById(@Param("id") id: string) {
     return this.dictionaryTypeService.removeDictionaryTypeById(+id);

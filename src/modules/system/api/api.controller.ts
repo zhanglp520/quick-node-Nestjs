@@ -236,7 +236,6 @@ export class ApiController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
   @Delete(":id")
   removeApiById(@Param("id") id: string) {
     return this.apiService.removeApiById(+id);
@@ -269,7 +268,6 @@ export class ApiController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
   @Delete("batchRemove/:ids")
   batchRemove(@Param("ids") ids: string) {
     return this.apiService.removeApiByIds(ids);
