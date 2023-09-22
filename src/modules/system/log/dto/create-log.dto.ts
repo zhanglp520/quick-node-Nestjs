@@ -23,9 +23,6 @@ export class CreateLogDto {
   @ApiProperty({ description: "操作人" })
   operateId: string;
 
-  @ApiProperty({ description: "创建时间" })
-  createTime: Date;
-
   @ApiProperty({ description: "备注" })
   remark: string;
 }

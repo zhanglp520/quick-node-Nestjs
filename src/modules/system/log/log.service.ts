@@ -67,9 +67,9 @@ export class LogService {
    * @param createUserDto 创建日志dto
    */
   async createLog(createLogDto: CreateLogDto) {
-    createLogDto.createTime = new Date();
     const logEntity = new LogEntity();
     toEntity(createLogDto, logEntity);
+    logEntity.createTime = new Date();
     await this.logRepository.insert(logEntity);
   }
 

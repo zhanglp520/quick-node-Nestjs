@@ -69,6 +69,7 @@ export class DeptService {
     }
     const deptEntity = new DeptEntity();
     toEntity(createDeptDto, deptEntity);
+    deptEntity.createTime = new Date();
     await this.deptRepository.insert(deptEntity);
   }
 
