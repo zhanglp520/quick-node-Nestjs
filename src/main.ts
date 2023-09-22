@@ -9,12 +9,7 @@ import { LoggerInterceptor } from "@/common/interceptors/logger.interceptor";
 import { AllExceptionsFilter } from "@/common/filters/all-exceptions.filter";
 import { LogService } from "@/modules/system/log/log.service";
 // import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
-import {
-  DocumentBuilder,
-  SwaggerModule,
-  SwaggerDocumentOptions,
-  SwaggerCustomOptions,
-} from "@nestjs/swagger";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { knife4jSetup } from "nestjs-knife4j";
 
 async function bootstrap() {
@@ -50,59 +45,22 @@ async function bootstrap() {
     .setDescription("quick-vue3-admin接口文档方便开发者使用")
     .setVersion("2.0.0.RELEASE")
     .setContact("土豆哥", "https://quick.ainiteam.com", "zz15229380174@163.com")
-    // .addServer('http://127.0.0.1:4100', '开发服务器地址')
-    .addServer("http://localhost:4100", "开发环境")
+    .addServer("http://localhost:3101", "开发环境")
     .addServer("https://api.quick.ainiteam.com/", "生产环境")
-    // .setBasePath('http://127.0.0.1:4100')
     .setTermsOfService("https://quick.ainiteam.com")
     .build();
 
-  const options: SwaggerDocumentOptions = {
-    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
-  };
-
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document, {
-    useGlobalPrefix: true,
-  }); //localhost:2000/doc
+  SwaggerModule.setup("api", app, document);
+
   knife4jSetup(app, {
     urls: [
       {
-        name: "首页",
+        name: "默认",
         url: `/api-json`,
         swaggerVersion: "2.0",
         location: `/api-json`,
       },
-      {
-        name: "系统模块",
-        url: `/api-json`,
-        swaggerVersion: "2.0",
-        location: `/api/v2/system?group=系统模块`,
-      },
-      // {
-      //   name: '测试',
-      //   url: `/api-json`,
-      //   swaggerVersion: '2.0',
-      //   location: `/api-json`,
-      // },
-      // {
-      //   name: '系统模块',
-      //   url: `127.0.0.1`,
-      //   swaggerVersion: '2.0',
-      //   location: `/api/v2?group=系统模块`,
-      // },
-      // {
-      //   name: '权限模块',
-      //   url: `/api-json`,
-      //   swaggerVersion: '2.0',
-      //   location: `/api-json`,
-      // },
-      // {
-      //   name: '开发者模块',
-      //   url: `/api-json`,
-      //   swaggerVersion: '2.0',
-      //   location: `/api-json`,
-      // },
     ],
   });
 

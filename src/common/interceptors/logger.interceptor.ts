@@ -10,6 +10,7 @@ import * as Log4js from "log4js";
 import config from "@/config/log4.config";
 import { LogService } from "@/modules/system/log/log.service";
 import { CreateLogDto } from "@/modules/system/log/dto/create-log.dto";
+import { ResponseResult } from "../tools/response.result";
 
 @Injectable()
 export class LoggerInterceptor implements NestInterceptor {
@@ -36,14 +37,11 @@ export class LoggerInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data) => {
+        const result = new ResponseResult(0, "操作成功", data ?? null);
         const end = Date.now();
         const logObj = {
           ...logData,
-          response: JSON.stringify({
-            status: 0,
-            msg: "操作成功.",
-            data: data ? data : null,
-          }),
+          response: JSON.stringify(result),
           duration: end - start,
           operateId: "admin",
         };

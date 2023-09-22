@@ -6,4 +6,7 @@ export class CreateDictionaryDto {
 
   @ApiProperty({ description: "字典名称" })
   dicName: string;
+
+  @ApiProperty({ description: "备注" })
+  remark: string;
 }

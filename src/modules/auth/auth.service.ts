@@ -8,14 +8,14 @@ import { MenuEntity } from "@/modules/system/menu/entities/menu.entity";
 import { ApiEntity } from "@/modules/system/api/entities/api.entity";
 import { UserEntity } from "@/modules/system/user/entities/user.entity";
 import { UserService } from "@/modules/system/user/user.service";
-import { UserVo } from "@/modules/system/user/vo/user.vo";
 import { RoleMenuEntity } from "@/modules/auth/entities/role-menu.entity";
 import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
 import { CreateUserRoleDto } from "@/modules/auth/dtos/create-user-role.dto";
-import { CreateRoleMenuDto } from "@/modules/auth/dtos/create-role-menu.dto";
+import { CreateRoleAuthDto } from "@/modules/auth/dtos/create-role-auth.dto";
 import { LoginDto } from "@/modules/auth/dtos/login.dto";
 import { RefreshTokenDto } from "@/modules/auth/dtos/refresh-token.dto";
-import { TokenVo } from "@/modules/auth/vo/token.vo";
+import { Token } from "@/common/tools/token";
+import { RoleApiEntity } from "./entities/role-api.entity";
 
 @Injectable()
 export class AuthService {
@@ -24,16 +24,20 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  @InjectRepository(MenuEntity)
-  private readonly menuRepository: Repository<MenuEntity>;
   @InjectRepository(UserEntity)
   private readonly userRepository: Repository<UserEntity>;
+  @InjectRepository(MenuEntity)
+  private readonly menuRepository: Repository<MenuEntity>;
+  @InjectRepository(ApiEntity)
+  private readonly apiRepository: Repository<ApiEntity>;
+
   @InjectRepository(UserRoleEntity)
   private readonly userRoleRepository: Repository<UserRoleEntity>;
   @InjectRepository(RoleMenuEntity)
   private readonly roleMenuRepository: Repository<RoleMenuEntity>;
-  @InjectRepository(ApiEntity)
-  private readonly apiRepository: Repository<ApiEntity>;
+  @InjectRepository(RoleApiEntity)
+  private readonly roleApiRepository: Repository<RoleApiEntity>;
+
   async validateUserById(id: number) {
     const user = await this.userService.getUserById(id);
     if (!user) {
@@ -45,7 +49,7 @@ export class AuthService {
   async validateUserByUserName(
     username: string,
     pass: string
-  ): Promise<UserVo> {
+  ): Promise<UserEntity> {
     const user = await this.userService.getUserByUserName(username);
     if (!user) {
       throw new HttpException(
@@ -82,7 +86,7 @@ export class AuthService {
     });
     const { exp } = this.jwtService.verify(quickAccessToken); //获取jwt生成的到期时间
     // const expiresIn = new Date().getTime() + 1000 * accessTokenExpiresIn;//有误差，不严重
-    const tokenVo = new TokenVo();
+    const tokenVo = new Token();
     tokenVo.quickAccessToken = quickAccessToken;
     tokenVo.quickRefreshToken = quickRefreshToken;
     tokenVo.expiresIn = exp;
@@ -103,11 +107,11 @@ export class AuthService {
       }
       const tokenObj = this.genToken({ id, userName });
       const { quickAccessToken, quickRefreshToken, expiresIn } = tokenObj;
-      const tokenVo = new TokenVo();
-      tokenVo.quickAccessToken = quickAccessToken;
-      tokenVo.quickRefreshToken = quickRefreshToken;
-      tokenVo.expiresIn = expiresIn;
-      return tokenVo;
+      const token = new Token();
+      token.quickAccessToken = quickAccessToken;
+      token.quickRefreshToken = quickRefreshToken;
+      token.expiresIn = expiresIn;
+      return token;
     } catch (error) {
       throw new HttpException(
         {
@@ -127,9 +131,10 @@ export class AuthService {
     }
   }
 
-  async validateUserByJwt(payload): Promise<UserVo> {
+  async validateUserByJwt(payload): Promise<UserEntity> {
     const { id } = payload;
-    return await this.userService.getUserById(id);
+    const result = await this.userService.getUserById(id);
+    return result;
   }
 
   async login(login: LoginDto) {
@@ -144,11 +149,11 @@ export class AuthService {
     const payload = { userName, id };
     const tokenObj = this.genToken(payload);
     const { quickAccessToken, quickRefreshToken, expiresIn } = tokenObj;
-    const tokenVo = new TokenVo();
-    tokenVo.quickAccessToken = quickAccessToken;
-    tokenVo.quickRefreshToken = quickRefreshToken;
-    tokenVo.expiresIn = expiresIn;
-    return tokenVo;
+    const token = new Token();
+    token.quickAccessToken = quickAccessToken;
+    token.quickRefreshToken = quickRefreshToken;
+    token.expiresIn = expiresIn;
+    return token;
   }
 
   async logout() {
@@ -233,20 +238,33 @@ export class AuthService {
     await this.userRoleRepository.insert(list);
   }
 
-  async assignPermission(createRoleMenuDto: CreateRoleMenuDto) {
-    const { roleId } = createRoleMenuDto;
-    const list = new Array<RoleMenuEntity>();
-    const ids = createRoleMenuDto.menuIds.split(",");
-    ids.forEach((element) => {
-      const roleMenuEntity = new RoleMenuEntity();
-      roleMenuEntity.roleId = roleId;
-      roleMenuEntity.menuId = Number(element);
-      list.push(roleMenuEntity);
-    });
+  async assignPermission(createRoleAuthDto: CreateRoleAuthDto) {
+    const { roleId, menuIds, apiIds } = createRoleAuthDto;
     await this.roleMenuRepository.delete({
       roleId,
     });
-    await this.roleMenuRepository.insert(list);
+
+    //角色授权菜单
+    const roleMenuList = new Array<RoleMenuEntity>();
+    const mIds = menuIds.split(",");
+    mIds.forEach((element) => {
+      const roleMenuEntity = new RoleMenuEntity();
+      roleMenuEntity.roleId = roleId;
+      roleMenuEntity.menuId = Number(element);
+      roleMenuList.push(roleMenuEntity);
+    });
+    await this.roleMenuRepository.insert(roleMenuList);
+
+    //角色授权接口
+    const roleApiList = new Array<RoleApiEntity>();
+    const aIds = apiIds.split(",");
+    aIds.forEach((element) => {
+      const roleApiEntity = new RoleApiEntity();
+      roleApiEntity.roleId = roleId;
+      roleApiEntity.apiId = Number(element);
+      roleApiList.push(roleApiEntity);
+    });
+    await this.roleApiRepository.insert(roleApiList);
   }
   async getApiListByRoleId1(id: number) {
     // const sql = this.apiRepository

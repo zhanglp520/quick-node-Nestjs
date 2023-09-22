@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Not, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import * as ExcelJS from "exceljs";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { SearchUserDto } from "./dto/search-user.dto";
@@ -10,14 +10,10 @@ import * as crypto from "crypto-js";
 import { toEntity } from "src/utils/dto2Entity";
 import systemConfig from "../../../config/system.config";
 import { ChangePasswordDto } from "./dto/change-password.dto";
-import { InjectMapper } from "@automapper/nestjs";
-import { Mapper } from "@automapper/core";
-import { UserVo } from "./vo/user.vo";
 import { PageResponseResult } from "src/common/tools/page.response.result";
-import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
-import { UserRoleVo } from "@/modules/auth/vo/user-role.vo";
-import { RoleEntity } from "../role/entities/role.entity";
-import { RoleVo } from "../role/vo/role.vo";
+import { Deleted } from "@/common/enums/deleted.enum";
+import { Enabled } from "@/common/enums/enabled.enum";
+
 /*
  *@Description: 用户管理模块业务
  *返回用户数据时，排除掉超级管理员,超级管理员id为0，默认管理员用户名为administrator。切记
@@ -26,114 +22,75 @@ import { RoleVo } from "../role/vo/role.vo";
  */
 @Injectable()
 export class UserService {
-  constructor(@InjectMapper() mapper: Mapper) {
-    this.mapper = mapper;
-  }
-
-  private readonly mapper: Mapper;
   @InjectRepository(UserEntity)
   private readonly userRepository: Repository<UserEntity>;
 
-  async getUserPageList(
-    searchUserDto: SearchUserDto
-  ): Promise<PageResponseResult<UserVo[]>> {
+  /**
+   * 获取用户分页列表
+   * @param searchUserDto 搜索dto
+   */
+  async getUserPageList(searchUserDto: SearchUserDto) {
     const { page, keyword } = searchUserDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
-    const queryBuilder = this.userRepository.createQueryBuilder();
-    queryBuilder.where("id<>0");
+    const queryBuilder = this.userRepository.createQueryBuilder("u");
+    queryBuilder.where("u.id<>0");
     if (keyword) {
-      queryBuilder.andWhere(`user_name=:userName`, { userName: keyword });
-      queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
+      queryBuilder.andWhere(`u.user_name=:userName`, { userName: keyword });
+      queryBuilder.orWhere(`u.phone=:phone`, { phone: keyword });
     }
     const entities = await queryBuilder
-      .orderBy("create_time", "DESC")
+      .orderBy("u.create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
-
-    const vos = await this.mapper.mapArrayAsync(entities, UserEntity, UserVo);
-    page.total = await this.userRepository.count();
-    const data = new PageResponseResult<UserVo[]>();
-    data.payload = vos;
-    data.total = page.total;
-    return data;
+    page.total = await queryBuilder.getCount();
+    const result = new PageResponseResult<UserEntity[]>(page.total, entities);
+    return result;
   }
 
+  /**
+   * 获取用户列表
+   */
   async getUserList() {
-    //多对一方式
-    // console.log('entities', '多对一方式');
     const entities = await this.userRepository
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.roles", "system_roles")
+      .where("u.id<>0")
       .getMany();
-    //一对多方式
-    // const entities = await this.userRepository
-    //   .createQueryBuilder('u')
-    //   .leftJoinAndSelect('u.userRoles', 'per_user_roles')
-    //   .getMany();
-    //关联时，使用此方式，得不到关联属性值
-    // const entities = await this.userRepository.find({
-    //   where: {
-    //     id: Not(0),
-    //   },
-    // });
-    const vos = [];
-    const self = this;
-    entities.forEach((element) => {
-      const vo = self.mapper.map(element, UserEntity, UserVo);
-      const roleVos = self.mapper.mapArray(element.roles, RoleEntity, RoleVo);
-      vo.roles = roleVos;
-      vos.push(vo);
-    });
-    return vos;
+    return entities;
   }
 
+  /**
+   * 根据用户id获取用户信息
+   * @param id 主键
+   */
   async getUserById(id: number) {
     const entity = await this.userRepository
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.roles", "system_roles")
       .andWhere(`u.id=:id`, { id: id })
       .getOne();
-    const roleVos = await this.mapper.mapArrayAsync(
-      entity.roles,
-      RoleEntity,
-      RoleVo
-    );
-    const vo = await this.mapper.mapAsync(entity, UserEntity, UserVo);
-    vo.roles = roleVos;
-    return vo;
-    // const entity = await this.getById(id);
-    // const vo = await this.mapper.mapAsync(entity, UserEntity, UserVo);
-    // // const roleVos = await this.mapper.mapArrayAsync(
-    // //   entity.roles,
-    // //   RoleEntity,
-    // //   RoleVo
-    // // );
-    // // vo.roles = roleVos;
-    // return vo;
+    return entity;
   }
 
+  /**
+   * 根据用户名称获取用户信息
+   * @param userName 用户名称
+   */
   async getUserByUserName(userName: string) {
-    // const entity = await this.userRepository.findOneBy({
-    //   userName,
-    // });
-
     const entity = await this.userRepository
       .createQueryBuilder("u")
       .leftJoinAndSelect("u.roles", "system_roles")
       .andWhere(`user_name=:userName`, { userName: userName })
       .getOne();
-    const roleVos = await this.mapper.mapArrayAsync(
-      entity.roles,
-      RoleEntity,
-      RoleVo
-    );
-    const vo = await this.mapper.mapAsync(entity, UserEntity, UserVo);
-    vo.roles = roleVos;
-    return vo;
+    return entity;
   }
 
+  /**
+   * 创建用户
+   * @param createUserDto 创建用户dto
+   */
   async createUser(createUserDto: CreateUserDto) {
     const user = await this.userRepository.findOneBy({
       userName: createUserDto.userName,
@@ -152,12 +109,17 @@ export class UserService {
     userEntity.password = crypto
       .MD5(crypto.MD5(defaultPassword).toString())
       .toString();
-    userEntity.deleted = false;
-    userEntity.enabled = true;
+    userEntity.deleted = Deleted.NoDeleted;
+    userEntity.enabled = Enabled.Enabled;
     userEntity.createTime = new Date();
     await this.userRepository.insert(userEntity);
   }
 
+  /**
+   * 修改用户
+   * @param id 主键
+   * @param updateUserDto 修改用户dto
+   */
   async updateUserById(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.getById(id);
     if (!user) {
@@ -173,27 +135,47 @@ export class UserService {
     await this.userRepository.update(id, userEntity);
   }
 
+  /**
+   * 删除用户
+   * @param id 主键
+   */
   async removeUserById(id: number) {
     await this.userRepository.delete(id);
   }
 
+  /**
+   * 批量删除用户
+   * @param id 主键
+   */
   async removeUserByIds(ids: string) {
     const arr = ids.split(",");
     await this.userRepository.delete(arr);
   }
 
+  /**
+   * 启用用户
+   * @param id 主键
+   */
   async enabledUserById(id: number) {
     const userEntity = new UserEntity();
-    userEntity.enabled = true;
+    userEntity.enabled = Enabled.Enabled;
     await this.userRepository.update(id, userEntity);
   }
 
+  /**
+   * 禁用用户
+   * @param id 主键
+   */
   async disableUserById(id: number) {
     const userEntity = new UserEntity();
-    userEntity.enabled = false;
+    userEntity.enabled = Enabled.Disable;
     await this.userRepository.update(id, userEntity);
   }
 
+  /**
+   * 重置用户密码
+   * @param id 主键
+   */
   async resetUserPasswordById(id: number) {
     const userEntity = new UserEntity();
     const { defaultPassword } = systemConfig;
@@ -203,6 +185,10 @@ export class UserService {
     await this.userRepository.update(id, userEntity);
   }
 
+  /**
+   * 修改用户密码
+   * @param id 主键
+   */
   async changePasswordById(id: number, changePasswordDto: ChangePasswordDto) {
     const { oldPassword, newPassword } = changePasswordDto;
     const user = await this.getById(id);

@@ -14,12 +14,15 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { LogVo } from "./vo/log.vo";
 import { ResponseResult } from "src/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { LogEntity } from "./entities/log.entity";
+import { LogPageResult } from "./result/log.page.result";
+import { LogResult } from "./result/log.result";
 
 @ApiTags("日志管理")
 @Controller("/system/logs")
@@ -27,13 +30,38 @@ export class LogController {
   constructor(private readonly logService: LogService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: false })
-  @ApiQuery({ name: "size", description: "每页条数", required: false })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: LogVo,
+    type: LogPageResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
@@ -63,7 +91,17 @@ export class LogController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: LogVo,
+    type: LogResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getLogById(@Param("id") id: string) {
@@ -77,7 +115,21 @@ export class LogController {
     description: "操作成功",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Delete(":id")
   removeLogById(@Param("id") id: string) {
     return this.logService.removeLogById(+id);

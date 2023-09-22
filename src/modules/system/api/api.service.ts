@@ -8,10 +8,8 @@ import { UpdateApiDto } from "./dto/update-api.dto";
 import { ApiEntity } from "./entities/api.entity";
 import * as crypto from "crypto-js";
 import { toEntity } from "src/utils/dto2Entity";
-import { InjectMapper } from "@automapper/nestjs";
-import { Mapper } from "@automapper/core";
-import { ApiVo } from "./vo/api.vo";
 import { PageResponseResult } from "src/common/tools/page.response.result";
+
 /*
  *@Description: 接口管理模块业务
  *返回接口数据时，排除掉超级管理员,超级管理员id为0，默认管理员接口名为administrator。切记
@@ -20,17 +18,14 @@ import { PageResponseResult } from "src/common/tools/page.response.result";
  */
 @Injectable()
 export class ApiService {
-  constructor(@InjectMapper() mapper: Mapper) {
-    this.mapper = mapper;
-  }
-
-  private readonly mapper: Mapper;
   @InjectRepository(ApiEntity)
   private readonly apiRepository: Repository<ApiEntity>;
 
-  async getApiPageList(
-    searchApiDto: SearchApiDto
-  ): Promise<PageResponseResult<ApiVo[]>> {
+  /**
+   * 获取接口分页列表
+   * @param searchApiDto 搜索dto
+   */
+  async getApiPageList(searchApiDto: SearchApiDto) {
     const { page, keyword } = searchApiDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
@@ -46,38 +41,47 @@ export class ApiService {
       .limit(size)
       .getMany();
 
-    const vos = await this.mapper.mapArrayAsync(entities, ApiEntity, ApiVo);
-    page.total = await this.apiRepository.count();
-    const data = new PageResponseResult<ApiVo[]>();
-    data.payload = vos;
-    data.total = page.total;
-    return data;
+    page.total = await queryBuilder.getCount();
+    const result = new PageResponseResult<ApiEntity[]>(page.total, entities);
+    return result;
   }
 
+  /**
+   * 获取接口列表
+   */
   async getApiList() {
     const entities = await this.apiRepository.find({
       where: {
         id: Not(0),
       },
     });
-    const vos = await this.mapper.mapArrayAsync(entities, ApiEntity, ApiVo);
-    return vos;
+    return entities;
   }
 
+  /**
+   * 根据接口id获取接口信息
+   * @param id 主键
+   */
   async getApiById(id: number) {
     const entity = await this.getById(id);
-    const vo = await this.mapper.mapAsync(entity, ApiEntity, ApiVo);
-    return vo;
+    return entity;
   }
 
+  /**
+   * 根据接口名称获取接口信息
+   * @param apiName 接口名称
+   */
   async getApiByApiName(apiName: string) {
     const entity = await this.apiRepository.findOneBy({
       apiName,
     });
-    const vo = await this.mapper.mapAsync(entity, ApiEntity, ApiVo);
-    return vo;
+    return entity;
   }
 
+  /**
+   * 创建接口
+   * @param createApiDto 创建接口dto
+   */
   async createApi(createApiDto: CreateApiDto) {
     const api = await this.apiRepository.findOneBy({
       apiName: createApiDto.apiName,
@@ -96,6 +100,11 @@ export class ApiService {
     await this.apiRepository.insert(apiEntity);
   }
 
+  /**
+   * 修改接口
+   * @param id 主键
+   * @param updateApiDto 修改接口dto
+   */
   async updateApiById(id: number, updateApiDto: UpdateApiDto) {
     const api = await this.getById(id);
     if (!api) {
@@ -111,10 +120,18 @@ export class ApiService {
     await this.apiRepository.update(id, apiEntity);
   }
 
+  /**
+   * 删除接口
+   * @param id 主键
+   */
   async removeApiById(id: number) {
     await this.apiRepository.delete(id);
   }
 
+  /**
+   * 批量删除接口
+   * @param id 主键
+   */
   async removeApiByIds(ids: string) {
     const arr = ids.split(",");
     await this.apiRepository.delete(arr);

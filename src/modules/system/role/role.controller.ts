@@ -7,6 +7,8 @@ import {
   Delete,
   Query,
   Put,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { RoleService } from "./role.service";
 import { CreateRoleDto } from "./dto/create-role.dto";
@@ -18,12 +20,16 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { RoleVo } from "./vo/role.vo";
 import { ResponseResult } from "src/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { RoleEntity } from "./entities/role.entity";
+import { RolePageResult } from "./result/role.page.result";
+import { RoleListResult } from "./result/role.list.result";
+import { RoleResult } from "./result/role.result";
 
 @ApiTags("角色管理")
 @Controller("/system/roles")
@@ -31,14 +37,40 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @ApiOperation({ summary: "分页列表" })
-  @ApiQuery({ name: "keyword", description: "关键字", required: false })
-  @ApiQuery({ name: "current", description: "当前页码", required: false })
-  @ApiQuery({ name: "size", description: "每页条数", required: false })
+  @ApiQuery({
+    name: "keyword",
+    description: "关键字",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "current",
+    description: "当前页码",
+    required: true,
+    type: Number,
+  })
+  @ApiQuery({
+    name: "size",
+    description: "每页条数",
+    required: true,
+    type: Number,
+  })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RolePageResult,
   })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("getPageList")
   getPageList(
     @Query("keyword") keyword,
@@ -59,8 +91,19 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleListResult,
   })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async getRoleList() {
     const list = await this.roleService.getRoleList();
@@ -72,8 +115,19 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleResult,
   })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(":id")
   getRoleById(@Param("id") id: string) {
     return this.roleService.getRoleById(+id);
@@ -89,8 +143,19 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: RoleVo,
+    type: RoleResult,
   })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("getRoleByRoleName/:roleName")
   getRoleByRoleName(@Param("roleName") roleName: string) {
     return this.roleService.getRoleByRoleName(roleName);
@@ -101,6 +166,21 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Post()
@@ -114,6 +194,21 @@ export class RoleController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Put(":id")
@@ -136,7 +231,21 @@ export class RoleController {
     description: "操作成功",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Delete(":id")
   removeRoleById(@Param("id") id: string) {
     return this.roleService.removeRoleById(+id);

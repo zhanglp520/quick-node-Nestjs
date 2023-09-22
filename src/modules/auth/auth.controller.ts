@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { AuthService } from './auth.service';
-import { CreateRoleMenuDto } from './dtos/create-role-menu.dto';
+import { CreateRoleAuthDto } from './dtos/create-role-auth.dto';
 import { CreateUserRoleDto } from './dtos/create-user-role.dto';
 import {
   ApiBody,
@@ -11,10 +11,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ResponseResult } from '@/common/tools/response.result';
-import { MenuVo } from '@/modules/system/menu/vo/menu.vo';
 import { RefreshTokenDto } from '@/modules/auth/dtos/refresh-token.dto';
-import { TokenVo } from '@/modules/auth/vo/token.vo';
 import { LoginDto } from '@/modules/auth/dtos/login.dto';
+import { MenuEntity } from '../system/menu/entities/menu.entity';
 
 @ApiTags('权限管理')
 @Controller('/auths')
@@ -26,7 +25,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: TokenVo,
+     type: ResponseResult,
   })
   @Public()
   @Post('/login')
@@ -50,7 +49,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: TokenVo,
+     type: ResponseResult,
   })
   @Public()
   @Post('/refreshToken')
@@ -68,7 +67,7 @@ export class AuthController {
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
-    type: MenuVo,
+    type: MenuEntity,
   })
   @Get('getMenuListByUserId/:id')
   getMenuListByUserId(@Param('id') id: string) {
@@ -122,15 +121,15 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '角色分配权限' })
-  @ApiBody({ type: CreateRoleMenuDto, description: '角色分配权限参数' })
+  @ApiBody({ type: CreateRoleAuthDto, description: '角色分配权限参数' })
   @ApiOkResponse({
     status: 200,
     description: '操作成功',
     type: ResponseResult,
   })
   @Post('/assignPermission')
-  assignPermission(@Body() createRoleMenuDto: CreateRoleMenuDto) {
-    return this.authService.assignPermission(createRoleMenuDto);
+  assignPermission(@Body() createRoleAuthDto: CreateRoleAuthDto) {
+    return this.authService.assignPermission(createRoleAuthDto);
   }
 
   @ApiOperation({ summary: '已分配的接口权限' })

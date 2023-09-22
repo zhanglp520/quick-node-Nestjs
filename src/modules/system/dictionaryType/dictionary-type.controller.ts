@@ -15,12 +15,14 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { DictionaryTypeVo } from "./vo/dictionary-type.vo";
 import { ResponseResult } from "src/common/tools/response.result";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
+import { DictionaryTypeEntity } from "./entities/dictionary-type.entity";
+import { DictionaryTypePageResult } from "./result/dictionary-type.page.result";
 
 @ApiTags("字典分类")
 @Controller("/system/dictionaryTypes")
@@ -31,7 +33,17 @@ export class DictionaryTypeController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryTypeVo,
+    type: DictionaryTypePageResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get()
   async getDictionaryTypeList() {
@@ -44,7 +56,17 @@ export class DictionaryTypeController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryTypeVo,
+    type: DictionaryTypeEntity,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getDictionaryTypeById(@Param("id") id: string) {
@@ -55,7 +77,17 @@ export class DictionaryTypeController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: DictionaryTypeVo,
+    type: DictionaryTypeEntity,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getDictionaryTypeByDictionaryTypeName/:dictionaryTypeName")
   getDictionaryTypeByDictionaryTypeName(
@@ -73,6 +105,21 @@ export class DictionaryTypeController {
     description: "操作成功",
     type: ResponseResult,
   })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Post()
   createDictionaryType(
     @Body() createDictionaryTypeDto: CreateDictionaryTypeDto
@@ -88,6 +135,21 @@ export class DictionaryTypeController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Put(":id")
@@ -108,7 +170,21 @@ export class DictionaryTypeController {
     description: "操作成功",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Delete(":id")
   removeDictionaryTypeById(@Param("id") id: string) {
     return this.dictionaryTypeService.removeDictionaryTypeById(+id);

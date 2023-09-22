@@ -37,7 +37,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const msg: string = exception.response
       ? exception.response
       : "服务器内部错误,请联系管理员.";
-
     const responseBody: any = {
       status: 1,
       error: httpStatus,
