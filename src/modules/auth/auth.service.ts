@@ -11,10 +11,11 @@ import { UserService } from "@/modules/system/user/user.service";
 import { RoleMenuEntity } from "@/modules/auth/entities/role-menu.entity";
 import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
 import { CreateUserRoleDto } from "@/modules/auth/dtos/create-user-role.dto";
-import { CreateRoleMenuDto } from "@/modules/auth/dtos/create-role-menu.dto";
+import { CreateRoleAuthDto } from "@/modules/auth/dtos/create-role-auth.dto";
 import { LoginDto } from "@/modules/auth/dtos/login.dto";
 import { RefreshTokenDto } from "@/modules/auth/dtos/refresh-token.dto";
 import { Token } from "@/common/tools/token";
+import { RoleApiEntity } from "./entities/role-api.entity";
 
 @Injectable()
 export class AuthService {
@@ -27,16 +28,20 @@ export class AuthService {
   private config = null;
   private status = false;
 
-  @InjectRepository(MenuEntity)
-  private readonly menuRepository: Repository<MenuEntity>;
   @InjectRepository(UserEntity)
   private readonly userRepository: Repository<UserEntity>;
+  @InjectRepository(MenuEntity)
+  private readonly menuRepository: Repository<MenuEntity>;
+  @InjectRepository(ApiEntity)
+  private readonly apiRepository: Repository<ApiEntity>;
+
   @InjectRepository(UserRoleEntity)
   private readonly userRoleRepository: Repository<UserRoleEntity>;
   @InjectRepository(RoleMenuEntity)
   private readonly roleMenuRepository: Repository<RoleMenuEntity>;
-  @InjectRepository(ApiEntity)
-  private readonly apiRepository: Repository<ApiEntity>;
+  @InjectRepository(RoleApiEntity)
+  private readonly roleApiRepository: Repository<RoleApiEntity>;
+
   async validateUserById(id: number) {
     const user = await this.userService.getUserById(id);
     if (!user) {
@@ -284,20 +289,33 @@ export class AuthService {
     await this.userRoleRepository.insert(list);
   }
 
-  async assignPermission(createRoleMenuDto: CreateRoleMenuDto) {
-    const { roleId } = createRoleMenuDto;
-    const list = new Array<RoleMenuEntity>();
-    const ids = createRoleMenuDto.menuIds.split(",");
-    ids.forEach((element) => {
-      const roleMenuEntity = new RoleMenuEntity();
-      roleMenuEntity.roleId = roleId;
-      roleMenuEntity.menuId = Number(element);
-      list.push(roleMenuEntity);
-    });
+  async assignPermission(createRoleAuthDto: CreateRoleAuthDto) {
+    const { roleId, menuIds, apiIds } = createRoleAuthDto;
     await this.roleMenuRepository.delete({
       roleId,
     });
-    await this.roleMenuRepository.insert(list);
+
+    //角色授权菜单
+    const roleMenuList = new Array<RoleMenuEntity>();
+    const mIds = menuIds.split(",");
+    mIds.forEach((element) => {
+      const roleMenuEntity = new RoleMenuEntity();
+      roleMenuEntity.roleId = roleId;
+      roleMenuEntity.menuId = Number(element);
+      roleMenuList.push(roleMenuEntity);
+    });
+    await this.roleMenuRepository.insert(roleMenuList);
+
+    //角色授权接口
+    const roleApiList = new Array<RoleApiEntity>();
+    const aIds = apiIds.split(",");
+    aIds.forEach((element) => {
+      const roleApiEntity = new RoleApiEntity();
+      roleApiEntity.roleId = roleId;
+      roleApiEntity.apiId = Number(element);
+      roleApiList.push(roleApiEntity);
+    });
+    await this.roleApiRepository.insert(roleApiList);
   }
   async getApiListByRoleId1(id: number) {
     // const sql = this.apiRepository

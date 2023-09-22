@@ -1,6 +1,5 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
+import { Column, Entity, ManyToMany } from "typeorm";
 import { UserEntity } from "@/modules/system/user/entities/user.entity";
-import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
 import { ApiEntity } from "@/modules/system/api/entities/api.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { BaseEntity } from "@/entities/base.entity";
@@ -24,9 +23,11 @@ export class RoleEntity extends BaseEntity {
   deptId: number;
 
   @ApiProperty({ description: "创建时间" })
-  @Transform((createTime: any) =>
-    moment(createTime.value).format("YYYY-MM-DD HH:mm:ss")
-  )
+  @Transform((createTime: any) => {
+    console.log("createTime", createTime);
+
+    return moment(createTime.value).format("YYYY-MM-DD HH:mm:ss");
+  })
   @Column({ type: "datetime", name: "create_time" })
   createTime: Date;
 

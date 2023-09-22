@@ -130,7 +130,6 @@ export class LogController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
   @Delete(":id")
   removeLogById(@Param("id") id: string) {
     return this.logService.removeLogById(+id);

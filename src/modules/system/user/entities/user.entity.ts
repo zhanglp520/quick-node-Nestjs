@@ -1,19 +1,8 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  PrimaryColumnCannotBeNullableError,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-  //   JoinTable,
-  //   ManyToMany,
-} from "typeorm";
+import { Column, Entity, ManyToMany, JoinTable } from "typeorm";
 import { RoleEntity } from "../../role/entities/role.entity";
-import { UserRoleEntity } from "@/modules/auth/entities/user-role.entity";
 import { BaseEntity } from "@/entities/base.entity";
 import { ApiProperty } from "@nestjs/swagger";
-import { Transform } from "class-transformer";
+import { Exclude, Transform } from "class-transformer";
 import { Enabled } from "@/common/enums/enabled.enum";
 import { Deleted } from "@/common/enums/deleted.enum";
 
@@ -30,6 +19,7 @@ export class UserEntity extends BaseEntity {
   @Column({ type: "varchar", name: "user_name" })
   userName: string;
 
+  @Exclude()
   @ApiProperty({ description: "密码" })
   @Column({ type: "varchar", default: "e10adc3949ba59abbe56e057f20f883e" })
   password: string;
@@ -63,9 +53,11 @@ export class UserEntity extends BaseEntity {
   enabled: Enabled;
 
   @ApiProperty({ description: "创建时间" })
-  @Transform((createTime: any) =>
-    moment(createTime.value).format("YYYY-MM-DD HH:mm:ss")
-  )
+  @Transform((createTime: any) => {
+    console.log("createTime", createTime);
+
+    return moment(createTime.value).format("YYYY-MM-DD HH:mm:ss");
+  })
   @Column({ type: "datetime", name: "create_time" })
   createTime: Date;
 
@@ -73,28 +65,13 @@ export class UserEntity extends BaseEntity {
   @Column({ type: "varchar" })
   remark: string;
 
-  // @AutoMap()
-  // @OneToMany(() => UserRoleEntity, (ur) => ur.user)
-  // @JoinTable({
-  //   name: 'per_user_roles',
-  // })
-  // userRoles: UserRoleEntity[];
-
-  // @AutoMap()
-  // roles: number[];
-
   @ApiProperty({ description: "角色" })
   @ManyToMany(() => RoleEntity, (role) => role.users)
-  // @JoinTable()
   @JoinTable({
     name: "per_user_roles",
     joinColumns: [{ name: "user_id" }],
     inverseJoinColumns: [{ name: "role_id" }],
   })
-  // @Column({ type: 'int', default: 1 })
-  @ApiProperty({ description: "消息" })
+  @ApiProperty({ description: "角色" })
   roles: RoleEntity[];
-
-  // @AutoMap()
-  // roleIds: number[];
 }

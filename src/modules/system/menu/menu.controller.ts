@@ -159,7 +159,6 @@ export class MenuController {
   }
 
   @ApiOperation({ summary: "删除" })
-  // @Roles(Role.administrator)
   @ApiOkResponse({
     status: 200,
     description: "操作成功",

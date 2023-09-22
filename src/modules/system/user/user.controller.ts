@@ -37,8 +37,6 @@ import { UserListResult } from "./result/user.list.result";
 import { UserResult } from "./result/user.result";
 
 @ApiTags("用户管理")
-// @UseInterceptors(new RbacInterceptor(Role.Administrator))
-// @Roles(Role.administrator, Role.admin)
 @Controller("/system/users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -110,6 +108,7 @@ export class UserController {
     description: "系统异常",
     type: ResponseResult,
   })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("/getUserList")
   async getUserList() {
     const list = await this.userService.getUserList();
@@ -133,6 +132,7 @@ export class UserController {
     description: "系统异常",
     type: ResponseResult,
   })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(":id")
   getUserById(@Param("id") id: string) {
     return this.userService.getUserById(+id);
@@ -160,6 +160,7 @@ export class UserController {
     description: "系统异常",
     type: ResponseResult,
   })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("getUserByUserName/:userName")
   getUserByUserName(@Param("userName") userName: string) {
     return this.userService.getUserByUserName(userName);
@@ -245,7 +246,6 @@ export class UserController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
   @Delete(":id")
   removeUserById(@Param("id") id: string) {
     return this.userService.removeUserById(+id);
@@ -278,7 +278,6 @@ export class UserController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
   @Delete("batchRemove/:ids")
   batchRemove(@Param("ids") ids: string) {
     return this.userService.removeUserByIds(ids);

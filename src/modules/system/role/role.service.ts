@@ -21,13 +21,13 @@ export class RoleService {
     const { page, keyword } = searchRoleDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
-    const queryBuilder = this.roleRepository.createQueryBuilder();
+    const queryBuilder = this.roleRepository.createQueryBuilder("u");
     if (keyword) {
-      queryBuilder.where(`role_name=:roleName`, { roleName: keyword });
-      queryBuilder.orWhere(`phone=:phone`, { phone: keyword });
+      queryBuilder.where(`u.role_name=:roleName`, { roleName: keyword });
+      queryBuilder.orWhere(`u.phone=:phone`, { phone: keyword });
     }
     const entities = await queryBuilder
-      .orderBy("create_time", "DESC")
+      .orderBy("u.create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
@@ -81,6 +81,7 @@ export class RoleService {
     }
     const roleEntity = new RoleEntity();
     toEntity(createRoleDto, roleEntity);
+    roleEntity.createTime = new Date();
     await this.roleRepository.insert(roleEntity);
   }
 
