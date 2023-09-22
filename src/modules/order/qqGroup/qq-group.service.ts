@@ -6,11 +6,9 @@ import { SearchQQGroupDto } from "./dto/search-qq-group.dto";
 import { UpdateQQGroupDto } from "./dto/update-qq-group.dto";
 import { QQGroupEntity } from "./entities/qq-group.entity";
 import { toEntity } from "src/utils/dto2Entity";
-import { InjectMapper } from "@automapper/nestjs";
-import { Mapper } from "@automapper/core";
-import { QQGroupVo } from "./vo/qq-group.vo";
 import { PageResponseResult } from "src/common/tools/page.response.result";
 import { qqOpts } from "../../../config/orm.config";
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require("moment");
 
@@ -22,11 +20,6 @@ const moment = require("moment");
  */
 @Injectable()
 export class QQGroupService {
-  constructor(@InjectMapper() mapper: Mapper) {
-    this.mapper = mapper;
-  }
-
-  private readonly mapper: Mapper;
   @InjectRepository(QQGroupEntity, qqOpts.database.toString())
   private readonly qqGroupRepository: Repository<QQGroupEntity>;
 
@@ -154,9 +147,7 @@ export class QQGroupService {
     return result;
   }
 
-  async getQQGroupPageList(
-    searchQQGroupDto: SearchQQGroupDto
-  ): Promise<PageResponseResult<QQGroupVo[]>> {
+  async getQQGroupPageList(searchQQGroupDto: SearchQQGroupDto) {
     const { page, keyword, orderId, content, status } = searchQQGroupDto;
     const { current, size } = page;
     const skip = (current - 1) * size;
@@ -183,21 +174,18 @@ export class QQGroupService {
       });
     }
     const entities = await queryBuilder
-      .orderBy("create_time", "DESC")
+      .orderBy("status", "ASC")
+      .addOrderBy("create_time", "DESC")
       .offset(skip)
       .limit(size)
       .getMany();
 
-    const vos = await this.mapper.mapArrayAsync(
-      entities,
-      QQGroupEntity,
-      QQGroupVo
+    page.total = await queryBuilder.getCount();
+    const result = new PageResponseResult<QQGroupEntity[]>(
+      page.total,
+      entities
     );
-    page.total = await this.qqGroupRepository.count();
-    const data = new PageResponseResult<QQGroupVo[]>();
-    data.payload = vos;
-    data.total = page.total;
-    return data;
+    return result;
   }
 
   async getQQGroupList() {
@@ -282,6 +270,13 @@ export class QQGroupService {
   async removeQQGroupByIds(ids: string) {
     const arr = ids.split(",");
     await this.qqGroupRepository.delete(arr);
+  }
+
+  async batchExcuteByIds(ids: string) {
+    const arr = ids.split(",");
+    const qqGroupEntity = new QQGroupEntity();
+    qqGroupEntity.status = 1;
+    await this.qqGroupRepository.update(arr, qqGroupEntity);
   }
 
   private getById(id: number) {

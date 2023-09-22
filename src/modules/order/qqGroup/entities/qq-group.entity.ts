@@ -1,33 +1,39 @@
-import { AutoMap } from "@automapper/classes";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "@/entities/base.entity";
+import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
+import { Column, Entity } from "typeorm";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const moment = require("moment");
 
 @Entity("qq_groups")
 export class QQGroupEntity extends BaseEntity {
-  @AutoMap()
-  @PrimaryGeneratedColumn({ type: "int" })
-  id?: number;
-
-  @AutoMap()
+  @ApiProperty({ description: "订单编号" })
   @Column({ type: "varchar", name: "order_id" })
   orderId: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "内容" })
   @Column({ type: "text" })
   content: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "关键字" })
   @Column({ type: "varchar" })
   keyword: string;
 
-  @AutoMap()
+  @ApiProperty({ description: "状态" })
   @Column({ type: "int" })
   status: number;
 
-  @AutoMap()
-  @Column({ type: "timestamp", name: "create_time", default: new Date() })
+  @ApiProperty({ description: "创建时间" })
+  @Transform((createTime: any) => {
+    console.log("createTime", createTime);
+
+    return moment(createTime.value).format("YYYY-MM-DD HH:mm:ss");
+  })
+  @Column({ type: "datetime", name: "create_time" })
   createTime: Date;
 
-  @AutoMap()
-  @Column({ type: "text" })
+  @ApiProperty({ description: "备注" })
+  @Column({ type: "varchar" })
   remark: string;
 }

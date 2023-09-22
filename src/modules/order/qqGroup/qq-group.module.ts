@@ -3,7 +3,6 @@ import { QQGroupService } from "./qq-group.service";
 import { QQGroupController } from "./qq-group.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { QQGroupEntity } from "./entities/qq-group.entity";
-import { QQGroupMapperProfile } from "./mapper/qq-group.mapper";
 import { qqOpts } from "../../../config/orm.config";
 
 @Module({
@@ -12,7 +11,7 @@ import { qqOpts } from "../../../config/orm.config";
     TypeOrmModule.forFeature([QQGroupEntity], qqOpts.database.toString()),
   ],
   controllers: [QQGroupController],
-  providers: [QQGroupService, QQGroupMapperProfile],
+  providers: [QQGroupService],
   exports: [QQGroupService],
 })
 export class QQGroupModule {}

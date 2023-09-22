@@ -31,11 +31,13 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { QQGroupVo } from "./vo/qq-group.vo";
 import { Role } from "src/common/enums/role.enum";
 import { ResponseResult } from "src/common/tools/response.result";
 import { RolesGuard } from "src/modules/auth/guards/roles.guard";
 import { Roles } from "src/common/decorators/roles.decorator";
+import { QQGroupPageResult } from "./result/qq-group.page.result";
+import { QQGroupListResult } from "./result/qq-group.list.result";
+import { QQGroupResult } from "./result/qq-group.result";
 
 @ApiTags("订单管理")
 // @UseInterceptors(new RbacInterceptor(Role.Administrator))
@@ -50,21 +52,18 @@ export class QQGroupController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQGroupVo,
-    // schema: {
-    //   type: 'object',
-    //   items: {
-    //     $ref: getSchemaPath(PageResponseResult),
-    //     items: {
-    //       $ref: getSchemaPath(QQGroupVo),
-    //     },
-    //   },
-    // },
-    // type: ResponseResult<PageResponseResult<QQGroupVo>>,
-    // isArray: true,
+    type: QQGroupPageResult,
   })
-  // @UseInterceptors(MapInterceptor(DeptEntity, DeptVo, { isArray: true }))
-  // @Roles(Role.administrator, Role.admin)
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   getPageList(
@@ -98,10 +97,19 @@ export class QQGroupController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQGroupVo,
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("statistics")
-  // @Version('2')
   statistics() {
     return this.qqGroupService.statistics();
   }
@@ -110,7 +118,17 @@ export class QQGroupController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQGroupVo,
+    type: QQGroupListResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("/getQQGroupList")
   async getQQGroupList() {
@@ -123,7 +141,17 @@ export class QQGroupController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQGroupVo,
+    type: QQGroupResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get(":id")
   getQQGroupById(@Param("id") id: string) {
@@ -140,7 +168,17 @@ export class QQGroupController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQGroupVo,
+    type: QQGroupResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
   })
   @Get("getQQGroupByQQGroupName/:qqGroupName")
   // @Version('2')
@@ -150,9 +188,9 @@ export class QQGroupController {
 
   @ApiOperation({ summary: "创建" })
   @ApiBody({ type: CreateQQGroupDto, description: "创建订单参数" })
-  @ApiResponse({
-    status: 0,
-    description: "请求成功",
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
     type: ResponseResult,
   })
   @ApiResponse({
@@ -161,12 +199,12 @@ export class QQGroupController {
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 1,
-    description: "操作失败",
+    status: 401,
+    description: "无权限",
     type: ResponseResult,
   })
   @ApiResponse({
-    status: 2,
+    status: 500,
     description: "系统异常",
     type: ResponseResult,
   })
@@ -181,6 +219,21 @@ export class QQGroupController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
     type: ResponseResult,
   })
   @Put(":id")
@@ -198,7 +251,21 @@ export class QQGroupController {
     description: "操作成功",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Delete(":id")
   removeQQGroupById(@Param("id") id: string) {
     return this.qqGroupService.removeQQGroupById(+id);
@@ -216,9 +283,55 @@ export class QQGroupController {
     description: "操作成功",
     type: ResponseResult,
   })
-  @Roles(Role.administrator)
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
   @Delete("batchRemove/:ids")
   batchRemove(@Param("ids") ids: string) {
     return this.qqGroupService.removeQQGroupByIds(ids);
+  }
+
+  @ApiOperation({ summary: "批量处理" })
+  @ApiQuery({
+    name: "ids",
+    type: String,
+    description: "主键,多个以逗号隔开",
+    required: true,
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
+  @Post("batchExcute")
+  batchExcute(@Query("ids") ids: string) {
+    return this.qqGroupService.batchExcuteByIds(ids);
   }
 }
