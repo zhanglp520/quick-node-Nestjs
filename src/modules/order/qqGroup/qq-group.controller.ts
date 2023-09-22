@@ -6,17 +6,10 @@ import {
   Param,
   Delete,
   Query,
-  Res,
   Put,
   ClassSerializerInterceptor,
   UseInterceptors,
-  Patch,
-  UploadedFile,
-  UseGuards,
-  // Version,
 } from "@nestjs/common";
-import { Response } from "express";
-import { FileInterceptor } from "@nestjs/platform-express";
 import { QQGroupService } from "./qq-group.service";
 import { CreateQQGroupDto } from "./dto/create-qq-group.dto";
 import { UpdateQQGroupDto } from "./dto/update-qq-group.dto";
@@ -31,10 +24,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { Role } from "src/common/enums/role.enum";
 import { ResponseResult } from "src/common/tools/response.result";
-import { RolesGuard } from "src/modules/auth/guards/roles.guard";
-import { Roles } from "src/common/decorators/roles.decorator";
 import { QQGroupPageResult } from "./result/qq-group.page.result";
 import { QQGroupListResult } from "./result/qq-group.list.result";
 import { QQGroupResult } from "./result/qq-group.result";
@@ -272,7 +262,7 @@ export class QQGroupController {
   }
 
   @ApiOperation({ summary: "批量删除" })
-  @ApiParam({
+  @ApiQuery({
     name: "ids",
     type: String,
     description: "主键,多个以逗号隔开",
@@ -298,9 +288,36 @@ export class QQGroupController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Delete("batchRemove/:ids")
-  batchRemove(@Param("ids") ids: string) {
-    return this.qqGroupService.removeQQGroupByIds(ids);
+  @Post("batchRemove")
+  batchRemove(@Query("ids") ids: string) {
+    return this.qqGroupService.batchRemoveQQGroupByIds(ids);
+  }
+
+  @ApiOperation({ summary: "处理" })
+  @ApiParam({ name: "id", type: String, description: "主键", required: true })
+  @ApiOkResponse({
+    status: 200,
+    description: "操作成功",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 201,
+    description: "参数错误",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "无权限",
+    type: ResponseResult,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "系统异常",
+    type: ResponseResult,
+  })
+  @Post("excute/:id")
+  excute(@Param("id") id: number) {
+    return this.qqGroupService.excuteQQGroupById(id);
   }
 
   @ApiOperation({ summary: "批量处理" })
@@ -332,6 +349,6 @@ export class QQGroupController {
   })
   @Post("batchExcute")
   batchExcute(@Query("ids") ids: string) {
-    return this.qqGroupService.batchExcuteByIds(ids);
+    return this.qqGroupService.batchExcuteQQGroupByIds(ids);
   }
 }

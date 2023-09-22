@@ -267,12 +267,18 @@ export class QQGroupService {
     await this.qqGroupRepository.delete(id);
   }
 
-  async removeQQGroupByIds(ids: string) {
+  async batchRemoveQQGroupByIds(ids: string) {
     const arr = ids.split(",");
     await this.qqGroupRepository.delete(arr);
   }
 
-  async batchExcuteByIds(ids: string) {
+  async excuteQQGroupById(id: number) {
+    const qqGroupEntity = new QQGroupEntity();
+    qqGroupEntity.status = 1;
+    await this.qqGroupRepository.update(id, qqGroupEntity);
+  }
+
+  async batchExcuteQQGroupByIds(ids: string) {
     const arr = ids.split(",");
     const qqGroupEntity = new QQGroupEntity();
     qqGroupEntity.status = 1;
