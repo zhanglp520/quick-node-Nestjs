@@ -267,7 +267,7 @@ export class QQGroupService {
     await this.qqGroupRepository.delete(id);
   }
 
-  async batchRemoveQQGroupByIds(ids: string) {
+  async removeQQGroupByIds(ids: string) {
     const arr = ids.split(",");
     await this.qqGroupRepository.delete(arr);
   }

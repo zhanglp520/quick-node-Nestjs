@@ -9,6 +9,7 @@ import {
   Put,
   ClassSerializerInterceptor,
   UseInterceptors,
+  Patch,
 } from "@nestjs/common";
 import { QQGroupService } from "./qq-group.service";
 import { CreateQQGroupDto } from "./dto/create-qq-group.dto";
@@ -262,7 +263,7 @@ export class QQGroupController {
   }
 
   @ApiOperation({ summary: "批量删除" })
-  @ApiQuery({
+  @ApiParam({
     name: "ids",
     type: String,
     description: "主键,多个以逗号隔开",
@@ -288,9 +289,9 @@ export class QQGroupController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Post("batchRemove")
-  batchRemove(@Query("ids") ids: string) {
-    return this.qqGroupService.batchRemoveQQGroupByIds(ids);
+  @Delete("batchRemove/:ids")
+  batchRemove(@Param("ids") ids: string) {
+    return this.qqGroupService.removeQQGroupByIds(ids);
   }
 
   @ApiOperation({ summary: "处理" })
@@ -315,7 +316,7 @@ export class QQGroupController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Post("excute/:id")
+  @Patch("excute/:id")
   excute(@Param("id") id: number) {
     return this.qqGroupService.excuteQQGroupById(id);
   }
@@ -347,8 +348,8 @@ export class QQGroupController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Post("batchExcute")
-  batchExcute(@Query("ids") ids: string) {
+  @Patch("batchExcute/:ids")
+  batchExcute(@Param("ids") ids: string) {
     return this.qqGroupService.batchExcuteQQGroupByIds(ids);
   }
 }
