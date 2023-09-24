@@ -40,9 +40,9 @@ export class QQGroupService {
     const d = date.getDate();
     const monthObj = entities.filter((item: QQGroupEntity) => {
       const date1 = new Date(item.createTime);
-      const start = moment().startOf("week");
-      const end = moment().endOf("week");
-      return date1 > start && date1 < end;
+      const start = moment().startOf("month");
+      const end = moment().endOf("month");
+      return date1 >= start && date1 < end;
     });
     const dayObj = entities.filter((item: QQGroupEntity) => {
       const date1 = new Date(item.createTime);
@@ -62,7 +62,7 @@ export class QQGroupService {
       const date1 = new Date(item.createTime);
       const start = moment().startOf("week");
       const end = moment().endOf("week");
-      return date1 > start && date1 < end;
+      return date1 >= start && date1 < end;
     });
 
     //周日
