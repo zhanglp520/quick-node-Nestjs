@@ -20,6 +20,7 @@ import { ApiModule } from "@/modules/system/api/api.module";
 import { RolesGuard } from "@/modules/auth/guards/roles.guard";
 //订单管理
 import { QQGroupModule } from "@/modules/order/qqGroup/qq-group.module";
+import { QQFrendModule } from "@/modules/order/qqFrend/qq-frend.module";
 
 @Dependencies(DataSource)
 @Module({
@@ -36,6 +37,7 @@ import { QQGroupModule } from "@/modules/order/qqGroup/qq-group.module";
     DictionaryModule,
     ApiModule,
     QQGroupModule,
+    QQFrendModule,
     TypeOrmModule.forRoot(defaultOpts),
   ],
   controllers: [AppController],
