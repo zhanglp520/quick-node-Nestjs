@@ -24,6 +24,7 @@ export const orderOpts: TypeOrmModuleOptions = {
   password: "order_order_dev",
   database: "order_order_dev",
 };
+
 export const qqOpts: TypeOrmModuleOptions = {
   ...defaultOpts,
   name: "order_qq_dev",

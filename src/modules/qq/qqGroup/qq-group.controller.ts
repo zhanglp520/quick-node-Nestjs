@@ -11,10 +11,10 @@ import {
   UseInterceptors,
   Patch,
 } from "@nestjs/common";
-import { QQFrendService } from "./qq-frend.service";
-import { CreateQQFrendDto } from "./dto/create-qq-frend.dto";
-import { UpdateQQFrendDto } from "./dto/update-qq-frend.dto";
-import { SearchQQFrendDto } from "./dto/search-qq-frend.dto";
+import { QQGroupService } from "./qq-group.service";
+import { CreateQQGroupDto } from "./dto/create-qq-group.dto";
+import { UpdateQQGroupDto } from "./dto/update-qq-group.dto";
+import { SearchQQGroupDto } from "./dto/search-qq-group.dto";
 
 import {
   ApiBody,
@@ -26,15 +26,15 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { ResponseResult } from "src/common/tools/response.result";
-import { QQFrendPageResult } from "./result/qq-frend.page.result";
-import { QQFrendListResult } from "./result/qq-frend.list.result";
-import { QQFrendResult } from "./result/qq-frend.result";
+import { QQGroupPageResult } from "./result/qq-group.page.result";
+import { QQGroupListResult } from "./result/qq-group.list.result";
+import { QQGroupResult } from "./result/qq-group.result";
 
-@ApiTags("订单管理")
+@ApiTags("QQ群")
 // @UseInterceptors(new RbacInterceptor(Role.Administrator))
-@Controller("/order/qqFrends")
-export class QQFrendController {
-  constructor(private readonly qqFrendService: QQFrendService) {}
+@Controller("/order/qqGroups")
+export class QQGroupController {
+  constructor(private readonly qqGroupService: QQGroupService) {}
 
   @ApiOperation({ summary: "分页列表" })
   @ApiQuery({ name: "keyword", description: "关键字", required: false })
@@ -43,7 +43,7 @@ export class QQFrendController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQFrendPageResult,
+    type: QQGroupPageResult,
   })
   @ApiResponse({
     status: 401,
@@ -59,25 +59,28 @@ export class QQFrendController {
   @Get()
   getPageList(
     @Query("orderId") orderId,
+    @Query("keyword") keyword,
     @Query("content") content,
     @Query("status") status,
     @Query("current") current,
     @Query("size") size
   ) {
-    const searchQQFrendDto = new SearchQQFrendDto();
-    searchQQFrendDto.orderId = orderId;
-    searchQQFrendDto.content = content;
-    searchQQFrendDto.status = status;
-    searchQQFrendDto.page = {
+    const searchQQGroupDto = new SearchQQGroupDto();
+    searchQQGroupDto.orderId = orderId;
+    searchQQGroupDto.keyword = keyword;
+    searchQQGroupDto.content = content;
+    searchQQGroupDto.status = status;
+    searchQQGroupDto.page = {
       current,
       size,
     };
-    return this.qqFrendService.getQQFrendPageList(searchQQFrendDto);
+    searchQQGroupDto.keyword = keyword;
+    return this.qqGroupService.getQQGroupPageList(searchQQGroupDto);
   }
 
   @ApiOperation({ summary: "根据订单名称获取详情" })
   @ApiParam({
-    name: "qqFrendName",
+    name: "qqGroupName",
     type: String,
     description: "订单名称",
     required: true,
@@ -99,14 +102,14 @@ export class QQFrendController {
   })
   @Get("statistics")
   statistics() {
-    return this.qqFrendService.statistics();
+    return this.qqGroupService.statistics();
   }
 
   @ApiOperation({ summary: "列表" })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQFrendListResult,
+    type: QQGroupListResult,
   })
   @ApiResponse({
     status: 401,
@@ -118,9 +121,9 @@ export class QQFrendController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Get("/getQQFrendList")
-  async getQQFrendList() {
-    const list = await this.qqFrendService.getQQFrendList();
+  @Get("/getQQGroupList")
+  async getQQGroupList() {
+    const list = await this.qqGroupService.getQQGroupList();
     return list;
   }
 
@@ -129,7 +132,7 @@ export class QQFrendController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQFrendResult,
+    type: QQGroupResult,
   })
   @ApiResponse({
     status: 401,
@@ -142,13 +145,13 @@ export class QQFrendController {
     type: ResponseResult,
   })
   @Get(":id")
-  getQQFrendById(@Param("id") id: string) {
-    return this.qqFrendService.getQQFrendById(+id);
+  getQQGroupById(@Param("id") id: string) {
+    return this.qqGroupService.getQQGroupById(+id);
   }
 
   @ApiOperation({ summary: "根据订单名称获取详情" })
   @ApiParam({
-    name: "qqFrendName",
+    name: "qqGroupName",
     type: String,
     description: "订单名称",
     required: true,
@@ -156,7 +159,7 @@ export class QQFrendController {
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
-    type: QQFrendResult,
+    type: QQGroupResult,
   })
   @ApiResponse({
     status: 401,
@@ -168,14 +171,14 @@ export class QQFrendController {
     description: "系统异常",
     type: ResponseResult,
   })
-  @Get("getQQFrendByQQFrendName/:qqFrendName")
+  @Get("getQQGroupByQQGroupName/:qqGroupName")
   // @Version('2')
-  getQQFrendByQQFrendName(@Param("qqFrendName") qqFrendName: string) {
-    return this.qqFrendService.getQQFrendByQQFrendName(qqFrendName);
+  getQQGroupByQQGroupName(@Param("qqGroupName") qqGroupName: string) {
+    return this.qqGroupService.getQQGroupByQQGroupName(qqGroupName);
   }
 
   @ApiOperation({ summary: "创建" })
-  @ApiBody({ type: CreateQQFrendDto, description: "创建订单参数" })
+  @ApiBody({ type: CreateQQGroupDto, description: "创建订单参数" })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
@@ -197,13 +200,13 @@ export class QQFrendController {
     type: ResponseResult,
   })
   @Post()
-  createQQFrend(@Body() createQQFrendDto: CreateQQFrendDto) {
-    return this.qqFrendService.createQQFrend(createQQFrendDto);
+  createQQGroup(@Body() createQQGroupDto: CreateQQGroupDto) {
+    return this.qqGroupService.createQQGroup(createQQGroupDto);
   }
 
   @ApiOperation({ summary: "修改" })
   @ApiParam({ name: "id", type: String, description: "主键", required: true })
-  @ApiBody({ type: UpdateQQFrendDto, description: "修改订单参数" })
+  @ApiBody({ type: UpdateQQGroupDto, description: "修改订单参数" })
   @ApiOkResponse({
     status: 200,
     description: "操作成功",
@@ -225,11 +228,11 @@ export class QQFrendController {
     type: ResponseResult,
   })
   @Put(":id")
-  updateQQFrendById(
+  updateQQGroupById(
     @Param("id") id: string,
-    @Body() updateQQFrendDto: UpdateQQFrendDto
+    @Body() updateQQGroupDto: UpdateQQGroupDto
   ) {
-    return this.qqFrendService.updateQQFrendById(+id, updateQQFrendDto);
+    return this.qqGroupService.updateQQGroupById(+id, updateQQGroupDto);
   }
 
   @ApiOperation({ summary: "删除" })
@@ -255,8 +258,8 @@ export class QQFrendController {
     type: ResponseResult,
   })
   @Delete(":id")
-  removeQQFrendById(@Param("id") id: string) {
-    return this.qqFrendService.removeQQFrendById(+id);
+  removeQQGroupById(@Param("id") id: string) {
+    return this.qqGroupService.removeQQGroupById(+id);
   }
 
   @ApiOperation({ summary: "批量删除" })
@@ -288,7 +291,7 @@ export class QQFrendController {
   })
   @Delete("batchRemove/:ids")
   batchRemove(@Param("ids") ids: string) {
-    return this.qqFrendService.removeQQFrendByIds(ids);
+    return this.qqGroupService.removeQQGroupByIds(ids);
   }
 
   @ApiOperation({ summary: "处理" })
@@ -315,7 +318,7 @@ export class QQFrendController {
   })
   @Patch("excute/:id")
   excute(@Param("id") id: number) {
-    return this.qqFrendService.excuteQQFrendById(id);
+    return this.qqGroupService.excuteQQGroupById(id);
   }
 
   @ApiOperation({ summary: "批量处理" })
@@ -347,6 +350,6 @@ export class QQFrendController {
   })
   @Patch("batchExcute/:ids")
   batchExcute(@Param("ids") ids: string) {
-    return this.qqFrendService.batchExcuteQQFrendByIds(ids);
+    return this.qqGroupService.batchExcuteQQGroupByIds(ids);
   }
 }

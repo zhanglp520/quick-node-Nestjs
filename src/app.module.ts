@@ -19,8 +19,9 @@ import { DictionaryModule } from "@/modules/system/dictionary/dictionary.module"
 import { ApiModule } from "@/modules/system/api/api.module";
 import { RolesGuard } from "@/modules/auth/guards/roles.guard";
 //订单管理
-import { QQGroupModule } from "@/modules/order/qqGroup/qq-group.module";
-import { QQFrendModule } from "@/modules/order/qqFrend/qq-frend.module";
+import { QQGroupModule } from "@/modules/qq/qqGroup/qq-group.module";
+import { QQFrendModule } from "@/modules/qq/qqFrend/qq-frend.module";
+import { OrderModule } from "@/modules/order/order/order.module";
 
 @Dependencies(DataSource)
 @Module({
@@ -38,6 +39,7 @@ import { QQFrendModule } from "@/modules/order/qqFrend/qq-frend.module";
     ApiModule,
     QQGroupModule,
     QQFrendModule,
+    OrderModule,
     TypeOrmModule.forRoot(defaultOpts),
   ],
   controllers: [AppController],

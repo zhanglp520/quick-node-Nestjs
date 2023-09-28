@@ -13,8 +13,7 @@ import { qqOpts } from "../../../config/orm.config";
 const moment = require("moment");
 
 /*
- *@Description: 用户管理模块业务
- *返回用户数据时，排除掉超级管理员,超级管理员id为0，默认管理员用户名为administrator。切记
+ *@Description: qq群管理模块业务
  *@Author: 土豆哥
  *@Date: 2022-11-28 22:20:27
  */
@@ -253,7 +252,7 @@ export class QQGroupService {
     if (!qqGroup) {
       throw new HttpException(
         {
-          message: "操作失败,未找到用户信息.",
+          message: "操作失败,未找到qq群信息.",
         },
         HttpStatus.BAD_REQUEST
       );
