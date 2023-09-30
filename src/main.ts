@@ -41,13 +41,13 @@ async function bootstrap() {
   console.log("静态路径", join(__dirname, "..", "public"));
 
   const config = new DocumentBuilder()
-    .setTitle("quick-vue3-admin接口文档")
-    .setDescription("quick-vue3-admin接口文档方便开发者使用")
+    .setTitle("quick-order接口文档")
+    .setDescription("quick-vue3-order接口文档方便开发者使用")
     .setVersion("2.0.0.RELEASE")
-    .setContact("土豆哥", "https://quick.ainiteam.com", "zz15229380174@163.com")
-    .addServer("http://localhost:3101", "开发环境")
-    .addServer("https://api.quick.ainiteam.com/", "生产环境")
-    .setTermsOfService("https://quick.ainiteam.com")
+    .setContact("土豆哥", "https://order.ainiteam.com", "zz15229380174@163.com")
+    .addServer("http://localhost:6101", "开发环境")
+    .addServer("https://api.order.ainiteam.com/", "生产环境")
+    .setTermsOfService("https://order.ainiteam.com")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
