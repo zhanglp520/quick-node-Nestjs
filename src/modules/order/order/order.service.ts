@@ -109,13 +109,9 @@ export class OrderService {
     orderEntity.deleted = Deleted.NoDeleted;
     orderEntity.status = OrderStatus.Auditing;
     orderEntity.createTime = new Date();
-    orderEntity.deliveryTime = new Date(createOrderDto.deliveryTime);
-    console.log(
-      "orderEntity-aaaaa",
-      JSON.stringify(createOrderDto),
-      JSON.stringify(orderEntity)
+    orderEntity.deliveryTime = new Date(
+      Number(createOrderDto.deliveryTime) * 1000
     );
-
     await this.orderRepository.insert(orderEntity);
   }
 
