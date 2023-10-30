@@ -1,7 +1,7 @@
 #!/bin/sh
 #部署后端服务
-cd /ainiteam/quick/server
-tar -zcvf backup_quick-web."$(date '+%Y%m%d%H%M%S')".tar.gz dist
+cd /ainiteam/order/server
+tar -zcvf backup_order-web."$(date '+%Y%m%d%H%M%S')".tar.gz dist
 rm -rf dist
 rm -rf package.json
 rm -rf tsconfig.json
@@ -9,7 +9,7 @@ rm -rf Dockerfile
 rm -rf docker-compose.yml
 rm -rf startup.sh
 cd temp
-tar -zxvf dist.tar.gz -C /ainiteam/quick/server
+tar -zxvf dist.tar.gz -C /ainiteam/order/server
 cd ..
 rm -rf temp
 
@@ -21,7 +21,7 @@ firewall-cmd --reload
 firewall-cmd --list-ports
 systemctl restart docker
 
-#quick后端通过容器启动服务
+#后端服务通过容器启动服务
 docker-compose pull
 docker-compose build --no-cache
 docker-compose up -d

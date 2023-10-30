@@ -2,7 +2,7 @@ version: "3.0"
 
 services:
   mysql:
-    container_name: quick-mysql
+    container_name: order-mysql
     image: mysql:8.0
     ports:
       - 3306:3306
@@ -15,12 +15,12 @@ services:
       # - MYSQL_ROOT_HOST: "%"
       - MYSQL_ROOT_PASSWORD=123456
     volumes:
-      - /ainiteam/quick/data/mysql/conf:/etc/mysql/conf.d
-      - /ainiteam/quick/data/mysql/data:/var/lib/mysql
+      - /ainiteam/order/data/mysql/conf:/etc/mysql/conf.d
+      - /ainiteam/order/data/mysql/data:/var/lib/mysql
     networks:
-      - quick
-  quick:
-    container_name: quick-server
+      - order
+  order:
+    container_name: order-server
     build:
       context: .
       dockerfile: Dockerfile
@@ -30,12 +30,12 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-    working_dir: /ainiteam/quick/server
+    working_dir: /ainiteam/order/server
     volumes:
-      - .:/ainiteam/quick/server
+      - .:/ainiteam/order/server
     networks:
-      - quick
+      - order
     depends_on:
       - mysql
 networks:
-  quick:
+  order:

@@ -1,8 +1,8 @@
 FROM node:18.17.1
 
-RUN mkdir -p /ainiteam/quick/server
+RUN mkdir -p /ainiteam/order/server
 
-WORKDIR /ainiteam/quick/server
+WORKDIR /ainiteam/order/server
 
 RUN npm config set registry https://registry.npm.taobao.org/
 
