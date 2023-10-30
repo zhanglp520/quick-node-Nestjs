@@ -12,9 +12,8 @@ mkdir temp
 mv dist /var/lib/jenkins/workspace/quick-nestjs/temp
 cp package.json /var/lib/jenkins/workspace/quick-nestjs/temp
 cp tsconfig.json /var/lib/jenkins/workspace/quick-nestjs/temp
-cd /var/lib/jenkins/workspace/quick-nestjs/deploy
-cp Dockerfile /var/lib/jenkins/workspace/quick-nestjs/temp/deploy
-cp docker-compose.yml /var/lib/jenkins/workspace/quick-nestjs/temp/deploy
-cp startup.sh /var/lib/jenkins/workspace/quick-nestjs/temp/deploy
+cp ./deploy/Dockerfile /var/lib/jenkins/workspace/quick-nestjs/temp/deploy
+cp ./deploy/docker-compose.yml /var/lib/jenkins/workspace/quick-nestjs/temp/deploy
+cp ./deploy/startup.sh /var/lib/jenkins/workspace/quick-nestjs/temp/deploy
 cd /var/lib/jenkins/workspace/quick-nestjs/temp
 tar -zcvf dist.tar.gz *
