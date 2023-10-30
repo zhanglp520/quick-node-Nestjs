@@ -21,7 +21,7 @@ firewall-cmd --reload
 firewall-cmd --list-ports
 systemctl restart docker
 
-#quick后端通过容器启动服务
+#通过容器启动后端服务
 docker-compose pull
 docker-compose build --no-cache
 docker-compose up -d
