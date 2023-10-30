@@ -7,7 +7,7 @@ import {
 import { FileInterceptor } from "@nestjs/platform-express";
 import multer = require("multer");
 import dayjs = require("dayjs");
-import { UploadService } from "./Upload.service";
+import { UploadService } from "./upload.service";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("上传管理")
