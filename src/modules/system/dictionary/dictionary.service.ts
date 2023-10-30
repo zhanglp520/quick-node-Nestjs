@@ -98,6 +98,7 @@ export class DictionaryService {
     }
     const dictionaryEntity = new DictionaryEntity();
     toEntity(createDictionaryDto, dictionaryEntity);
+    dictionaryEntity.createTime = new Date();
     await this.dictionaryRepository.insert(dictionaryEntity);
   }
 

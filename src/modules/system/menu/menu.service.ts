@@ -84,6 +84,7 @@ export class MenuService {
     const menuEntity = new MenuEntity();
     toEntity(createMenuDto, menuEntity);
     menuEntity.deleted = Deleted.NoDeleted;
+    menuEntity.createTime = new Date();
     await this.menuRepository.insert(menuEntity);
   }
 

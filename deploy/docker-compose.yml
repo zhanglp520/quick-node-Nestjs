@@ -1,0 +1,41 @@
+version: "3.0"
+
+services:
+  mysql:
+    container_name: quick-mysql
+    image: mysql:8.0
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      # - MYSQL_DATABASE: blog
+      # - MYSQL_ROOT_PASSWORD: 123456
+      # - MYSQL_USER: lio
+      # - MYSQL_PASSWORD: 123456
+      # - MYSQL_ROOT_HOST: "%"
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - /ainiteam/quick/data/mysql/conf:/etc/mysql/conf.d
+      - /ainiteam/quick/data/mysql/data:/var/lib/mysql
+    networks:
+      - quick
+  quick:
+    container_name: quick-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3101:3101
+    # command: sh ./startup.sh
+    restart: always
+    environment:
+      NODE_ENV: production
+    working_dir: /ainiteam/quick/server
+    volumes:
+      - .:/ainiteam/quick/server
+    networks:
+      - quick
+    depends_on:
+      - mysql
+networks:
+  quick:

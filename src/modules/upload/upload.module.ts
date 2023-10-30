@@ -4,8 +4,8 @@ import dayjs = require("dayjs");
 import { diskStorage } from "multer";
 // import * as nuid from 'nuid';
 import { v4 as uuidv4 } from "uuid";
-import { UploadController } from "./Upload.controller";
-import { UploadService } from "./Upload.service";
+import { UploadController } from "./upload.controller";
+import { UploadService } from "./upload.service";
 
 @Module({
   imports: [
