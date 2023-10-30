@@ -5,6 +5,9 @@ tar -zcvf backup_quick-web."$(date '+%Y%m%d%H%M%S')".tar.gz dist
 rm -rf dist
 rm -rf package.json
 rm -rf tsconfig.json
+rm -rf Dockerfile
+rm -rf docker-compose.yml
+rm -rf startup.sh
 cd temp
 tar -zxvf dist.tar.gz -C /ainiteam/server/quick
 cd ..
