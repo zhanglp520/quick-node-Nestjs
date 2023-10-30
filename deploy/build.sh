@@ -15,5 +15,5 @@ cp tsconfig.json /var/lib/jenkins/workspace/quick-nestjs/temp
 cp ./deploy/Dockerfile /var/lib/jenkins/workspace/quick-nestjs/temp
 cp ./deploy/docker-compose.yml /var/lib/jenkins/workspace/quick-nestjs/temp
 cp ./deploy/startup.sh /var/lib/jenkins/workspace/quick-nestjs/temp
-cd cd /var/lib/jenkins/workspace/quick-nestjs/temp
+cd /var/lib/jenkins/workspace/quick-nestjs/temp
 tar -zcvf dist.tar.gz *
