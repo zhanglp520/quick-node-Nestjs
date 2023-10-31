@@ -1,4 +1,7 @@
-FROM node:18.17.1
+FROM node:18.17.1-bullseye-slim
+
+ENV TZ=Asia/Shanghai \
+  DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir -p /ainiteam/quick/server
 

@@ -1,3 +1,7 @@
+#提权
+# chmod +x ./deploy/build.sh
+# ./deploy/build.sh
+
 #后端服务打包
 cd /var/lib/jenkins/workspace/quick-server
 npm config set registry https://registry.npm.taobao.org

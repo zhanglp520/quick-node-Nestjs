@@ -19,7 +19,7 @@ services:
       - /ainiteam/quick/data/mysql/data:/var/lib/mysql
     networks:
       - quick
-  quick:
+  server:
     container_name: quick-server
     build:
       context: .

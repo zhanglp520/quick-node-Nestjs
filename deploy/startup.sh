@@ -1,4 +1,12 @@
 #!/bin/sh
+
+#提权
+# chmod +x startup.sh
+# ./startup.sh
+
+# 需要传输的文件
+# temp/dist.tar.gz
+
 #部署后端服务
 cd /ainiteam/quick/server
 tar -zcvf backup_quick-web."$(date '+%Y%m%d%H%M%S')".tar.gz dist
@@ -24,5 +32,9 @@ systemctl restart docker
 #通过容器启动后端服务
 docker-compose pull
 docker-compose build --no-cache
+docker stop quick-server
+docker rm quick-server
+docker stop quick-mysql
+docker rm quick-mysql
 docker-compose up -d
 docker-compose logs
